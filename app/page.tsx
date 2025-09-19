@@ -520,7 +520,7 @@ export default function CubifyAnalyzer() {
                   <img
                     src={playerInfo.avatar.url || "/placeholder.svg"}
                     alt={playerInfo.name}
-                    className="w-16 h-16 rounded-full"
+                    className="w-16 h-16 rounded-full object-cover"
                   />
                 )}
                 <div>

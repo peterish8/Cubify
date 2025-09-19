@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+
 import { ArrowLeft, Users, Loader2, Zap, Trophy, ExternalLink } from "lucide-react"
 import Link from "next/link"
 
@@ -76,6 +76,18 @@ export default function ComparePage() {
     }
 
     const player = await playerResponse.json()
+    
+    // Fetch avatar from WCA API
+    let avatarUrl = null
+    try {
+      const wcaResponse = await fetch(`https://www.worldcubeassociation.org/api/v0/persons/${wcaId}`)
+      if (wcaResponse.ok) {
+        const wcaData = await wcaResponse.json()
+        avatarUrl = wcaData.person?.avatar?.url
+      }
+    } catch (e) {
+      console.log("Avatar fetch failed:", e)
+    }
 
     if (!player || !player.name) {
       throw new Error(`Invalid player data received for ${wcaId}`)
@@ -91,7 +103,7 @@ export default function ComparePage() {
       },
       continent: player.continent,
       wca_id: player.id,
-      avatar: player.avatar ? { url: player.avatar } : undefined,
+      avatar: avatarUrl ? { url: avatarUrl } : undefined,
       personal_records: {},
     }
 
@@ -309,7 +321,7 @@ export default function ComparePage() {
               <div className="space-y-2">
                 <label className="text-sm font-bold text-glass-secondary">Player 1</label>
                 <Input
-                  placeholder="e.g., 2022RPRA01"
+                  placeholder="Enter WCA ID"
                   value={wcaId1}
                   onChange={(e) => setWcaId1(e.target.value.toUpperCase())}
                   disabled={loading}
@@ -319,7 +331,7 @@ export default function ComparePage() {
               <div className="space-y-2">
                 <label className="text-sm font-bold text-glass-secondary">Player 2</label>
                 <Input
-                  placeholder="e.g., 2023ABCD01"
+                  placeholder="Enter WCA ID"
                   value={wcaId2}
                   onChange={(e) => setWcaId2(e.target.value.toUpperCase())}
                   disabled={loading}
@@ -379,15 +391,13 @@ export default function ComparePage() {
               {[player1, player2].map((player, index) => (
                 <div key={player.wca_id} className="glass-card rounded-2xl p-6">
                   <div className="flex items-center gap-4 mb-4">
-                    <Avatar className="w-16 h-16 border-2 border-glass-accent/50">
-                      <AvatarImage 
-                        src={`https://images.weserv.nl/?url=worldcubeassociation.org/uploads/user/avatar/${player.wca_id.slice(0, 4)}/${player.wca_id}/thumbnail.jpg&w=64&h=64`}
+                    {player.avatar?.url && (
+                      <img
+                        src={player.avatar.url || "/placeholder.svg"}
                         alt={player.name}
+                        className="w-16 h-16 rounded-full object-cover"
                       />
-                      <AvatarFallback className="bg-glass-secondary text-glass-accent font-black text-xl">
-                        {player.name.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
+                    )}
                     <div>
                       <h3 className="text-xl font-heading font-black text-glass-accent tracking-wide">
                         {player.name.toUpperCase()}
@@ -560,29 +570,25 @@ export default function ComparePage() {
                         </th>
                         <th className="text-center py-4 px-3 text-glass-accent font-heading font-black tracking-wide">
                           <div className="flex flex-col items-center gap-2">
-                            <Avatar className="w-8 h-8 border border-glass-accent/50">
-                              <AvatarImage 
-                                src={`https://images.weserv.nl/?url=worldcubeassociation.org/uploads/user/avatar/${player1.wca_id.slice(0, 4)}/${player1.wca_id}/thumbnail.jpg&w=32&h=32`}
+                            {player1.avatar?.url && (
+                              <img
+                                src={player1.avatar.url || "/placeholder.svg"}
                                 alt={player1.name}
+                                className="w-8 h-8 rounded-full object-cover"
                               />
-                              <AvatarFallback className="bg-glass-secondary text-glass-accent font-black text-xs">
-                                {player1.name.charAt(0).toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
+                            )}
                             <span>{player1.name.split(" ")[0].toUpperCase()}</span>
                           </div>
                         </th>
                         <th className="text-center py-4 px-3 text-glass-accent font-heading font-black tracking-wide">
                           <div className="flex flex-col items-center gap-2">
-                            <Avatar className="w-8 h-8 border border-glass-accent/50">
-                              <AvatarImage 
-                                src={`https://images.weserv.nl/?url=worldcubeassociation.org/uploads/user/avatar/${player2.wca_id.slice(0, 4)}/${player2.wca_id}/thumbnail.jpg&w=32&h=32`}
+                            {player2.avatar?.url && (
+                              <img
+                                src={player2.avatar.url || "/placeholder.svg"}
                                 alt={player2.name}
+                                className="w-8 h-8 rounded-full object-cover"
                               />
-                              <AvatarFallback className="bg-glass-secondary text-glass-accent font-black text-xs">
-                                {player2.name.charAt(0).toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
+                            )}
                             <span>{player2.name.split(" ")[0].toUpperCase()}</span>
                           </div>
                         </th>
