@@ -431,7 +431,7 @@ export default function CubifyAnalyzer() {
 
       <div className="container mx-auto px-4 py-8 relative z-10">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-heading font-black text-glass-primary mb-4 tracking-wider">CUBIFY</h1>
+          <h1 className="text-5xl font-heading font-black text-glass-primary mb-4 tracking-wider">CUBIFY8</h1>
           <div className="flex items-center justify-center gap-2 mb-4">
             <div className="w-1 h-6 bg-glass-accent"></div>
             <p className="text-xl text-glass-accent font-bold tracking-wide">WCA STATS ANALYZER</p>
