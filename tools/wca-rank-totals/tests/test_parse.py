@@ -37,15 +37,30 @@ class ParseTest(unittest.TestCase):
         with self.assertRaisesRegex(CountingError, "duplicate rank row"):
             count_ranks(path, "single", self.people(), {})
 
-    def test_non_positive_rank_fails_closed(self) -> None:
+    def test_non_positive_world_rank_is_skipped(self) -> None:
         for value in ("0", "-1"):
             with self.subTest(value=value):
                 path = self.temporary_tsv(
                     "person_id\tevent_id\tworld_rank\tcontinent_rank\tcountry_rank\n"
                     f"2020TEST01\t333\t{value}\t1\t1\n"
+                    "2022SING01\t333\t2\t1\t1\n"
                 )
-                with self.assertRaisesRegex(CountingError, "non-positive rank"):
-                    count_ranks(path, "single", self.people(), {})
+                totals: dict = {}
+                count_ranks(path, "single", self.people(), totals)
+                self.assertEqual(1, totals["333"]["single"].world)
+                self.assertEqual({"US": 1}, totals["333"]["single"].countries)
+
+    def test_zero_country_rank_still_counts_when_world_rank_valid(self) -> None:
+        """Real WCA export can contain country_rank=0; still count via persons region."""
+        path = self.temporary_tsv(
+            "person_id\tevent_id\tworld_rank\tcontinent_rank\tcountry_rank\n"
+            "2020TEST01\t333\t1\t1\t0\n"
+            "2022SING01\t333\t2\t1\t1\n"
+        )
+        totals: dict = {}
+        count_ranks(path, "single", self.people(), totals)
+        self.assertEqual(2, totals["333"]["single"].world)
+        self.assertEqual({"IN": 1, "US": 1}, totals["333"]["single"].countries)
 
     def test_invalid_numeric_rank_is_counting_error(self) -> None:
         path = self.temporary_tsv(

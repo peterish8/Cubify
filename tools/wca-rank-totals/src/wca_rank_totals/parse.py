@@ -82,14 +82,11 @@ def load_current_people(path: Path, countries: dict[str, Region]) -> dict[str, R
     return people
 
 
-def _positive_rank(value: str, path: Path, event_id: str, person_id: str) -> int:
+def _parse_rank(value: str, path: Path, event_id: str, person_id: str) -> int:
     try:
-        rank = int(value)
+        return int(value)
     except (TypeError, ValueError) as error:
         raise CountingError(f"{path.name}: invalid rank for {event_id}/{person_id}") from error
-    if rank <= 0:
-        raise CountingError(f"{path.name}: non-positive rank for {event_id}/{person_id}")
-    return rank
 
 
 def count_ranks(path: Path, rank_type: str, people: dict[str, Region], totals: Totals) -> None:
@@ -106,9 +103,13 @@ def count_ranks(path: Path, rank_type: str, people: dict[str, Region], totals: T
         if key in seen:
             raise CountingError(f"{path.name}: duplicate rank row {event_id}/{person_id}")
         seen.add(key)
-        _positive_rank(row["world_rank"], path, event_id, person_id)
-        _positive_rank(row["continent_rank"], path, event_id, person_id)
-        _positive_rank(row["country_rank"], path, event_id, person_id)
+        # Only world_rank gates inclusion. Official export rows can have 0 continent/country
+        # ranks (e.g. data quirks); those values are unused because region comes from persons.
+        world_rank = _parse_rank(row["world_rank"], path, event_id, person_id)
+        _parse_rank(row["continent_rank"], path, event_id, person_id)
+        _parse_rank(row["country_rank"], path, event_id, person_id)
+        if world_rank <= 0:
+            continue
         try:
             region = people[person_id]
         except KeyError as error:
