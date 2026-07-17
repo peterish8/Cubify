@@ -114,7 +114,9 @@ export default function CubifyAnalyzer() {
   }
 
   const fetchStats = async () => {
-    if (!wcaId.trim()) {
+    const normalizedWcaId = wcaId.trim().toUpperCase()
+
+    if (!normalizedWcaId) {
       setError("Please enter a WCA ID")
       return
     }
@@ -127,83 +129,54 @@ export default function CubifyAnalyzer() {
     const startTime = Date.now()
 
     try {
-      const playerResponse = await fetch(
-        `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/persons/${wcaId}.json`,
-      )
+      const playerResponse = await fetch(`https://www.worldcubeassociation.org/api/v0/persons/${normalizedWcaId}`)
 
       if (!playerResponse.ok) {
         throw new Error("Player not found. Please check the WCA ID.")
       }
 
-      const player = await playerResponse.json()
-      
-      // Fetch avatar from WCA API
-      let avatarUrl = null
-      try {
-        const wcaResponse = await fetch(`https://www.worldcubeassociation.org/api/v0/persons/${wcaId}`)
-        if (wcaResponse.ok) {
-          const wcaData = await wcaResponse.json()
-          avatarUrl = wcaData.person?.avatar?.url
-        }
-      } catch (e) {
-        console.log("Avatar fetch failed:", e)
-      }
+      const playerData = await playerResponse.json()
+      const player = playerData.person
 
       if (!player || !player.name) {
         throw new Error("Invalid player data received from API")
       }
 
-      console.log("[v0] Player country data:", player.country)
-      console.log("[v0] Player countryIso2:", player.countryIso2)
-      console.log("[v0] Player avatar data:", player.avatar)
-      console.log("[v0] Player full data keys:", Object.keys(player))
-
-      const countryIso = player.country || player.countryIso2 || "XX"
-      console.log("[v0] Extracted countryIso:", countryIso)
-
-      const continentCode = CONTINENT_CODES[player.continent] || "world"
+      const countryIso = player.country?.iso2 || player.country_iso2 || "XX"
+      const continent = player.country?.continent_id?.replace(/^_/, "") || ""
+      const continentCode = CONTINENT_CODES[continent] || "world"
 
       const transformedPlayer: PlayerInfo = {
         name: player.name,
         country: {
-          name: player.country,
+          name: player.country?.name || countryIso,
           iso2: countryIso.toLowerCase(),
         },
-        continent: player.continent,
-        wca_id: player.id,
-        avatar: avatarUrl ? { url: avatarUrl } : undefined,
+        continent,
+        wca_id: player.wca_id || player.id || normalizedWcaId,
+        avatar: player.avatar?.url ? { url: player.avatar.url } : undefined,
         personal_records: {},
       }
 
-      if (player.rank && (player.rank.singles || player.rank.averages)) {
-        // Process singles for all events
-        if (player.rank.singles) {
-          player.rank.singles.forEach((record: any) => {
-            if (!transformedPlayer.personal_records[record.eventId]) {
-              transformedPlayer.personal_records[record.eventId] = {}
-            }
-            transformedPlayer.personal_records[record.eventId].single = {
-              best: record.best,
-              world_ranking: record.rank.world,
-              continental_ranking: record.rank.continent,
-              national_ranking: record.rank.country,
-            }
-          })
+      for (const [eventId, records] of Object.entries(playerData.personal_records || {}) as [string, any][]) {
+        transformedPlayer.personal_records[eventId] = {}
+
+        if (records.single) {
+          transformedPlayer.personal_records[eventId].single = {
+            best: records.single.best,
+            world_ranking: records.single.world_rank,
+            continental_ranking: records.single.continent_rank,
+            national_ranking: records.single.country_rank,
+          }
         }
 
-        // Process averages for all events
-        if (player.rank.averages) {
-          player.rank.averages.forEach((record: any) => {
-            if (!transformedPlayer.personal_records[record.eventId]) {
-              transformedPlayer.personal_records[record.eventId] = {}
-            }
-            transformedPlayer.personal_records[record.eventId].average = {
-              best: record.best,
-              world_ranking: record.rank.world,
-              continental_ranking: record.rank.continent,
-              national_ranking: record.rank.country,
-            }
-          })
+        if (records.average) {
+          transformedPlayer.personal_records[eventId].average = {
+            best: records.average.best,
+            world_ranking: records.average.world_rank,
+            continental_ranking: records.average.continent_rank,
+            national_ranking: records.average.country_rank,
+          }
         }
       }
 
@@ -229,31 +202,31 @@ export default function CubifyAnalyzer() {
           nationalAverageResponse,
         ] = await Promise.all([
           fetch(
-            `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/rank/world/single/${eventId}.json`,
+            `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads/v1/rank/world/single/${eventId}.json`,
           ),
           fetch(
-            `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/rank/world/average/${eventId}.json`,
+            `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads/v1/rank/world/average/${eventId}.json`,
           ),
           fetch(
-            `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/rank/${continentCode}/single/${eventId}.json`,
+            `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads/v1/rank/${continentCode}/single/${eventId}.json`,
           ),
           fetch(
-            `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/rank/${continentCode}/average/${eventId}.json`,
+            `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads/v1/rank/${continentCode}/average/${eventId}.json`,
           ),
           fetch(
-            `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/rank/${countryIso.toUpperCase()}/single/${eventId}.json`,
+            `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads/v1/rank/${countryIso.toUpperCase()}/single/${eventId}.json`,
           ),
           fetch(
-            `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/rank/${countryIso.toUpperCase()}/average/${eventId}.json`,
+            `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads/v1/rank/${countryIso.toUpperCase()}/average/${eventId}.json`,
           ),
         ])
 
         console.log(`[v0] National API URLs for ${eventId}:`)
         console.log(
-          `[v0] Single: https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/rank/${countryIso.toUpperCase()}/single/${eventId}.json`,
+          `[v0] Single: https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads/v1/rank/${countryIso.toUpperCase()}/single/${eventId}.json`,
         )
         console.log(
-          `[v0] Average: https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/rank/${countryIso.toUpperCase()}/average/${eventId}.json`,
+          `[v0] Average: https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads/v1/rank/${countryIso.toUpperCase()}/average/${eventId}.json`,
         )
         console.log(`[v0] National Single Response OK: ${nationalSingleResponse.ok}`)
         console.log(`[v0] National Average Response OK: ${nationalAverageResponse.ok}`)
