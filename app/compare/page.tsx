@@ -67,75 +67,54 @@ export default function ComparePage() {
   const [error, setError] = useState("")
 
   const fetchPlayerData = async (wcaId: string): Promise<PlayerInfo> => {
-    const playerResponse = await fetch(
-      `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/persons/${wcaId}.json`,
-    )
+    const normalizedWcaId = wcaId.trim().toUpperCase()
+    const playerResponse = await fetch(`https://www.worldcubeassociation.org/api/v0/persons/${normalizedWcaId}`)
 
     if (!playerResponse.ok) {
-      throw new Error(`Player ${wcaId} not found. Please check the WCA ID.`)
+      throw new Error(`Player ${normalizedWcaId} not found. Please check the WCA ID.`)
     }
 
-    const player = await playerResponse.json()
-    
-    // Fetch avatar from WCA API
-    let avatarUrl = null
-    try {
-      const wcaResponse = await fetch(`https://www.worldcubeassociation.org/api/v0/persons/${wcaId}`)
-      if (wcaResponse.ok) {
-        const wcaData = await wcaResponse.json()
-        avatarUrl = wcaData.person?.avatar?.url
-      }
-    } catch (e) {
-      console.log("Avatar fetch failed:", e)
-    }
+    const playerData = await playerResponse.json()
+    const player = playerData.person
 
     if (!player || !player.name) {
-      throw new Error(`Invalid player data received for ${wcaId}`)
+      throw new Error(`Invalid player data received for ${normalizedWcaId}`)
     }
 
-    const countryIso = player.country || player.countryIso2 || "XX"
+    const countryIso = player.country?.iso2 || player.country_iso2 || "XX"
+    const continent = player.country?.continent_id?.replace(/^_/, "") || ""
 
     const transformedPlayer: PlayerInfo = {
       name: player.name,
       country: {
-        name: player.country,
+        name: player.country?.name || countryIso,
         iso2: countryIso.toLowerCase(),
       },
-      continent: player.continent,
-      wca_id: player.id,
-      avatar: avatarUrl ? { url: avatarUrl } : undefined,
+      continent,
+      wca_id: player.wca_id || player.id || normalizedWcaId,
+      avatar: player.avatar?.url ? { url: player.avatar.url } : undefined,
       personal_records: {},
     }
 
-    if (player.rank && (player.rank.singles || player.rank.averages)) {
-      // Process singles
-      if (player.rank.singles) {
-        player.rank.singles.forEach((record: any) => {
-          if (!transformedPlayer.personal_records[record.eventId]) {
-            transformedPlayer.personal_records[record.eventId] = {}
-          }
-          transformedPlayer.personal_records[record.eventId].single = {
-            best: record.best,
-            world_ranking: record.rank.world,
-            continental_ranking: record.rank.continent,
-            national_ranking: record.rank.country,
-          }
-        })
+    for (const [eventId, records] of Object.entries(playerData.personal_records || {}) as [string, any][]) {
+      transformedPlayer.personal_records[eventId] = {}
+
+      if (records.single) {
+        transformedPlayer.personal_records[eventId].single = {
+          best: records.single.best,
+          world_ranking: records.single.world_rank,
+          continental_ranking: records.single.continent_rank,
+          national_ranking: records.single.country_rank,
+        }
       }
 
-      // Process averages
-      if (player.rank.averages) {
-        player.rank.averages.forEach((record: any) => {
-          if (!transformedPlayer.personal_records[record.eventId]) {
-            transformedPlayer.personal_records[record.eventId] = {}
-          }
-          transformedPlayer.personal_records[record.eventId].average = {
-            best: record.best,
-            world_ranking: record.rank.world,
-            continental_ranking: record.rank.continent,
-            national_ranking: record.rank.country,
-          }
-        })
+      if (records.average) {
+        transformedPlayer.personal_records[eventId].average = {
+          best: records.average.best,
+          world_ranking: records.average.world_rank,
+          continental_ranking: records.average.continent_rank,
+          national_ranking: records.average.country_rank,
+        }
       }
     }
 
