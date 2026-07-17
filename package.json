@@ -46,8 +46,10 @@
     "cmdk": "latest",
     "date-fns": "4.1.0",
     "embla-carousel-react": "latest",
+    "framer-motion": "^12.42.2",
     "geist": "^1.3.1",
     "input-otp": "latest",
+    "lenis": "^1.3.25",
     "lucide-react": "^0.454.0",
     "next": "14.2.35",
     "next-themes": "latest",
@@ -70,8 +72,8 @@
     "@types/react-dom": "^18",
     "postcss": "^8.5",
     "tailwindcss": "^4.1.9",
-    "tw-animate-css": "1.3.3",
     "tsx": "4.20.3",
+    "tw-animate-css": "1.3.3",
     "typescript": "^5"
   }
 }

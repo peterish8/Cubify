@@ -4,9 +4,14 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-
+import { Magnetic } from "@/components/motion/Magnetic"
+import { Reveal, Stagger, StaggerItem } from "@/components/motion/Reveal"
+import { CountUp } from "@/components/motion/CountUp"
+import { eventDisplayName } from "@/lib/wca-events"
+import { formatResult } from "@/lib/wca-format"
 import { ArrowLeft, Users, Loader2, Zap, Trophy, ExternalLink } from "lucide-react"
 import Link from "next/link"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface PlayerInfo {
   name: string
@@ -36,26 +41,6 @@ interface PlayerInfo {
       }
     }
   >
-}
-
-const EVENT_NAMES: Record<string, string> = {
-  "333": "3×3 Cube",
-  "222": "2×2 Cube",
-  "444": "4×4 Cube",
-  "555": "5×5 Cube",
-  "666": "6×6 Cube",
-  "777": "7×7 Cube",
-  "333bf": "3×3 Blindfolded",
-  "333fm": "3×3 Fewest Moves",
-  "333oh": "3×3 One-Handed",
-  clock: "Clock",
-  minx: "Megaminx",
-  pyram: "Pyraminx",
-  skewb: "Skewb",
-  sq1: "Square-1",
-  "444bf": "4×4 Blindfolded",
-  "555bf": "5×5 Blindfolded",
-  "333mbf": "3×3 Multi-Blind",
 }
 
 export default function ComparePage() {
@@ -132,8 +117,6 @@ export default function ComparePage() {
     setPlayer1(null)
     setPlayer2(null)
 
-    const startTime = Date.now()
-
     try {
       const [playerData1, playerData2] = await Promise.all([
         fetchPlayerData(wcaId1.trim()),
@@ -142,42 +125,17 @@ export default function ComparePage() {
 
       setPlayer1(playerData1)
       setPlayer2(playerData2)
-
-      const elapsedTime = Date.now() - startTime
-      const remainingTime = Math.max(0, 3000 - elapsedTime)
-
-      if (remainingTime > 0) {
-        await new Promise((resolve) => setTimeout(resolve, remainingTime))
-      }
     } catch (err) {
-      const elapsedTime = Date.now() - startTime
-      const remainingTime = Math.max(0, 3000 - elapsedTime)
-
-      if (remainingTime > 0) {
-        await new Promise((resolve) => setTimeout(resolve, remainingTime))
-      }
-
       setError(err instanceof Error ? err.message : "An error occurred while fetching data")
     } finally {
       setLoading(false)
     }
   }
 
-  const formatTime = (centiseconds: number) => {
-    const seconds = centiseconds / 100
-    return seconds < 60
-      ? `${seconds.toFixed(2)}s`
-      : `${Math.floor(seconds / 60)}:${(seconds % 60).toFixed(2).padStart(5, "0")}`
-  }
-
   const getAllEvents = () => {
     const events = new Set<string>()
-    if (player1) {
-      Object.keys(player1.personal_records).forEach((event) => events.add(event))
-    }
-    if (player2) {
-      Object.keys(player2.personal_records).forEach((event) => events.add(event))
-    }
+    if (player1) Object.keys(player1.personal_records).forEach((event) => events.add(event))
+    if (player2) Object.keys(player2.personal_records).forEach((event) => events.add(event))
     return Array.from(events).sort()
   }
 
@@ -188,15 +146,39 @@ export default function ComparePage() {
     return rank1 < rank2 ? "player1" : rank1 > rank2 ? "player2" : "tie"
   }
 
+  /** Score a single/average slot: better rank wins; missing side loses (unfair mode). */
+  const scoreSlot = (
+    rank1: number | undefined,
+    rank2: number | undefined,
+    mode: "fair" | "unfair",
+  ): "player1" | "player2" | "tie" | null => {
+    const has1 = typeof rank1 === "number" && rank1 > 0
+    const has2 = typeof rank2 === "number" && rank2 > 0
+    if (has1 && has2) return getBetterRank(rank1, rank2)
+    if (mode === "fair") return null
+    if (has1 && !has2) return "player1"
+    if (!has1 && has2) return "player2"
+    return null
+  }
+
+  const applyWinner = (
+    winner: "player1" | "player2" | "tie" | null,
+    points1: { n: number },
+    points2: { n: number },
+  ) => {
+    if (winner === "player1") points1.n++
+    else if (winner === "player2") points2.n++
+  }
+
   const calculatePoints = () => {
     if (!player1 || !player2)
       return { fair: { player1: 0, player2: 0, events: [] }, unfair: { player1: 0, player2: 0, events: [] } }
 
     const allEvents = getAllEvents()
-    let fairPoints1 = 0,
-      fairPoints2 = 0
-    let unfairPoints1 = 0,
-      unfairPoints2 = 0
+    const fairPoints1 = { n: 0 }
+    const fairPoints2 = { n: 0 }
+    const unfairPoints1 = { n: 0 }
+    const unfairPoints2 = { n: 0 }
     const fairEvents: string[] = []
     const unfairEvents: string[] = []
 
@@ -204,319 +186,323 @@ export default function ComparePage() {
       const event1 = player1.personal_records[eventId]
       const event2 = player2.personal_records[eventId]
 
-      // Fair comparison - only events where both have results
       if (event1 && event2) {
         fairEvents.push(eventId)
-
-        // Single comparison
-        if (event1.single && event2.single) {
-          const singleWinner = getBetterRank(event1.single.world_ranking, event2.single.world_ranking)
-          if (singleWinner === "player1") fairPoints1++
-          else if (singleWinner === "player2") fairPoints2++
-        }
-
-        // Average comparison
-        if (event1.average && event2.average) {
-          const averageWinner = getBetterRank(event1.average.world_ranking, event2.average.world_ranking)
-          if (averageWinner === "player1") fairPoints1++
-          else if (averageWinner === "player2") fairPoints2++
-        }
+        applyWinner(
+          scoreSlot(event1.single?.world_ranking, event2.single?.world_ranking, "fair"),
+          fairPoints1,
+          fairPoints2,
+        )
+        applyWinner(
+          scoreSlot(event1.average?.world_ranking, event2.average?.world_ranking, "fair"),
+          fairPoints1,
+          fairPoints2,
+        )
       }
 
-      // Unfair comparison - all events from both players
       unfairEvents.push(eventId)
-
-      // Give points for having results when opponent doesn't
-      if (event1 && !event2) {
-        if (event1.single) unfairPoints1++
-        if (event1.average) unfairPoints1++
-      } else if (!event1 && event2) {
-        if (event2.single) unfairPoints2++
-        if (event2.average) unfairPoints2++
-      } else if (event1 && event2) {
-        // Both have results, compare like fair mode
-        if (event1.single && event2.single) {
-          const singleWinner = getBetterRank(event1.single.world_ranking, event2.single.world_ranking)
-          if (singleWinner === "player1") unfairPoints1++
-          else if (singleWinner === "player2") unfairPoints2++
-        }
-
-        if (event1.average && event2.average) {
-          const averageWinner = getBetterRank(event1.average.world_ranking, event2.average.world_ranking)
-          if (averageWinner === "player1") unfairPoints1++
-          else if (averageWinner === "player2") unfairPoints2++
-        }
-      }
+      applyWinner(
+        scoreSlot(event1?.single?.world_ranking, event2?.single?.world_ranking, "unfair"),
+        unfairPoints1,
+        unfairPoints2,
+      )
+      applyWinner(
+        scoreSlot(event1?.average?.world_ranking, event2?.average?.world_ranking, "unfair"),
+        unfairPoints1,
+        unfairPoints2,
+      )
     })
 
     return {
-      fair: { player1: fairPoints1, player2: fairPoints2, events: fairEvents },
-      unfair: { player1: unfairPoints1, player2: unfairPoints2, events: unfairEvents },
+      fair: { player1: fairPoints1.n, player2: fairPoints2.n, events: fairEvents },
+      unfair: { player1: unfairPoints1.n, player2: unfairPoints2.n, events: unfairEvents },
     }
   }
 
   return (
-    <div className="min-h-screen glass-bg relative overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="spotlight-left"></div>
-        <div className="spotlight-right"></div>
-        <div className="star-field top-1/5 left-1/5" style={{ animationDelay: "0s" }}></div>
-        <div className="star-field top-1/3 right-1/4" style={{ animationDelay: "1s" }}></div>
-        <div className="star-field bottom-1/3 left-1/6" style={{ animationDelay: "2s" }}></div>
-        <div className="star-field top-2/3 right-1/6" style={{ animationDelay: "1.5s" }}></div>
-        <div className="star-field bottom-1/5 right-1/3" style={{ animationDelay: "0.5s" }}></div>
-      </div>
-
-      <div className="container mx-auto px-4 py-8 relative z-10">
-        <div className="mb-8">
+    <div className="editorial-bg relative overflow-hidden">
+      <div className="container mx-auto px-4 py-10 md:py-14 relative z-10">
+        <Reveal className="mb-8">
           <Link href="/">
-            <Button variant="outline" className="glass-border bg-transparent hover:bg-glass-secondary mb-4">
+            <Button
+              variant="outline"
+              className="rounded-xl border-border bg-card/40 hover:bg-card hover:border-primary/40 mb-2"
+              data-cursor="hover"
+            >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Analyzer
+              Back to analyzer
             </Button>
           </Link>
-        </div>
+        </Reveal>
 
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-heading font-black text-glass-primary mb-4 tracking-wider">COMPARE</h1>
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="w-1 h-6 bg-glass-accent"></div>
-            <p className="text-xl text-glass-accent font-bold tracking-wide">PLAYER VS PLAYER</p>
-            <div className="w-1 h-6 bg-glass-accent"></div>
-          </div>
-          <p className="text-glass-muted max-w-2xl mx-auto text-balance font-medium">
-            Compare two speedcubers head-to-head across all events and see who ranks better.
+        <Reveal className="text-center mb-12">
+          <p className="text-xs font-medium tracking-[0.25em] uppercase text-primary mb-3">
+            Head to head
           </p>
-        </div>
+          <h1 className="font-heading text-5xl md:text-6xl font-bold tracking-tight text-foreground mb-4">
+            COMPARE
+          </h1>
+          <p className="text-muted-foreground max-w-xl mx-auto text-balance text-base md:text-lg leading-relaxed">
+            Compare two speedcubers across every event and see who ranks better worldwide.
+          </p>
+        </Reveal>
 
-        <div className="max-w-4xl mx-auto mb-12">
-          <div className="glass-card rounded-2xl p-6 animate-pulse-glow">
-            <div className="flex items-center gap-3 mb-6">
-              <Users className="text-glass-accent" size={24} />
-              <h2 className="text-xl font-heading font-black text-glass-accent tracking-wide">ENTER WCA IDs</h2>
+        <Reveal delay={0.08} className="max-w-4xl mx-auto mb-12">
+          <div className="surface-card rounded-2xl p-6">
+            <div className="flex items-center gap-2.5 mb-5">
+              <Users className="text-primary" size={18} />
+              <h2 className="text-sm font-semibold tracking-wide text-foreground">Enter WCA IDs</h2>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6 mb-6">
+            <div className="grid md:grid-cols-2 gap-5 mb-5">
               <div className="space-y-2">
-                <label className="text-sm font-bold text-glass-secondary">Player 1</label>
+                <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  Player 1
+                </label>
                 <Input
-                  placeholder="Enter WCA ID"
+                  placeholder="WCA ID"
                   value={wcaId1}
                   onChange={(e) => setWcaId1(e.target.value.toUpperCase())}
                   disabled={loading}
-                  className="bg-glass-secondary border-glass-border text-glass-primary placeholder:text-glass-muted focus:border-glass-accent focus:ring-glass-accent/30 rounded-xl h-12 text-center font-mono tracking-wider font-bold backdrop-blur-sm"
+                  className="input-editorial"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-bold text-glass-secondary">Player 2</label>
+                <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  Player 2
+                </label>
                 <Input
-                  placeholder="Enter WCA ID"
+                  placeholder="WCA ID"
                   value={wcaId2}
                   onChange={(e) => setWcaId2(e.target.value.toUpperCase())}
                   disabled={loading}
-                  className="bg-glass-secondary border-glass-border text-glass-primary placeholder:text-glass-muted focus:border-glass-accent focus:ring-glass-accent/30 rounded-xl h-12 text-center font-mono tracking-wider font-bold backdrop-blur-sm"
+                  className="input-editorial"
                 />
               </div>
             </div>
 
-            <Button
-              onClick={compareStats}
-              disabled={loading}
-              className="neuro-button w-full h-12 text-glass-primary font-heading font-black tracking-wider rounded-xl"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  COMPARING...
-                </>
-              ) : (
-                <>
-                  <Zap className="mr-2 h-5 w-5" />
-                  COMPARE STATS
-                </>
-              )}
-            </Button>
+            <Magnetic className="w-full" strength={0.25}>
+              <Button
+                onClick={compareStats}
+                disabled={loading}
+                className="btn-primary-glow w-full h-12 rounded-xl text-sm tracking-wide"
+                data-cursor="hover"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Comparing…
+                  </>
+                ) : (
+                  <>
+                    <Zap className="mr-2 h-4 w-4" />
+                    Compare stats
+                  </>
+                )}
+              </Button>
+            </Magnetic>
 
-            {error && (
-              <div className="text-red-300 text-sm text-center p-3 bg-red-500/10 rounded-lg border border-red-500/20 font-medium backdrop-blur-sm mt-4">
-                {error}
-              </div>
-            )}
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="text-sm text-center p-3 rounded-xl bg-destructive/10 border border-destructive/25 text-red-300 mt-4"
+                >
+                  {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-        </div>
+        </Reveal>
 
         {loading && (
-          <div className="max-w-md mx-auto mb-8">
-            <div className="glass-card rounded-2xl p-8">
-              <div className="flex flex-col items-center space-y-6">
-                <div className="relative">
-                  <Loader2 className="h-16 w-16 animate-spin text-glass-accent" />
-                  <div className="absolute inset-0 h-16 w-16 rounded-full border-4 border-glass-accent/20 animate-pulse"></div>
-                  <div
-                    className="absolute inset-2 h-12 w-12 rounded-full border-2 border-glass-accent/40 animate-spin"
-                    style={{ animationDirection: "reverse", animationDuration: "3s" }}
-                  ></div>
+          <div className="max-w-4xl mx-auto mb-8 grid md:grid-cols-2 gap-5">
+            {[0, 1].map((i) => (
+              <div key={i} className="surface-card rounded-2xl p-6 space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="skeleton-shimmer h-16 w-16 rounded-full" />
+                  <div className="flex-1 space-y-3">
+                    <div className="skeleton-shimmer h-5 w-40 rounded-md" />
+                    <div className="skeleton-shimmer h-4 w-28 rounded-md" />
+                  </div>
                 </div>
-                <p className="text-center text-glass-secondary font-bold">Comparing players...</p>
               </div>
-            </div>
+            ))}
           </div>
         )}
 
         {player1 && player2 && !loading && (
           <>
-            {/* Player Info Cards */}
-            <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto mb-8">
-              {[player1, player2].map((player, index) => (
-                <div key={player.wca_id} className="glass-card rounded-2xl p-6">
-                  <div className="flex items-center gap-4 mb-4">
-                    {player.avatar?.url && (
-                      <img
-                        src={player.avatar.url || "/placeholder.svg"}
-                        alt={player.name}
-                        className="w-16 h-16 rounded-full object-cover"
-                      />
-                    )}
-                    <div>
-                      <h3 className="text-xl font-heading font-black text-glass-accent tracking-wide">
-                        {player.name.toUpperCase()}
-                      </h3>
-                      <div className="flex items-center gap-3 mt-2">
+            <Stagger className="grid md:grid-cols-2 gap-5 max-w-6xl mx-auto mb-8" stagger={0.08}>
+              {[player1, player2].map((player) => (
+                <StaggerItem key={player.wca_id}>
+                  <div className="surface-card surface-card-hover rounded-2xl p-6 h-full">
+                    <div className="flex items-center gap-4 mb-4">
+                      {player.avatar?.url && (
                         <img
-                          src={`https://flagcdn.com/24x18/${player.country.iso2}.png`}
-                          alt={player.country.name}
-                          className="rounded border border-glass-border"
+                          src={player.avatar.url}
+                          alt={player.name}
+                          className="w-16 h-16 rounded-full object-cover ring-2 ring-border"
                         />
-                        <span className="text-glass-secondary font-bold">{player.country.name}</span>
-                        <Badge className="bg-glass-accent/20 text-glass-accent border-glass-accent/30 font-mono font-bold">
-                          {player.wca_id}
-                        </Badge>
+                      )}
+                      <div className="min-w-0">
+                        <h3 className="text-lg font-semibold text-foreground truncate">{player.name}</h3>
+                        <div className="flex flex-wrap items-center gap-2 mt-2">
+                          <img
+                            src={`https://flagcdn.com/24x18/${player.country.iso2}.png`}
+                            alt={player.country.name}
+                            className="rounded"
+                          />
+                          <span className="text-sm text-muted-foreground">{player.country.name}</span>
+                          <Badge
+                            variant="outline"
+                            className="font-mono text-xs tabular-nums border-primary/30 text-primary bg-primary/10"
+                          >
+                            {player.wca_id}
+                          </Badge>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    asChild
-                    className="glass-border bg-transparent hover:bg-glass-secondary"
-                  >
-                    <a
-                      href={`https://www.worldcubeassociation.org/persons/${player.wca_id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-glass-accent font-bold"
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
+                      className="rounded-lg border-border hover:border-primary/40"
                     >
-                      View WCA Profile <ExternalLink size={14} />
-                    </a>
-                  </Button>
-                </div>
+                      <a
+                        href={`https://www.worldcubeassociation.org/persons/${player.wca_id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2"
+                        data-cursor="hover"
+                      >
+                        View WCA profile <ExternalLink size={14} />
+                      </a>
+                    </Button>
+                  </div>
+                </StaggerItem>
               ))}
-            </div>
+            </Stagger>
 
-            {/* Points Scoring Section */}
-            <div className="max-w-6xl mx-auto mb-8">
-              <div className="glass-card rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <Trophy className="text-glass-accent" size={24} />
-                  <h2 className="text-xl font-heading font-black text-glass-accent tracking-wide">POINTS SCORING</h2>
+            <Reveal className="max-w-6xl mx-auto mb-8">
+              <div className="surface-card rounded-2xl p-6">
+                <div className="flex items-center gap-2.5 mb-6">
+                  <Trophy className="text-primary" size={18} />
+                  <h2 className="text-sm font-semibold tracking-wide text-foreground">Points scoring</h2>
                 </div>
 
                 {(() => {
                   const points = calculatePoints()
                   return (
-                    <div className="grid md:grid-cols-2 gap-6">
-                      {/* Fair Comparison */}
-                      <div className="border border-glass-border/30 rounded-xl p-4 bg-glass-secondary/20">
-                        <h3 className="text-lg font-heading font-black text-green-400 mb-3 text-center">
-                          FAIR COMPARISON
+                    <div className="grid md:grid-cols-2 gap-5">
+                      <div className="rounded-xl border border-border/80 bg-secondary/30 p-5">
+                        <h3 className="text-sm font-semibold text-emerald-400 mb-1 text-center tracking-wide">
+                          Fair comparison
                         </h3>
-                        <p className="text-xs text-glass-muted text-center mb-4">
-                          Only events where both players have results ({points.fair.events.length} events)
+                        <p className="text-xs text-muted-foreground text-center mb-5">
+                          Shared events only ({points.fair.events.length})
                         </p>
 
                         <div className="flex items-center justify-between mb-4">
                           <div className="text-center">
                             <div
-                              className={`text-2xl font-black ${points.fair.player1 > points.fair.player2 ? "text-green-400" : points.fair.player1 === points.fair.player2 ? "text-glass-accent" : "text-glass-muted"}`}
+                              className={`text-3xl font-bold tabular-nums ${
+                                points.fair.player1 > points.fair.player2
+                                  ? "text-emerald-400"
+                                  : points.fair.player1 === points.fair.player2
+                                    ? "text-primary"
+                                    : "text-muted-foreground"
+                              }`}
                             >
-                              {points.fair.player1}
+                              <CountUp value={points.fair.player1} />
                             </div>
-                            <div className="text-xs text-glass-muted font-bold">{player1.name.split(" ")[0]}</div>
+                            <div className="text-xs text-muted-foreground mt-1">
+                              {player1.name.split(" ")[0]}
+                            </div>
                           </div>
-
-                          <div className="text-center">
-                            <div className="text-glass-accent font-bold text-sm">VS</div>
-                          </div>
-
+                          <div className="text-xs font-semibold text-muted-foreground tracking-widest">VS</div>
                           <div className="text-center">
                             <div
-                              className={`text-2xl font-black ${points.fair.player2 > points.fair.player1 ? "text-green-400" : points.fair.player1 === points.fair.player2 ? "text-glass-accent" : "text-glass-muted"}`}
+                              className={`text-3xl font-bold tabular-nums ${
+                                points.fair.player2 > points.fair.player1
+                                  ? "text-emerald-400"
+                                  : points.fair.player1 === points.fair.player2
+                                    ? "text-primary"
+                                    : "text-muted-foreground"
+                              }`}
                             >
-                              {points.fair.player2}
+                              <CountUp value={points.fair.player2} />
                             </div>
-                            <div className="text-xs text-glass-muted font-bold">{player2.name.split(" ")[0]}</div>
+                            <div className="text-xs text-muted-foreground mt-1">
+                              {player2.name.split(" ")[0]}
+                            </div>
                           </div>
                         </div>
 
-                        <div className="text-center">
+                        <div className="text-center text-sm font-medium">
                           {points.fair.player1 > points.fair.player2 ? (
-                            <div className="text-green-400 font-bold text-sm">
-                              🏆 {player1.name.split(" ")[0]} WINS!
-                            </div>
+                            <span className="text-emerald-400">🏆 {player1.name.split(" ")[0]} wins</span>
                           ) : points.fair.player2 > points.fair.player1 ? (
-                            <div className="text-green-400 font-bold text-sm">
-                              🏆 {player2.name.split(" ")[0]} WINS!
-                            </div>
+                            <span className="text-emerald-400">🏆 {player2.name.split(" ")[0]} wins</span>
                           ) : (
-                            <div className="text-glass-accent font-bold text-sm">🤝 TIE GAME!</div>
+                            <span className="text-primary">🤝 Tie</span>
                           )}
                         </div>
                       </div>
 
-                      {/* Unfair Comparison */}
-                      <div className="border border-glass-border/30 rounded-xl p-4 bg-glass-secondary/20">
-                        <h3 className="text-lg font-heading font-black text-orange-400 mb-3 text-center">
-                          UNFAIR COMPARISON
+                      <div className="rounded-xl border border-border/80 bg-secondary/30 p-5">
+                        <h3 className="text-sm font-semibold text-orange-400 mb-1 text-center tracking-wide">
+                          Unfair comparison
                         </h3>
-                        <p className="text-xs text-glass-muted text-center mb-4">
-                          All events from both players ({points.unfair.events.length} events)
+                        <p className="text-xs text-muted-foreground text-center mb-5">
+                          All events ({points.unfair.events.length})
                         </p>
 
                         <div className="flex items-center justify-between mb-4">
                           <div className="text-center">
                             <div
-                              className={`text-2xl font-black ${points.unfair.player1 > points.unfair.player2 ? "text-orange-400" : points.unfair.player1 === points.unfair.player2 ? "text-glass-accent" : "text-glass-muted"}`}
+                              className={`text-3xl font-bold tabular-nums ${
+                                points.unfair.player1 > points.unfair.player2
+                                  ? "text-orange-400"
+                                  : points.unfair.player1 === points.unfair.player2
+                                    ? "text-primary"
+                                    : "text-muted-foreground"
+                              }`}
                             >
-                              {points.unfair.player1}
+                              <CountUp value={points.unfair.player1} />
                             </div>
-                            <div className="text-xs text-glass-muted font-bold">{player1.name.split(" ")[0]}</div>
+                            <div className="text-xs text-muted-foreground mt-1">
+                              {player1.name.split(" ")[0]}
+                            </div>
                           </div>
-
-                          <div className="text-center">
-                            <div className="text-glass-accent font-bold text-sm">VS</div>
-                          </div>
-
+                          <div className="text-xs font-semibold text-muted-foreground tracking-widest">VS</div>
                           <div className="text-center">
                             <div
-                              className={`text-2xl font-black ${points.unfair.player2 > points.unfair.player1 ? "text-orange-400" : points.unfair.player1 === points.unfair.player2 ? "text-glass-accent" : "text-glass-muted"}`}
+                              className={`text-3xl font-bold tabular-nums ${
+                                points.unfair.player2 > points.unfair.player1
+                                  ? "text-orange-400"
+                                  : points.unfair.player1 === points.unfair.player2
+                                    ? "text-primary"
+                                    : "text-muted-foreground"
+                              }`}
                             >
-                              {points.unfair.player2}
+                              <CountUp value={points.unfair.player2} />
                             </div>
-                            <div className="text-xs text-glass-muted font-bold">{player2.name.split(" ")[0]}</div>
+                            <div className="text-xs text-muted-foreground mt-1">
+                              {player2.name.split(" ")[0]}
+                            </div>
                           </div>
                         </div>
 
-                        <div className="text-center">
+                        <div className="text-center text-sm font-medium">
                           {points.unfair.player1 > points.unfair.player2 ? (
-                            <div className="text-orange-400 font-bold text-sm">
-                              🏆 {player1.name.split(" ")[0]} WINS!
-                            </div>
+                            <span className="text-orange-400">🏆 {player1.name.split(" ")[0]} wins</span>
                           ) : points.unfair.player2 > points.unfair.player1 ? (
-                            <div className="text-orange-400 font-bold text-sm">
-                              🏆 {player2.name.split(" ")[0]} WINS!
-                            </div>
+                            <span className="text-orange-400">🏆 {player2.name.split(" ")[0]} wins</span>
                           ) : (
-                            <div className="text-glass-accent font-bold text-sm">🤝 TIE GAME!</div>
+                            <span className="text-primary">🤝 Tie</span>
                           )}
                         </div>
                       </div>
@@ -524,55 +510,53 @@ export default function ComparePage() {
                   )
                 })()}
               </div>
-            </div>
+            </Reveal>
 
-            {/* Comparison Table */}
-            <div className="max-w-7xl mx-auto">
-              <div className="glass-card rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <Trophy className="text-glass-accent" size={24} />
-                  <h2 className="text-xl font-heading font-black text-glass-accent tracking-wide">
-                    HEAD-TO-HEAD COMPARISON
+            <Reveal delay={0.1} className="max-w-7xl mx-auto">
+              <div className="surface-card rounded-2xl p-6">
+                <div className="flex items-center gap-2.5 mb-6">
+                  <Trophy className="text-primary" size={18} />
+                  <h2 className="text-sm font-semibold tracking-wide text-foreground">
+                    Head-to-head comparison
                   </h2>
                 </div>
 
                 <div className="overflow-x-auto">
-                  <table className="w-full">
-                    {/* Table Header */}
+                  <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-glass-border/30">
-                        <th className="text-left py-4 px-3 text-glass-accent font-heading font-black tracking-wide">
-                          EVENT
+                      <tr className="border-b border-border">
+                        <th className="text-left py-3 px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                          Event
                         </th>
-                        <th className="text-center py-4 px-3 text-glass-accent font-heading font-black tracking-wide">
-                          TYPE
+                        <th className="text-center py-3 px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                          Type
                         </th>
-                        <th className="text-center py-4 px-3 text-glass-accent font-heading font-black tracking-wide">
-                          <div className="flex flex-col items-center gap-2">
+                        <th className="text-center py-3 px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                          <div className="flex flex-col items-center gap-1.5">
                             {player1.avatar?.url && (
                               <img
-                                src={player1.avatar.url || "/placeholder.svg"}
+                                src={player1.avatar.url}
                                 alt={player1.name}
-                                className="w-8 h-8 rounded-full object-cover"
+                                className="w-7 h-7 rounded-full object-cover"
                               />
                             )}
-                            <span>{player1.name.split(" ")[0].toUpperCase()}</span>
+                            <span>{player1.name.split(" ")[0]}</span>
                           </div>
                         </th>
-                        <th className="text-center py-4 px-3 text-glass-accent font-heading font-black tracking-wide">
-                          <div className="flex flex-col items-center gap-2">
+                        <th className="text-center py-3 px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                          <div className="flex flex-col items-center gap-1.5">
                             {player2.avatar?.url && (
                               <img
-                                src={player2.avatar.url || "/placeholder.svg"}
+                                src={player2.avatar.url}
                                 alt={player2.name}
-                                className="w-8 h-8 rounded-full object-cover"
+                                className="w-7 h-7 rounded-full object-cover"
                               />
                             )}
-                            <span>{player2.name.split(" ")[0].toUpperCase()}</span>
+                            <span>{player2.name.split(" ")[0]}</span>
                           </div>
                         </th>
-                        <th className="text-center py-4 px-3 text-glass-accent font-heading font-black tracking-wide">
-                          WINNER
+                        <th className="text-center py-3 px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                          Winner
                         </th>
                       </tr>
                     </thead>
@@ -580,11 +564,9 @@ export default function ComparePage() {
                       {getAllEvents().map((eventId) => {
                         const event1 = player1.personal_records[eventId]
                         const event2 = player2.personal_records[eventId]
-                        const eventName = EVENT_NAMES[eventId] || eventId.toUpperCase()
+                        const eventName = eventDisplayName(eventId)
+                        const rows: React.ReactNode[] = []
 
-                        const rows = []
-
-                        // Single row
                         if (event1?.single || event2?.single) {
                           const singleWinner = getBetterRank(
                             event1?.single?.world_ranking,
@@ -593,52 +575,67 @@ export default function ComparePage() {
                           rows.push(
                             <tr
                               key={`${eventId}-single`}
-                              className="border-b border-glass-border/10 hover:bg-glass-secondary/10"
+                              className="border-b border-border/40 hover:bg-secondary/30 transition-colors"
                             >
-                              <td className="py-3 px-3 text-glass-secondary font-bold">
+                              <td className="py-3 px-3 text-foreground font-medium">
                                 {rows.length === 0 ? eventName : ""}
                               </td>
-                              <td className="py-3 px-3 text-center text-glass-muted font-bold text-sm">SINGLE</td>
+                              <td className="py-3 px-3 text-center text-muted-foreground text-xs">Single</td>
                               <td
-                                className={`py-3 px-3 text-center font-mono font-bold ${singleWinner === "player1" ? "text-green-400" : singleWinner === "tie" ? "text-glass-accent" : "text-glass-muted"}`}
+                                className={`py-3 px-3 text-center tabular-nums font-medium ${
+                                  singleWinner === "player1"
+                                    ? "text-emerald-400"
+                                    : singleWinner === "tie"
+                                      ? "text-primary"
+                                      : "text-muted-foreground"
+                                }`}
                               >
                                 {event1?.single ? (
                                   <div>
-                                    <div>{formatTime(event1.single.best)}</div>
-                                    <div className="text-xs text-glass-muted">WR #{event1.single.world_ranking}</div>
+                                    <div>{formatResult(eventId, event1.single.best, "single")}</div>
+                                    <div className="text-xs text-muted-foreground">
+                                      WR #{event1.single.world_ranking}
+                                    </div>
                                   </div>
                                 ) : (
-                                  "N/A"
+                                  "—"
                                 )}
                               </td>
                               <td
-                                className={`py-3 px-3 text-center font-mono font-bold ${singleWinner === "player2" ? "text-green-400" : singleWinner === "tie" ? "text-glass-accent" : "text-glass-muted"}`}
+                                className={`py-3 px-3 text-center tabular-nums font-medium ${
+                                  singleWinner === "player2"
+                                    ? "text-emerald-400"
+                                    : singleWinner === "tie"
+                                      ? "text-primary"
+                                      : "text-muted-foreground"
+                                }`}
                               >
                                 {event2?.single ? (
                                   <div>
-                                    <div>{formatTime(event2.single.best)}</div>
-                                    <div className="text-xs text-glass-muted">WR #{event2.single.world_ranking}</div>
+                                    <div>{formatResult(eventId, event2.single.best, "single")}</div>
+                                    <div className="text-xs text-muted-foreground">
+                                      WR #{event2.single.world_ranking}
+                                    </div>
                                   </div>
                                 ) : (
-                                  "N/A"
+                                  "—"
                                 )}
                               </td>
-                              <td className="py-3 px-3 text-center">
+                              <td className="py-3 px-3 text-center text-xs font-medium">
                                 {singleWinner === "player1" ? (
-                                  <div className="text-green-400 font-bold text-sm">{player1.name.split(" ")[0]}</div>
+                                  <span className="text-emerald-400">{player1.name.split(" ")[0]}</span>
                                 ) : singleWinner === "player2" ? (
-                                  <div className="text-green-400 font-bold text-sm">{player2.name.split(" ")[0]}</div>
+                                  <span className="text-emerald-400">{player2.name.split(" ")[0]}</span>
                                 ) : singleWinner === "tie" ? (
-                                  <div className="text-glass-accent font-bold text-sm">TIE</div>
+                                  <span className="text-primary">Tie</span>
                                 ) : (
-                                  <div className="text-glass-muted font-bold text-sm">-</div>
+                                  <span className="text-muted-foreground">—</span>
                                 )}
                               </td>
                             </tr>,
                           )
                         }
 
-                        // Average row
                         if (event1?.average || event2?.average) {
                           const averageWinner = getBetterRank(
                             event1?.average?.world_ranking,
@@ -647,45 +644,61 @@ export default function ComparePage() {
                           rows.push(
                             <tr
                               key={`${eventId}-average`}
-                              className="border-b border-glass-border/10 hover:bg-glass-secondary/10"
+                              className="border-b border-border/40 hover:bg-secondary/30 transition-colors"
                             >
-                              <td className="py-3 px-3 text-glass-secondary font-bold">
+                              <td className="py-3 px-3 text-foreground font-medium">
                                 {rows.length === 0 ? eventName : ""}
                               </td>
-                              <td className="py-3 px-3 text-center text-glass-muted font-bold text-sm">AVERAGE</td>
+                              <td className="py-3 px-3 text-center text-muted-foreground text-xs">Average</td>
                               <td
-                                className={`py-3 px-3 text-center font-mono font-bold ${averageWinner === "player1" ? "text-green-400" : averageWinner === "tie" ? "text-glass-accent" : "text-glass-muted"}`}
+                                className={`py-3 px-3 text-center tabular-nums font-medium ${
+                                  averageWinner === "player1"
+                                    ? "text-emerald-400"
+                                    : averageWinner === "tie"
+                                      ? "text-primary"
+                                      : "text-muted-foreground"
+                                }`}
                               >
                                 {event1?.average ? (
                                   <div>
-                                    <div>{formatTime(event1.average.best)}</div>
-                                    <div className="text-xs text-glass-muted">WR #{event1.average.world_ranking}</div>
+                                    <div>{formatResult(eventId, event1.average.best, "average")}</div>
+                                    <div className="text-xs text-muted-foreground">
+                                      WR #{event1.average.world_ranking}
+                                    </div>
                                   </div>
                                 ) : (
-                                  "N/A"
+                                  "—"
                                 )}
                               </td>
                               <td
-                                className={`py-3 px-3 text-center font-mono font-bold ${averageWinner === "player2" ? "text-green-400" : averageWinner === "tie" ? "text-glass-accent" : "text-glass-muted"}`}
+                                className={`py-3 px-3 text-center tabular-nums font-medium ${
+                                  averageWinner === "player2"
+                                    ? "text-emerald-400"
+                                    : averageWinner === "tie"
+                                      ? "text-primary"
+                                      : "text-muted-foreground"
+                                }`}
                               >
                                 {event2?.average ? (
                                   <div>
-                                    <div>{formatTime(event2.average.best)}</div>
-                                    <div className="text-xs text-glass-muted">WR #{event2.average.world_ranking}</div>
+                                    <div>{formatResult(eventId, event2.average.best, "average")}</div>
+                                    <div className="text-xs text-muted-foreground">
+                                      WR #{event2.average.world_ranking}
+                                    </div>
                                   </div>
                                 ) : (
-                                  "N/A"
+                                  "—"
                                 )}
                               </td>
-                              <td className="py-3 px-3 text-center">
+                              <td className="py-3 px-3 text-center text-xs font-medium">
                                 {averageWinner === "player1" ? (
-                                  <div className="text-green-400 font-bold text-sm">{player1.name.split(" ")[0]}</div>
+                                  <span className="text-emerald-400">{player1.name.split(" ")[0]}</span>
                                 ) : averageWinner === "player2" ? (
-                                  <div className="text-green-400 font-bold text-sm">{player2.name.split(" ")[0]}</div>
+                                  <span className="text-emerald-400">{player2.name.split(" ")[0]}</span>
                                 ) : averageWinner === "tie" ? (
-                                  <div className="text-glass-accent font-bold text-sm">TIE</div>
+                                  <span className="text-primary">Tie</span>
                                 ) : (
-                                  <div className="text-glass-muted font-bold text-sm">-</div>
+                                  <span className="text-muted-foreground">—</span>
                                 )}
                               </td>
                             </tr>,
@@ -698,22 +711,16 @@ export default function ComparePage() {
                   </table>
                 </div>
               </div>
-            </div>
+            </Reveal>
           </>
         )}
 
-        <div className="text-center mt-16 space-y-2">
-          <div className="flex items-center justify-center gap-2 text-glass-muted">
-            <div className="w-1 h-4 bg-glass-accent"></div>
-            <p className="text-sm font-mono font-bold">
-              Data sourced from WCA Official API and Unofficial WCA REST API
-            </p>
-            <div className="w-1 h-4 bg-glass-accent"></div>
-          </div>
-          <p className="text-xs text-glass-muted/60 font-mono tracking-wider font-bold">
-            BUILT FOR THE SPEEDCUBING COMMUNITY
+        <footer className="text-center mt-16 space-y-1.5 pb-6">
+          <p className="text-xs text-muted-foreground">Data sourced from the official WCA API</p>
+          <p className="text-[11px] tracking-widest uppercase text-muted-foreground/60">
+            Built for the speedcubing community
           </p>
-        </div>
+        </footer>
       </div>
     </div>
   )

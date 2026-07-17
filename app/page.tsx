@@ -11,9 +11,16 @@ import {
   getScopedTotals,
   type RankTotalsDocument,
 } from "@/lib/wca-rank-totals"
-
+import { eventDisplayName } from "@/lib/wca-events"
+import { formatResult } from "@/lib/wca-format"
+import { PercentileRing } from "@/components/PercentileRing"
+import { Magnetic } from "@/components/motion/Magnetic"
+import { Reveal, Stagger, StaggerItem } from "@/components/motion/Reveal"
+import { TiltCard } from "@/components/motion/TiltCard"
+import { CountUp } from "@/components/motion/CountUp"
 import { ExternalLink, Search, Trophy, Loader2, Zap, Users } from "lucide-react"
 import Link from "next/link"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface PlayerInfo {
   name: string
@@ -74,26 +81,6 @@ interface EventStats {
   }
 }
 
-const EVENT_NAMES: Record<string, string> = {
-  "333": "3×3 Cube",
-  "222": "2×2 Cube",
-  "444": "4×4 Cube",
-  "555": "5×5 Cube",
-  "666": "6×6 Cube",
-  "777": "7×7 Cube",
-  "333bf": "3×3 Blindfolded",
-  "333fm": "3×3 Fewest Moves",
-  "333oh": "3×3 One-Handed",
-  clock: "Clock",
-  minx: "Megaminx",
-  pyram: "Pyraminx",
-  skewb: "Skewb",
-  sq1: "Square-1",
-  "444bf": "4×4 Blindfolded",
-  "555bf": "5×5 Blindfolded",
-  "333mbf": "3×3 Multi-Blind",
-}
-
 const formatExportDate = (value: string): string =>
   new Intl.DateTimeFormat("en", {
     year: "numeric",
@@ -101,6 +88,139 @@ const formatExportDate = (value: string): string =>
     day: "numeric",
     timeZone: "UTC",
   }).format(new Date(value))
+
+function RankRow({
+  scope,
+  rank,
+  topPercent,
+}: {
+  scope: "NR" | "CR" | "WR"
+  rank: number
+  topPercent: number | null
+}) {
+  if (rank <= 0) return null
+  const chip = scope === "NR" ? "chip-nr" : scope === "CR" ? "chip-cr" : "chip-wr"
+  const pct = formatTopPercent(topPercent)
+
+  return (
+    <div className="flex items-center justify-between gap-2 text-sm">
+      <div className="flex items-center gap-2">
+        <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold tracking-wide ${chip}`}>
+          {scope}
+        </span>
+        <span className="tabular-nums text-foreground/90 font-medium">#{rank.toLocaleString()}</span>
+      </div>
+      {pct && <span className="tabular-nums text-xs text-muted-foreground font-medium">{pct}</span>}
+    </div>
+  )
+}
+
+function EventCard({
+  eventId,
+  eventStats,
+  playerInfo,
+}: {
+  eventId: string
+  eventStats: EventStats
+  playerInfo: PlayerInfo
+}) {
+  const record = playerInfo.personal_records[eventId]
+  const bestWrPercent =
+    eventStats.single.wr.topPercent ?? eventStats.average.wr.topPercent ?? null
+
+  return (
+    <TiltCard className="h-full">
+      <div className="surface-card surface-card-hover rounded-2xl p-5 h-full flex flex-col">
+        <div className="flex items-start justify-between gap-3 mb-4">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <Trophy size={16} />
+            </div>
+            <h3 className="text-base font-semibold text-foreground truncate">
+              {eventDisplayName(eventId)}
+            </h3>
+          </div>
+          {bestWrPercent !== null && (
+            <PercentileRing
+              topPercent={bestWrPercent}
+              size={72}
+              stroke={5}
+              label="WR"
+              className="shrink-0 -mt-1"
+            />
+          )}
+        </div>
+
+        <div className="space-y-4 flex-1">
+          {record.single && (
+            <div className="space-y-2">
+              <div className="flex items-baseline justify-between">
+                <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
+                  Single
+                </span>
+                <span className="tabular-nums text-lg font-semibold text-foreground">
+                  {formatResult(eventId, record.single.best, "single")}
+                </span>
+              </div>
+              <div className="space-y-1.5 pl-0.5">
+                <RankRow scope="NR" rank={eventStats.single.rank.nr} topPercent={eventStats.single.nr.topPercent} />
+                <RankRow scope="CR" rank={eventStats.single.rank.cr} topPercent={eventStats.single.cr.topPercent} />
+                <RankRow scope="WR" rank={eventStats.single.rank.wr} topPercent={eventStats.single.wr.topPercent} />
+              </div>
+            </div>
+          )}
+
+          {record.average && (
+            <div className="space-y-2 border-t border-border/50 pt-3">
+              <div className="flex items-baseline justify-between">
+                <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
+                  Average
+                </span>
+                <span className="tabular-nums text-lg font-semibold text-foreground">
+                  {formatResult(eventId, record.average.best, "average")}
+                </span>
+              </div>
+              <div className="space-y-1.5 pl-0.5">
+                <RankRow scope="NR" rank={eventStats.average.rank.nr} topPercent={eventStats.average.nr.topPercent} />
+                <RankRow scope="CR" rank={eventStats.average.rank.cr} topPercent={eventStats.average.cr.topPercent} />
+                <RankRow scope="WR" rank={eventStats.average.rank.wr} topPercent={eventStats.average.wr.topPercent} />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </TiltCard>
+  )
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className="max-w-7xl mx-auto space-y-6">
+      <div className="surface-card rounded-2xl p-6 max-w-2xl mx-auto">
+        <div className="flex items-center gap-4">
+          <div className="skeleton-shimmer h-16 w-16 rounded-full" />
+          <div className="flex-1 space-y-3">
+            <div className="skeleton-shimmer h-5 w-48 rounded-md" />
+            <div className="skeleton-shimmer h-4 w-32 rounded-md" />
+          </div>
+        </div>
+      </div>
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="surface-card rounded-2xl p-5 space-y-4">
+            <div className="flex justify-between">
+              <div className="skeleton-shimmer h-5 w-28 rounded-md" />
+              <div className="skeleton-shimmer h-16 w-16 rounded-full" />
+            </div>
+            <div className="skeleton-shimmer h-4 w-full rounded-md" />
+            <div className="skeleton-shimmer h-4 w-3/4 rounded-md" />
+            <div className="skeleton-shimmer h-4 w-2/3 rounded-md" />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export default function CubifyAnalyzer() {
   const [wcaId, setWcaId] = useState("")
@@ -129,11 +249,7 @@ export default function CubifyAnalyzer() {
     setEventsData(null)
     setRankTotalsSource(null)
 
-    const startTime = Date.now()
-
     try {
-      // Start the one aggregate request alongside the official player request.
-      // Its failure is handled locally so official ranks still render.
       const rankTotalsPromise: Promise<RankTotalsDocument | null> = fetchRankTotals().catch((totalsError) => {
         console.error("Rank percentages are temporarily unavailable", totalsError)
         return null
@@ -196,8 +312,6 @@ export default function CubifyAnalyzer() {
 
       setPlayerInfo(transformedPlayer)
 
-      // Percentages are optional enrichment. The official WCA player and rank
-      // data above remains usable if the generated totals file is unavailable.
       const rankTotals = await rankTotalsPromise
       if (rankTotals) {
         setRankTotalsSource(rankTotals.source)
@@ -250,220 +364,173 @@ export default function CubifyAnalyzer() {
       }
 
       setEventsData(allEventsData)
-
-      const elapsedTime = Date.now() - startTime
-      const remainingTime = Math.max(0, 3000 - elapsedTime)
-
-      if (remainingTime > 0) {
-        await new Promise((resolve) => setTimeout(resolve, remainingTime))
-      }
     } catch (err) {
-      const elapsedTime = Date.now() - startTime
-      const remainingTime = Math.max(0, 3000 - elapsedTime)
-
-      if (remainingTime > 0) {
-        await new Promise((resolve) => setTimeout(resolve, remainingTime))
-      }
-
       setError(err instanceof Error ? err.message : "An error occurred while fetching data")
     } finally {
       setLoading(false)
     }
   }
 
-  const formatTime = (centiseconds: number) => {
-    const seconds = centiseconds / 100
-    return seconds < 60
-      ? `${seconds.toFixed(2)}s`
-      : `${Math.floor(seconds / 60)}:${(seconds % 60).toFixed(2).padStart(5, "0")}`
-  }
-
-  const getCountryEmoji = (iso2: string) => {
-    const countryFlags: Record<string, string> = {
-      in: "🇮🇳",
-      us: "🇺🇸",
-      cn: "🇨🇳",
-      au: "🇦🇺",
-      gb: "🇬🇧",
-      de: "🇩🇪",
-      fr: "🇫🇷",
-      jp: "🇯🇵",
-      kr: "🇰🇷",
-      ca: "🇨🇦",
-    }
-    return countryFlags[iso2.toLowerCase()] || "🏳️"
-  }
-
-  const getContinentEmoji = (continent: string) => {
-    const continentEmojis: Record<string, string> = {
-      Asia: "🌏",
-      Europe: "🌍",
-      "North America": "🌎",
-      "South America": "🌎",
-      Africa: "🌍",
-      Oceania: "🌏",
-    }
-    return continentEmojis[continent] || "🌍"
-  }
+  const eventCount = eventsData ? Object.keys(eventsData).length : 0
 
   return (
-    <div className="min-h-screen glass-bg relative overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Left spotlight */}
-        <div className="spotlight-left"></div>
-
-        {/* Right spotlight */}
-        <div className="spotlight-right"></div>
-
-        {/* Enhanced star field */}
-        <div className="star-field top-1/5 left-1/5" style={{ animationDelay: "0s" }}></div>
-        <div className="star-field top-1/3 right-1/4" style={{ animationDelay: "1s" }}></div>
-        <div className="star-field bottom-1/3 left-1/6" style={{ animationDelay: "2s" }}></div>
-        <div className="star-field top-2/3 right-1/6" style={{ animationDelay: "1.5s" }}></div>
-        <div className="star-field bottom-1/5 right-1/3" style={{ animationDelay: "0.5s" }}></div>
-        <div className="star-field top-1/6 left-2/3" style={{ animationDelay: "2.5s" }}></div>
-        <div className="star-field bottom-2/3 left-1/3" style={{ animationDelay: "3s" }}></div>
-        <div className="star-field top-3/4 left-1/8" style={{ animationDelay: "1.8s" }}></div>
-        <div className="star-field bottom-1/6 right-1/8" style={{ animationDelay: "2.2s" }}></div>
-        <div className="star-field top-1/8 right-2/3" style={{ animationDelay: "0.8s" }}></div>
-      </div>
-
-      <div className="container mx-auto px-4 py-8 relative z-10">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-heading font-black text-glass-primary mb-4 tracking-wider">CUBIFY8</h1>
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="w-1 h-6 bg-glass-accent"></div>
-            <p className="text-xl text-glass-accent font-bold tracking-wide">WCA STATS ANALYZER</p>
-            <div className="w-1 h-6 bg-glass-accent"></div>
-          </div>
-          <p className="text-glass-muted max-w-2xl mx-auto text-balance font-medium">
-            Discover your position in the speedcubing universe. Real-time rankings for all events across all regions.
+    <div className="editorial-bg relative overflow-hidden">
+      <div className="container mx-auto px-4 py-10 md:py-14 relative z-10">
+        {/* Header */}
+        <Reveal className="text-center mb-12 md:mb-16">
+          <p className="text-xs font-medium tracking-[0.25em] uppercase text-primary mb-3">
+            WCA Stats Analyzer
           </p>
-          <div className="mt-6">
-            <Link href="/compare">
-              <Button className="neuro-button text-glass-primary font-heading font-black tracking-wider rounded-xl">
-                <Users className="mr-2 h-5 w-5" />
-                COMPARE PLAYERS
-              </Button>
-            </Link>
+          <h1 className="font-heading text-5xl md:text-6xl font-bold tracking-tight text-foreground mb-4">
+            CUBIFY
+          </h1>
+          <p className="text-muted-foreground max-w-xl mx-auto text-balance text-base md:text-lg leading-relaxed">
+            See where you stand — national, continental, and world percentiles across every event.
+          </p>
+          <div className="mt-7">
+            <Magnetic>
+              <Link href="/compare">
+                <Button
+                  variant="outline"
+                  className="rounded-xl border-border bg-card/40 hover:bg-card hover:border-primary/40 gap-2"
+                  data-cursor="hover"
+                >
+                  <Users className="h-4 w-4" />
+                  Compare players
+                </Button>
+              </Link>
+            </Magnetic>
           </div>
-        </div>
+        </Reveal>
 
-        <div className="max-w-md mx-auto mb-12">
-          <div className="glass-card rounded-2xl p-6 animate-pulse-glow">
-            <div className="flex items-center gap-3 mb-4">
-              <Search className="text-glass-accent" size={24} />
-              <h2 className="text-xl font-heading font-black text-glass-accent tracking-wide">ENTER WCA ID</h2>
+        {/* Search */}
+        <Reveal delay={0.08} className="max-w-md mx-auto mb-12">
+          <div className="surface-card rounded-2xl p-6">
+            <div className="flex items-center gap-2.5 mb-1">
+              <Search className="text-primary" size={18} />
+              <h2 className="text-sm font-semibold tracking-wide text-foreground">Enter WCA ID</h2>
             </div>
-            <p className="text-sm text-glass-muted mb-6 font-medium">
-              Input your WCA ID to analyze your performance across all events
+            <p className="text-sm text-muted-foreground mb-5">
+              Pull live rankings and Top X% percentiles for all events
             </p>
-            <div className="space-y-4">
+            <div className="space-y-3">
               <Input
-                placeholder="e.g., 2022RPRA01"
+                placeholder="e.g. 2022RPRA01"
                 value={wcaId}
                 onChange={(e) => setWcaId(e.target.value.toUpperCase())}
-                onKeyPress={(e) => e.key === "Enter" && fetchStats()}
+                onKeyDown={(e) => e.key === "Enter" && fetchStats()}
                 disabled={loading}
-                className="bg-glass-secondary border-glass-border text-glass-primary placeholder:text-glass-muted focus:border-glass-accent focus:ring-glass-accent/30 rounded-xl h-12 text-center font-mono tracking-wider font-bold backdrop-blur-sm"
+                className="input-editorial"
               />
-              <Button
-                onClick={fetchStats}
-                disabled={loading}
-                className="neuro-button w-full h-12 text-glass-primary font-heading font-black tracking-wider rounded-xl"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    ANALYZING...
-                  </>
-                ) : (
-                  <>
-                    <Zap className="mr-2 h-5 w-5" />
-                    FETCH STATS
-                  </>
+              <Magnetic className="w-full" strength={0.25}>
+                <Button
+                  onClick={fetchStats}
+                  disabled={loading}
+                  className="btn-primary-glow w-full h-12 rounded-xl text-sm tracking-wide"
+                  data-cursor="hover"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Analyzing…
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="mr-2 h-4 w-4" />
+                      Fetch stats
+                    </>
+                  )}
+                </Button>
+              </Magnetic>
+              <AnimatePresence>
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="text-sm text-center p-3 rounded-xl bg-destructive/10 border border-destructive/25 text-red-300"
+                  >
+                    {error}
+                  </motion.div>
                 )}
-              </Button>
-              {error && (
-                <div className="text-red-300 text-sm text-center p-3 bg-red-500/10 rounded-lg border border-red-500/20 font-medium backdrop-blur-sm">
-                  {error}
-                </div>
-              )}
+              </AnimatePresence>
             </div>
           </div>
-        </div>
+        </Reveal>
 
-        {loading && (
-          <div className="max-w-md mx-auto mb-8">
-            <div className="glass-card rounded-2xl p-8">
-              <div className="flex flex-col items-center space-y-6">
-                <div className="relative">
-                  <Loader2 className="h-16 w-16 animate-spin text-glass-accent" />
-                  <div className="absolute inset-0 h-16 w-16 rounded-full border-4 border-glass-accent/20 animate-pulse"></div>
-                  <div
-                    className="absolute inset-2 h-12 w-12 rounded-full border-2 border-glass-accent/40 animate-spin"
-                    style={{ animationDirection: "reverse", animationDuration: "3s" }}
-                  ></div>
-                </div>
-                <p className="text-center text-glass-secondary font-bold">Fetching your WCA statistics...</p>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Loading */}
+        <AnimatePresence mode="wait">
+          {loading && (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="mb-10"
+            >
+              <LoadingSkeleton />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
+        {/* Player profile */}
         {playerInfo && !loading && (
-          <div className="max-w-2xl mx-auto mb-8">
-            <div className="glass-card rounded-2xl p-6">
-              <div className="flex items-center gap-4 mb-4">
+          <Reveal className="max-w-2xl mx-auto mb-10">
+            <div className="surface-card rounded-2xl p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
                 {playerInfo.avatar?.url && (
                   <img
-                    src={playerInfo.avatar.url || "/placeholder.svg"}
+                    src={playerInfo.avatar.url}
                     alt={playerInfo.name}
-                    className="w-16 h-16 rounded-full object-cover"
+                    className="w-16 h-16 rounded-full object-cover ring-2 ring-border"
                   />
                 )}
-                <div>
-                  <h3 className="text-2xl font-heading font-black text-glass-accent tracking-wide">
-                    {playerInfo.name.toUpperCase()}
+                <div className="min-w-0">
+                  <h3 className="text-xl md:text-2xl font-semibold text-foreground truncate">
+                    {playerInfo.name}
                   </h3>
-                  <div className="flex items-center gap-3 mt-2">
+                  <div className="flex flex-wrap items-center gap-2.5 mt-2">
                     <img
                       src={`https://flagcdn.com/24x18/${playerInfo.country.iso2}.png`}
                       alt={playerInfo.country.name}
-                      className="rounded border border-glass-border"
+                      className="rounded"
                     />
-                    <span className="text-glass-secondary font-bold">{playerInfo.country.name}</span>
-                    <Badge className="bg-glass-accent/20 text-glass-accent border-glass-accent/30 font-mono font-bold">
+                    <span className="text-sm text-muted-foreground">{playerInfo.country.name}</span>
+                    <Badge
+                      variant="outline"
+                      className="font-mono text-xs tabular-nums border-primary/30 text-primary bg-primary/10"
+                    >
                       {playerInfo.wca_id}
                     </Badge>
+                    {eventCount > 0 && (
+                      <span className="text-xs text-muted-foreground">
+                        <CountUp value={eventCount} className="font-semibold text-foreground" /> events
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                asChild
-                className="glass-border bg-transparent hover:bg-glass-secondary"
-              >
+              <Button variant="outline" size="sm" asChild className="rounded-lg border-border hover:border-primary/40">
                 <a
                   href={`https://www.worldcubeassociation.org/persons/${playerInfo.wca_id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-glass-accent font-bold"
+                  className="flex items-center gap-2"
+                  data-cursor="hover"
                 >
-                  View WCA Profile <ExternalLink size={14} />
+                  View WCA profile <ExternalLink size={14} />
                 </a>
               </Button>
             </div>
             {rankTotalsSource ? (
-              <p className="mt-3 text-center text-xs text-glass-muted">
-                Rank totals based on official WCA results as of {formatExportDate(rankTotalsSource.exportDate)}. {" "}
+              <p className="mt-3 text-center text-xs text-muted-foreground">
+                Rank totals based on official WCA results as of {formatExportDate(rankTotalsSource.exportDate)}.{" "}
                 <a
                   href={rankTotalsSource.url}
                   target="_blank"
                   rel="noreferrer"
                   title={rankTotalsSource.attribution}
-                  className="underline underline-offset-2 hover:text-white"
+                  className="underline underline-offset-2 hover:text-foreground transition-colors"
                 >
                   {rankTotalsSource.attribution}
                 </a>
@@ -473,137 +540,43 @@ export default function CubifyAnalyzer() {
                 Official ranks are available; percentage totals are temporarily unavailable.
               </p>
             )}
-          </div>
+          </Reveal>
         )}
 
+        {/* Event grid */}
         {eventsData && playerInfo && !loading && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+          <Stagger className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-7xl mx-auto" stagger={0.06}>
             {Object.entries(eventsData).map(([eventId, eventStats]) => (
-              <div key={eventId} className="glass-card rounded-2xl p-6 animate-float">
-                <div className="flex items-center gap-3 mb-4">
-                  <Trophy className="text-glass-accent" size={20} />
-                  <h3 className="text-lg font-heading font-black text-glass-accent tracking-wide">
-                    {EVENT_NAMES[eventId] || eventId.toUpperCase()}
-                  </h3>
-                </div>
-
-                {/* Single and Average Results */}
-                <div className="space-y-4">
-                  {playerInfo.personal_records[eventId].single && (
-                    <div className="space-y-2">
-                      <h4 className="text-sm font-black text-glass-secondary">SINGLE</h4>
-                      <p className="text-xs text-glass-muted font-mono font-bold">
-                        Best: {formatTime(playerInfo.personal_records[eventId].single!.best)}
-                      </p>
-
-                      {/* Rankings */}
-                      <div className="space-y-1 text-xs">
-                        {eventStats.single.rank.nr > 0 && (
-                          <div className="flex justify-between">
-                            <span className="font-bold">
-                              <span className="text-glass-accent font-black">NR:</span> #{eventStats.single.rank.nr}
-                            </span>
-                            {formatTopPercent(eventStats.single.nr.topPercent) && (
-                              <span className="text-glass-accent font-bold">
-                                {formatTopPercent(eventStats.single.nr.topPercent)}
-                              </span>
-                            )}
-                          </div>
-                        )}
-                        {eventStats.single.rank.cr > 0 && (
-                          <div className="flex justify-between">
-                            <span className="font-bold">
-                              <span className="text-glass-secondary font-black">CR:</span> #{eventStats.single.rank.cr}
-                            </span>
-                            {formatTopPercent(eventStats.single.cr.topPercent) && (
-                              <span className="text-glass-secondary font-bold">
-                                {formatTopPercent(eventStats.single.cr.topPercent)}
-                              </span>
-                            )}
-                          </div>
-                        )}
-                        {eventStats.single.rank.wr > 0 && (
-                          <div className="flex justify-between">
-                            <span className="font-bold">
-                              <span className="text-glass-primary font-black">WR:</span> #{eventStats.single.rank.wr}
-                            </span>
-                            {formatTopPercent(eventStats.single.wr.topPercent) && (
-                              <span className="text-glass-primary font-bold">
-                                {formatTopPercent(eventStats.single.wr.topPercent)}
-                              </span>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {playerInfo.personal_records[eventId].average && (
-                    <div className="space-y-2">
-                      <h4 className="text-sm font-black text-glass-secondary">AVERAGE</h4>
-                      <p className="text-xs text-glass-muted font-mono font-bold">
-                        Best: {formatTime(playerInfo.personal_records[eventId].average!.best)}
-                      </p>
-
-                      {/* Rankings */}
-                      <div className="space-y-1 text-xs">
-                        {eventStats.average.rank.nr > 0 && (
-                          <div className="flex justify-between">
-                            <span className="font-bold">
-                              <span className="text-glass-accent font-black">NR:</span> #{eventStats.average.rank.nr}
-                            </span>
-                            {formatTopPercent(eventStats.average.nr.topPercent) && (
-                              <span className="text-glass-accent font-bold">
-                                {formatTopPercent(eventStats.average.nr.topPercent)}
-                              </span>
-                            )}
-                          </div>
-                        )}
-                        {eventStats.average.rank.cr > 0 && (
-                          <div className="flex justify-between">
-                            <span className="font-bold">
-                              <span className="text-glass-secondary font-black">CR:</span> #{eventStats.average.rank.cr}
-                            </span>
-                            {formatTopPercent(eventStats.average.cr.topPercent) && (
-                              <span className="text-glass-secondary font-bold">
-                                {formatTopPercent(eventStats.average.cr.topPercent)}
-                              </span>
-                            )}
-                          </div>
-                        )}
-                        {eventStats.average.rank.wr > 0 && (
-                          <div className="flex justify-between">
-                            <span className="font-bold">
-                              <span className="text-glass-primary font-black">WR:</span> #{eventStats.average.rank.wr}
-                            </span>
-                            {formatTopPercent(eventStats.average.wr.topPercent) && (
-                              <span className="text-glass-primary font-bold">
-                                {formatTopPercent(eventStats.average.wr.topPercent)}
-                              </span>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <StaggerItem key={eventId}>
+                <EventCard eventId={eventId} eventStats={eventStats} playerInfo={playerInfo} />
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         )}
 
-        <div className="text-center mt-16 space-y-2">
-          <div className="flex items-center justify-center gap-2 text-glass-muted">
-            <div className="w-1 h-4 bg-glass-accent"></div>
-            <p className="text-sm font-mono font-bold">
-              Player records and rank totals are derived from official WCA data
-            </p>
-            <div className="w-1 h-4 bg-glass-accent"></div>
-          </div>
-          <p className="text-xs text-glass-muted/60 font-mono tracking-wider font-bold">
-            BUILT FOR THE SPEEDCUBING COMMUNITY
+        {/* Empty state */}
+        {!loading && !playerInfo && !error && (
+          <Reveal delay={0.15} className="max-w-lg mx-auto text-center mt-4">
+            <div className="surface-card rounded-2xl p-8 border-dashed">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <Trophy size={22} />
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Enter a WCA ID to unlock Top X% percentiles, NR/CR/WR ranks, and personal bests —
+                designed for the speedcubing community.
+              </p>
+            </div>
+          </Reveal>
+        )}
+
+        <footer className="text-center mt-16 space-y-1.5 pb-6">
+          <p className="text-xs text-muted-foreground">
+            Player records and rank totals derived from official WCA data
           </p>
-        </div>
+          <p className="text-[11px] tracking-widest uppercase text-muted-foreground/60">
+            Built for the speedcubing community
+          </p>
+        </footer>
       </div>
     </div>
   )

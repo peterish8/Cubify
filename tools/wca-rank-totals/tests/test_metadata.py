@@ -1,7 +1,13 @@
 from io import BytesIO
 import unittest
 
-from wca_rank_totals.metadata import MetadataError, fetch_metadata, validate_metadata
+from wca_rank_totals.metadata import (
+    MetadataError,
+    extract_export_format_version,
+    fetch_metadata,
+    normalize_export_format_version,
+    validate_metadata,
+)
 from wca_rank_totals.model import ExportMetadata
 
 
@@ -16,6 +22,32 @@ class MetadataTest(unittest.TestCase):
         )
         metadata = fetch_metadata(opener=lambda request, timeout: response)
         self.assertEqual(2, metadata.major_version)
+        self.assertEqual("2.0.2", metadata.export_format_version)
+
+    def test_accepts_live_public_api_shape(self) -> None:
+        """The live /api/v0/export/public endpoint uses export_version: 'v2.x.y'."""
+        response = self.response(
+            '{"export_date":"2026-07-17T00:00:43Z","export_version":"v2.0.2",'
+            '"sql_url":"https://www.worldcubeassociation.org/export/results/v2/sql",'
+            '"tsv_url":"https://www.worldcubeassociation.org/export/results/v2/tsv",'
+            '"tsv_filesize_bytes":366886026}'
+        )
+        metadata = fetch_metadata(opener=lambda request, timeout: response)
+        self.assertEqual("2.0.2", metadata.export_format_version)
+        self.assertEqual(2, metadata.major_version)
+        self.assertEqual("2026-07-17T00:00:43Z", metadata.export_date)
+        self.assertTrue(metadata.tsv_url.startswith("https://"))
+
+    def test_normalize_strips_leading_v(self) -> None:
+        self.assertEqual("2.0.2", normalize_export_format_version("v2.0.2"))
+        self.assertEqual("2.0.2", normalize_export_format_version("2.0.2"))
+        self.assertEqual("2.0.2", normalize_export_format_version("V2.0.2"))
+
+    def test_extract_prefers_export_format_version(self) -> None:
+        self.assertEqual(
+            "2.0.2",
+            extract_export_format_version({"export_format_version": "2.0.2", "export_version": "v9.9.9"}),
+        )
 
     def test_rejects_unsupported_major(self) -> None:
         metadata = ExportMetadata("2026-07-17T03:24:49+00:00", "3.0.0", "https://example.test/export.zip")
