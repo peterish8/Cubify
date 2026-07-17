@@ -4,15 +4,15 @@
 
 **Goal:** Replace Cubify's many unofficial rank-list requests with one compact official-export-derived totals request and display mathematically correct top percentages.
 
-**Architecture:** A typed client library owns the static JSON contract, scoped-total lookup, stale-data guard, and top-percentage formatting. `app/page.tsx` keeps using the official WCA person API for personal records, fetches the new aggregate once per search, and reuses it across every event.
+**Architecture (final monorepo decision):** A typed client library owns the static JSON contract, scoped-total lookup, stale-data guard, and top-percentage formatting. `app/page.tsx` keeps using the official WCA person API for personal records, fetches the aggregate once per search from Cubify's `rank-data` branch, and reuses it across every event.
 
-**Tech Stack:** Next.js 14, React 18, TypeScript 5, `node:test` through `tsx`, official WCA person API, static JSON from `peterish8/wca-rank-totals`.
+**Tech Stack:** Next.js 14, React 18, TypeScript 5, `node:test` through `tsx`, official WCA person API, static JSON from Cubify's `rank-data` branch.
 
 ## Global Constraints
 
 - Do not start until the generator completion gate in `2026-07-17-wca-rank-totals-generator.md` passes.
 - Player and personal-record source remains `https://www.worldcubeassociation.org/api/v0/persons/{WCA_ID}`.
-- Totals source is exactly `https://raw.githubusercontent.com/peterish8/wca-rank-totals/main/data/rank-totals.json`.
+- Totals source is exactly `https://raw.githubusercontent.com/peterish8/Cubify/rank-data/data/rank-totals.json`.
 - Fetch the totals document no more than once per player search.
 - Remove every runtime dependency on `robiningelbrecht/wca-rest-api`.
 - Preserve official canonical continent IDs and uppercase WCA country ISO2 values for lookups.
@@ -132,7 +132,7 @@ Create `lib/wca-rank-totals.ts`:
 
 ```typescript
 export const RANK_TOTALS_URL =
-  "https://raw.githubusercontent.com/peterish8/wca-rank-totals/main/data/rank-totals.json"
+  "https://raw.githubusercontent.com/peterish8/Cubify/rank-data/data/rank-totals.json"
 
 export type RankType = "single" | "average"
 
@@ -487,7 +487,7 @@ Run:
 
 ```bash
 curl --fail --silent --show-error \
-  https://raw.githubusercontent.com/peterish8/wca-rank-totals/main/data/rank-totals.json \
+  https://raw.githubusercontent.com/peterish8/Cubify/rank-data/data/rank-totals.json \
   | python -c 'import json,sys; d=json.load(sys.stdin); assert d["schemaVersion"] == 1; assert "333" in d["events"]; print(d["source"]["exportDate"])'
 ```
 

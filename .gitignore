@@ -25,3 +25,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# WCA rank totals generator
+**/__pycache__/
+*.py[cod]
+tools/wca-rank-totals/.work/
+tools/wca-rank-totals/data/rank-totals.json

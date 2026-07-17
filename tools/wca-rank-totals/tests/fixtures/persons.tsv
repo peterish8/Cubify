@@ -1,0 +1,6 @@
+wca_id	sub_id	name	country_id	gender
+2020TEST01	1	Current Tester	India	m
+2020TEST01	2	Historical Tester	United States	m
+2021ONLY01	1	Registration Only	India	f
+2022SING01	1	Single Only	United States	m
+2023TIED01	1	Tied Tester	India	f

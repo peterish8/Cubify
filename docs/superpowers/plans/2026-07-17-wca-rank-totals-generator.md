@@ -4,13 +4,13 @@
 
 **Goal:** Build a public, no-SQL GitHub Actions pipeline that converts the official WCA Results Export into exact per-event world, continent, and country totals for single and average rankings.
 
-**Architecture:** A standalone Python 3.12 repository streams four official TSV files into deterministic aggregate JSON. It first attempts HTTP-range-backed selective ZIP access, falls back to the full archive when ranges are unsupported, validates every aggregate, and commits only a new last-known-good `data/rank-totals.json`.
+**Architecture (final monorepo decision):** The Python 3.12 generator lives at `tools/wca-rank-totals/` in `peterish8/Cubify`. It streams four official TSV files into deterministic aggregate JSON, first attempting HTTP-range-backed selective ZIP access and safely falling back to the full archive. The scheduled workflow runs from `main` and publishes only validated JSON to the repository's `rank-data` branch, so daily data refreshes do not create website-source commits.
 
 **Tech Stack:** Python 3.12 standard library, `unittest`, GitHub Actions, official WCA Results Export v2, GitHub-hosted Ubuntu runner.
 
 ## Global Constraints
 
-- Repository: public `peterish8/wca-rank-totals`.
+- Repository: public `peterish8/Cubify`; generator source is on `main` and generated data is on `rank-data`.
 - No SQL, MySQL, Supabase, database service, server process, or runtime PyPI dependencies.
 - Input members: `WCA_export_countries.tsv`, `WCA_export_persons.tsv`, `WCA_export_ranks_single.tsv`, and `WCA_export_ranks_average.tsv` only.
 - Current competitor identity is the unique `persons` row where `sub_id = 1`.
@@ -40,9 +40,9 @@
 - `tests/test_parse.py` — counting and duplicate-identity tests.
 - `tests/test_document.py` — reconciliation and deterministic JSON tests.
 - `tests/test_cli.py` — unchanged-export and last-known-good orchestration tests.
-- `.github/workflows/update-rank-totals.yml` — tests, generation, commit, and workflow summary.
+- `.github/workflows/update-wca-rank-totals.yml` — tests, generation, `rank-data` publication, and workflow summary. This path is relative to the monorepo root; all other paths in this file are relative to `tools/wca-rank-totals/`.
 
-### Task 1: Create the repository and metadata model
+### Task 1: Create the generator package and metadata model
 
 **Files:**
 - Create: `pyproject.toml`
@@ -55,16 +55,16 @@
 - Consumes: no earlier task.
 - Produces: `Region`, `ExportMetadata`, `AcquisitionResult`, `RankBucket`, and `Totals` for all later tasks.
 
-- [ ] **Step 1: Create and clone the public repository**
+- [ ] **Step 1: Create the package inside the Cubify monorepo**
 
-Run with an authenticated GitHub CLI:
+From a checkout of `peterish8/Cubify`:
 
 ```bash
-gh repo create peterish8/wca-rank-totals --public --description "Exact WCA ranked-competitor totals generated from the official export" --clone
-cd wca-rank-totals
+mkdir -p tools/wca-rank-totals
+cd tools/wca-rank-totals
 ```
 
-Expected: an empty public repository cloned locally with `origin` set to `https://github.com/peterish8/wca-rank-totals.git`.
+Expected: the generator package is isolated under `tools/wca-rank-totals/` while sharing Cubify's repository and Actions allowance.
 
 - [ ] **Step 2: Write the failing model test**
 
@@ -1116,9 +1116,9 @@ git commit -m "feat: generate last-known-good rank totals"
 ### Task 7: Automate, run production generation, and record benchmarks
 
 **Files:**
-- Create: `.github/workflows/update-rank-totals.yml`
+- Create: `.github/workflows/update-wca-rank-totals.yml` at the monorepo root
 - Modify: `README.md`
-- Generate: `data/rank-totals.json`
+- Generate: `data/rank-totals.json` on the `rank-data` branch
 
 **Interfaces:**
 - Consumes: `python -m wca_rank_totals.cli` from Task 6.
@@ -1126,56 +1126,16 @@ git commit -m "feat: generate last-known-good rank totals"
 
 - [ ] **Step 1: Create the workflow**
 
-Create `.github/workflows/update-rank-totals.yml`:
+Create `.github/workflows/update-wca-rank-totals.yml` at the Cubify root. It must:
 
-```yaml
-name: Update WCA rank totals
-
-on:
-  schedule:
-    - cron: "17 6 * * *"
-  workflow_dispatch:
-
-concurrency:
-  group: update-wca-rank-totals
-  cancel-in-progress: false
-
-permissions:
-  contents: read
-
-jobs:
-  update:
-    runs-on: ubuntu-latest
-    timeout-minutes: 120
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
-        with:
-          python-version: "3.12"
-      - name: Test
-        run: PYTHONPATH=src python -m unittest discover -s tests -v
-      - name: Generate
-        run: |
-          mkdir -p .work
-          START_SECONDS=$SECONDS
-          PYTHONPATH=src python -m wca_rank_totals.cli | tee generation.log
-          echo "### WCA rank totals" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Runtime: $((SECONDS - START_SECONDS)) seconds" >> "$GITHUB_STEP_SUMMARY"
-          echo "- $(tail -1 generation.log)" >> "$GITHUB_STEP_SUMMARY"
-      - name: Commit changed data
-        run: |
-          if git diff --quiet -- data/rank-totals.json; then
-            echo "No data change" >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/rank-totals.json
-          git commit -m "data: update WCA rank totals"
-          git push
-```
+- run on the daily schedule, manual dispatch, and relevant `main` source changes;
+- use pinned checkout and Python actions;
+- run the 49-test generator suite before acquisition;
+- restore the last document from `rank-data` when that branch exists;
+- skip archive acquisition when the official export identity is unchanged;
+- bootstrap `rank-data` from the checked-out commit when it does not yet exist;
+- publish only `data/rank-totals.json` changes to `rank-data`; and
+- record runtime, acquisition output, JSON size, and publication status in the job summary.
 
 - [ ] **Step 2: Run all tests before publishing**
 
@@ -1186,7 +1146,7 @@ Expected: all tests pass.
 - [ ] **Step 3: Push the implementation and enable Actions**
 
 ```bash
-git add .github/workflows/update-rank-totals.yml
+git add .github/workflows/update-wca-rank-totals.yml
 git commit -m "ci: publish WCA rank totals daily"
 git push -u origin main
 gh workflow run "Update WCA rank totals"
@@ -1201,7 +1161,7 @@ RUN_ID=$(gh run list --workflow "Update WCA rank totals" --limit 1 --json databa
 gh run watch "$RUN_ID" --exit-status
 ```
 
-Expected: tests, generation, and commit steps succeed; `data/rank-totals.json` exists on `main`.
+Expected: tests, generation, and publication steps succeed; `data/rank-totals.json` exists on `rank-data`.
 
 - [ ] **Step 5: Verify production invariants independently**
 
@@ -1240,7 +1200,7 @@ Expected: the repository's README documents measured numbers rather than estimat
 
 Do not start the Cubify integration plan until all of these are true:
 
-- The public repository exists and its unit suite passes.
+- The generator exists in the public Cubify monorepo and its unit suite passes.
 - The first real official export run succeeds.
 - `data/rank-totals.json` passes independent reconciliation.
 - The stable raw URL returns schema version `1`.

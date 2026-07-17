@@ -4,6 +4,13 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import {
+  calculateTopPercent,
+  fetchRankTotals,
+  formatTopPercent,
+  getScopedTotals,
+  type RankTotalsDocument,
+} from "@/lib/wca-rank-totals"
 
 import { ExternalLink, Search, Trophy, Loader2, Zap, Users } from "lucide-react"
 import Link from "next/link"
@@ -13,6 +20,7 @@ interface PlayerInfo {
   country: {
     name: string
     iso2: string
+    continentId: string
   }
   continent: string
   wca_id: string
@@ -39,9 +47,8 @@ interface PlayerInfo {
 }
 
 interface RegionStats {
-  totalCompetitors: number
-  percentile: number
-  percentDownList: number
+  totalCompetitors: number | null
+  topPercent: number | null
 }
 
 interface EventStats {
@@ -87,31 +94,26 @@ const EVENT_NAMES: Record<string, string> = {
   "333mbf": "3×3 Multi-Blind",
 }
 
-const CONTINENT_CODES: Record<string, string> = {
-  Africa: "africa",
-  Asia: "asia",
-  Europe: "europe",
-  "North America": "north-america",
-  Oceania: "oceania",
-  "South America": "south-america",
-}
+const formatExportDate = (value: string): string =>
+  new Intl.DateTimeFormat("en", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(value))
 
 export default function CubifyAnalyzer() {
   const [wcaId, setWcaId] = useState("")
   const [loading, setLoading] = useState(false)
   const [playerInfo, setPlayerInfo] = useState<PlayerInfo | null>(null)
   const [eventsData, setEventsData] = useState<Record<string, EventStats> | null>(null)
+  const [rankTotalsSource, setRankTotalsSource] = useState<RankTotalsDocument["source"] | null>(null)
   const [error, setError] = useState("")
 
-  const calculateStats = (rank: number, totalCompetitors: number): RegionStats => {
-    const percentDownList = (rank / totalCompetitors) * 100
-    const percentile = (1 - (rank - 1) / totalCompetitors) * 100
-    return {
-      totalCompetitors,
-      percentile: Math.max(0, Math.min(100, percentile)),
-      percentDownList,
-    }
-  }
+  const calculateStats = (rank: number, totalCompetitors: number | null): RegionStats => ({
+    totalCompetitors,
+    topPercent: calculateTopPercent(rank, totalCompetitors),
+  })
 
   const fetchStats = async () => {
     const normalizedWcaId = wcaId.trim().toUpperCase()
@@ -125,10 +127,17 @@ export default function CubifyAnalyzer() {
     setError("")
     setPlayerInfo(null)
     setEventsData(null)
+    setRankTotalsSource(null)
 
     const startTime = Date.now()
 
     try {
+      // Start the one aggregate request alongside the official player request.
+      // Its failure is handled locally so official ranks still render.
+      const rankTotalsPromise: Promise<RankTotalsDocument | null> = fetchRankTotals().catch((totalsError) => {
+        console.error("Rank percentages are temporarily unavailable", totalsError)
+        return null
+      })
       const playerResponse = await fetch(`https://www.worldcubeassociation.org/api/v0/persons/${normalizedWcaId}`)
 
       if (!playerResponse.ok) {
@@ -142,15 +151,16 @@ export default function CubifyAnalyzer() {
         throw new Error("Invalid player data received from API")
       }
 
-      const countryIso = player.country?.iso2 || player.country_iso2 || "XX"
-      const continent = player.country?.continent_id?.replace(/^_/, "") || ""
-      const continentCode = CONTINENT_CODES[continent] || "world"
+      const countryIso = (player.country?.iso2 || player.country_iso2 || "XX").toUpperCase()
+      const continentId = player.country?.continent_id || ""
+      const continent = continentId.replace(/^_/, "")
 
       const transformedPlayer: PlayerInfo = {
         name: player.name,
         country: {
           name: player.country?.name || countryIso,
           iso2: countryIso.toLowerCase(),
+          continentId,
         },
         continent,
         wca_id: player.wca_id || player.id || normalizedWcaId,
@@ -186,94 +196,31 @@ export default function CubifyAnalyzer() {
 
       setPlayerInfo(transformedPlayer)
 
+      // Percentages are optional enrichment. The official WCA player and rank
+      // data above remains usable if the generated totals file is unavailable.
+      const rankTotals = await rankTotalsPromise
+      if (rankTotals) {
+        setRankTotalsSource(rankTotals.source)
+      }
+
       const eventIds = Object.keys(transformedPlayer.personal_records)
       const allEventsData: Record<string, EventStats> = {}
 
       for (const eventId of eventIds) {
         const eventRecord = transformedPlayer.personal_records[eventId]
 
-        // Fetch totals for this event
-        const [
-          worldSingleResponse,
-          worldAverageResponse,
-          continentalSingleResponse,
-          continentalAverageResponse,
-          nationalSingleResponse,
-          nationalAverageResponse,
-        ] = await Promise.all([
-          fetch(
-            `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads/v1/rank/world/single/${eventId}.json`,
-          ),
-          fetch(
-            `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads/v1/rank/world/average/${eventId}.json`,
-          ),
-          fetch(
-            `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads/v1/rank/${continentCode}/single/${eventId}.json`,
-          ),
-          fetch(
-            `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads/v1/rank/${continentCode}/average/${eventId}.json`,
-          ),
-          fetch(
-            `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads/v1/rank/${countryIso.toUpperCase()}/single/${eventId}.json`,
-          ),
-          fetch(
-            `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads/v1/rank/${countryIso.toUpperCase()}/average/${eventId}.json`,
-          ),
-        ])
-
-        console.log(`[v0] National API URLs for ${eventId}:`)
-        console.log(
-          `[v0] Single: https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads/v1/rank/${countryIso.toUpperCase()}/single/${eventId}.json`,
-        )
-        console.log(
-          `[v0] Average: https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads/v1/rank/${countryIso.toUpperCase()}/average/${eventId}.json`,
-        )
-        console.log(`[v0] National Single Response OK: ${nationalSingleResponse.ok}`)
-        console.log(`[v0] National Average Response OK: ${nationalAverageResponse.ok}`)
-
-        let worldSingleTotal = 0,
-          worldAverageTotal = 0
-        let continentalSingleTotal = 0,
-          continentalAverageTotal = 0
-        let nationalSingleTotal = 0,
-          nationalAverageTotal = 0
-
-        if (worldSingleResponse.ok) {
-          const data = await worldSingleResponse.json()
-          worldSingleTotal = data.total || 0
-        }
-        if (worldAverageResponse.ok) {
-          const data = await worldAverageResponse.json()
-          worldAverageTotal = data.total || 0
-        }
-        if (continentalSingleResponse.ok) {
-          const data = await continentalSingleResponse.json()
-          continentalSingleTotal = data.total || 0
-        }
-        if (continentalAverageResponse.ok) {
-          const data = await continentalAverageResponse.json()
-          continentalAverageTotal = data.total || 0
-        }
-        if (nationalSingleResponse.ok) {
-          const data = await nationalSingleResponse.json()
-          nationalSingleTotal = data.total || 0
-          console.log(`[v0] National Single Total for ${eventId}: ${nationalSingleTotal}`)
-        } else {
-          console.log(`[v0] National Single API failed for ${eventId}: ${nationalSingleResponse.status}`)
-        }
-        if (nationalAverageResponse.ok) {
-          const data = await nationalAverageResponse.json()
-          nationalAverageTotal = data.total || 0
-          console.log(`[v0] National Average Total for ${eventId}: ${nationalAverageTotal}`)
-        } else {
-          console.log(`[v0] National Average API failed for ${eventId}: ${nationalAverageResponse.status}`)
-        }
+        const singleTotals = rankTotals
+          ? getScopedTotals(rankTotals, eventId, "single", continentId, countryIso)
+          : { world: null, continent: null, country: null }
+        const averageTotals = rankTotals
+          ? getScopedTotals(rankTotals, eventId, "average", continentId, countryIso)
+          : { world: null, continent: null, country: null }
 
         const eventStats: EventStats = {
           single: {
-            nr: { totalCompetitors: 0, percentile: 0, percentDownList: 0 },
-            cr: { totalCompetitors: 0, percentile: 0, percentDownList: 0 },
-            wr: { totalCompetitors: 0, percentile: 0, percentDownList: 0 },
+            nr: { totalCompetitors: null, topPercent: null },
+            cr: { totalCompetitors: null, topPercent: null },
+            wr: { totalCompetitors: null, topPercent: null },
             rank: {
               nr: eventRecord.single?.national_ranking || 0,
               cr: eventRecord.single?.continental_ranking || 0,
@@ -281,9 +228,9 @@ export default function CubifyAnalyzer() {
             },
           },
           average: {
-            nr: { totalCompetitors: 0, percentile: 0, percentDownList: 0 },
-            cr: { totalCompetitors: 0, percentile: 0, percentDownList: 0 },
-            wr: { totalCompetitors: 0, percentile: 0, percentDownList: 0 },
+            nr: { totalCompetitors: null, topPercent: null },
+            cr: { totalCompetitors: null, topPercent: null },
+            wr: { totalCompetitors: null, topPercent: null },
             rank: {
               nr: eventRecord.average?.national_ranking || 0,
               cr: eventRecord.average?.continental_ranking || 0,
@@ -292,33 +239,12 @@ export default function CubifyAnalyzer() {
           },
         }
 
-        // Calculate percentiles for single
-        if (worldSingleTotal > 0 && eventStats.single.rank.wr > 0) {
-          eventStats.single.wr = calculateStats(eventStats.single.rank.wr, worldSingleTotal)
-        }
-        if (continentalSingleTotal > 0 && eventStats.single.rank.cr > 0) {
-          eventStats.single.cr = calculateStats(eventStats.single.rank.cr, continentalSingleTotal)
-        }
-        if (nationalSingleTotal > 0 && eventStats.single.rank.nr > 0) {
-          eventStats.single.nr = calculateStats(eventStats.single.rank.nr, nationalSingleTotal)
-          console.log(
-            `[v0] NR Single for ${eventId}: rank=${eventStats.single.rank.nr}, total=${nationalSingleTotal}, percentile=${eventStats.single.nr.percentile}`,
-          )
-        }
-
-        // Calculate percentiles for average
-        if (worldAverageTotal > 0 && eventStats.average.rank.wr > 0) {
-          eventStats.average.wr = calculateStats(eventStats.average.rank.wr, worldAverageTotal)
-        }
-        if (continentalAverageTotal > 0 && eventStats.average.rank.cr > 0) {
-          eventStats.average.cr = calculateStats(eventStats.average.rank.cr, continentalAverageTotal)
-        }
-        if (nationalAverageTotal > 0 && eventStats.average.rank.nr > 0) {
-          eventStats.average.nr = calculateStats(eventStats.average.rank.nr, nationalAverageTotal)
-          console.log(
-            `[v0] NR Average for ${eventId}: rank=${eventStats.average.rank.nr}, total=${nationalAverageTotal}, percentile=${eventStats.average.nr.percentile}`,
-          )
-        }
+        eventStats.single.wr = calculateStats(eventStats.single.rank.wr, singleTotals.world)
+        eventStats.single.cr = calculateStats(eventStats.single.rank.cr, singleTotals.continent)
+        eventStats.single.nr = calculateStats(eventStats.single.rank.nr, singleTotals.country)
+        eventStats.average.wr = calculateStats(eventStats.average.rank.wr, averageTotals.world)
+        eventStats.average.cr = calculateStats(eventStats.average.rank.cr, averageTotals.continent)
+        eventStats.average.nr = calculateStats(eventStats.average.rank.nr, averageTotals.country)
 
         allEventsData[eventId] = eventStats
       }
@@ -529,6 +455,24 @@ export default function CubifyAnalyzer() {
                 </a>
               </Button>
             </div>
+            {rankTotalsSource ? (
+              <p className="mt-3 text-center text-xs text-glass-muted">
+                Rank totals based on official WCA results as of {formatExportDate(rankTotalsSource.exportDate)}. {" "}
+                <a
+                  href={rankTotalsSource.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  title={rankTotalsSource.attribution}
+                  className="underline underline-offset-2 hover:text-white"
+                >
+                  {rankTotalsSource.attribution}
+                </a>
+              </p>
+            ) : (
+              <p className="mt-3 text-center text-xs text-amber-300/80">
+                Official ranks are available; percentage totals are temporarily unavailable.
+              </p>
+            )}
           </div>
         )}
 
@@ -559,20 +503,11 @@ export default function CubifyAnalyzer() {
                             <span className="font-bold">
                               <span className="text-glass-accent font-black">NR:</span> #{eventStats.single.rank.nr}
                             </span>
-                            {(() => {
-                              if (eventStats.single.rank.nr > 0) {
-                                const percentile = eventStats.single.nr.percentile
-                                if (percentile >= 99.9) {
-                                  return <span className="text-glass-accent font-bold">Top 0.1%</span>
-                                } else if (percentile >= 99) {
-                                  return <span className="text-glass-accent font-bold">Top 1%</span>
-                                } else {
-                                  const displayPercentage = (100 - percentile).toFixed(1)
-                                  return <span className="text-glass-accent font-bold">Top {displayPercentage}%</span>
-                                }
-                              }
-                              return null
-                            })()}
+                            {formatTopPercent(eventStats.single.nr.topPercent) && (
+                              <span className="text-glass-accent font-bold">
+                                {formatTopPercent(eventStats.single.nr.topPercent)}
+                              </span>
+                            )}
                           </div>
                         )}
                         {eventStats.single.rank.cr > 0 && (
@@ -580,20 +515,11 @@ export default function CubifyAnalyzer() {
                             <span className="font-bold">
                               <span className="text-glass-secondary font-black">CR:</span> #{eventStats.single.rank.cr}
                             </span>
-                            <span className="text-glass-secondary font-bold">
-                              {(() => {
-                                const percentile = eventStats.single.cr.percentile
-                                if (percentile >= 99.9) {
-                                  return "Top 0.1%"
-                                } else if (percentile >= 99) {
-                                  return "Top 1%"
-                                } else if (percentile > 0) {
-                                  return `Top ${(100 - percentile).toFixed(1)}%`
-                                } else {
-                                  return "Ranked"
-                                }
-                              })()}
-                            </span>
+                            {formatTopPercent(eventStats.single.cr.topPercent) && (
+                              <span className="text-glass-secondary font-bold">
+                                {formatTopPercent(eventStats.single.cr.topPercent)}
+                              </span>
+                            )}
                           </div>
                         )}
                         {eventStats.single.rank.wr > 0 && (
@@ -601,20 +527,11 @@ export default function CubifyAnalyzer() {
                             <span className="font-bold">
                               <span className="text-glass-primary font-black">WR:</span> #{eventStats.single.rank.wr}
                             </span>
-                            <span className="text-glass-primary font-bold">
-                              {(() => {
-                                const percentile = eventStats.single.wr.percentile
-                                if (percentile >= 99.9) {
-                                  return "Top 0.1%"
-                                } else if (percentile >= 99) {
-                                  return "Top 1%"
-                                } else if (percentile > 0) {
-                                  return `Top ${(100 - percentile).toFixed(1)}%`
-                                } else {
-                                  return "Ranked"
-                                }
-                              })()}
-                            </span>
+                            {formatTopPercent(eventStats.single.wr.topPercent) && (
+                              <span className="text-glass-primary font-bold">
+                                {formatTopPercent(eventStats.single.wr.topPercent)}
+                              </span>
+                            )}
                           </div>
                         )}
                       </div>
@@ -635,20 +552,11 @@ export default function CubifyAnalyzer() {
                             <span className="font-bold">
                               <span className="text-glass-accent font-black">NR:</span> #{eventStats.average.rank.nr}
                             </span>
-                            {(() => {
-                              if (eventStats.average.rank.nr > 0) {
-                                const percentile = eventStats.average.nr.percentile
-                                if (percentile >= 99.9) {
-                                  return <span className="text-glass-accent font-bold">Top 0.1%</span>
-                                } else if (percentile >= 99) {
-                                  return <span className="text-glass-accent font-bold">Top 1%</span>
-                                } else {
-                                  const displayPercentage = (100 - percentile).toFixed(1)
-                                  return <span className="text-glass-accent font-bold">Top {displayPercentage}%</span>
-                                }
-                              }
-                              return null
-                            })()}
+                            {formatTopPercent(eventStats.average.nr.topPercent) && (
+                              <span className="text-glass-accent font-bold">
+                                {formatTopPercent(eventStats.average.nr.topPercent)}
+                              </span>
+                            )}
                           </div>
                         )}
                         {eventStats.average.rank.cr > 0 && (
@@ -656,20 +564,11 @@ export default function CubifyAnalyzer() {
                             <span className="font-bold">
                               <span className="text-glass-secondary font-black">CR:</span> #{eventStats.average.rank.cr}
                             </span>
-                            <span className="text-glass-secondary font-bold">
-                              {(() => {
-                                const percentile = eventStats.average.cr.percentile
-                                if (percentile >= 99.9) {
-                                  return "Top 0.1%"
-                                } else if (percentile >= 99) {
-                                  return "Top 1%"
-                                } else if (percentile > 0) {
-                                  return `Top ${(100 - percentile).toFixed(1)}%`
-                                } else {
-                                  return "Ranked"
-                                }
-                              })()}
-                            </span>
+                            {formatTopPercent(eventStats.average.cr.topPercent) && (
+                              <span className="text-glass-secondary font-bold">
+                                {formatTopPercent(eventStats.average.cr.topPercent)}
+                              </span>
+                            )}
                           </div>
                         )}
                         {eventStats.average.rank.wr > 0 && (
@@ -677,20 +576,11 @@ export default function CubifyAnalyzer() {
                             <span className="font-bold">
                               <span className="text-glass-primary font-black">WR:</span> #{eventStats.average.rank.wr}
                             </span>
-                            <span className="text-glass-primary font-bold">
-                              {(() => {
-                                const percentile = eventStats.average.wr.percentile
-                                if (percentile >= 99.9) {
-                                  return "Top 0.1%"
-                                } else if (percentile >= 99) {
-                                  return "Top 1%"
-                                } else if (percentile > 0) {
-                                  return `Top ${(100 - percentile).toFixed(1)}%`
-                                } else {
-                                  return "Ranked"
-                                }
-                              })()}
-                            </span>
+                            {formatTopPercent(eventStats.average.wr.topPercent) && (
+                              <span className="text-glass-primary font-bold">
+                                {formatTopPercent(eventStats.average.wr.topPercent)}
+                              </span>
+                            )}
                           </div>
                         )}
                       </div>
@@ -706,7 +596,7 @@ export default function CubifyAnalyzer() {
           <div className="flex items-center justify-center gap-2 text-glass-muted">
             <div className="w-1 h-4 bg-glass-accent"></div>
             <p className="text-sm font-mono font-bold">
-              Data sourced from WCA Official API and Unofficial WCA REST API
+              Player records and rank totals are derived from official WCA data
             </p>
             <div className="w-1 h-4 bg-glass-accent"></div>
           </div>

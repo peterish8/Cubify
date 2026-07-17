@@ -1,12 +1,14 @@
 # WCA Rank Totals Design
 
+> Final deployment decision: keep the generator inside the Cubify monorepo at `tools/wca-rank-totals/`. The scheduled workflow lives on `main`, while the generated last-known-good JSON is published to the separate `rank-data` branch.
+
 ## Status
 
 Approved for implementation on 2026-07-17.
 
 ## Summary
 
-Create a small public repository, `peterish8/wca-rank-totals`, that uses GitHub Actions and the official WCA Results Export to publish exact per-event ranked-competitor totals. The generator will not use SQL, MySQL, Supabase, or a continuously running server.
+Add a small generator to the public `peterish8/Cubify` monorepo that uses GitHub Actions and the official WCA Results Export to publish exact per-event ranked-competitor totals on a dedicated `rank-data` branch. The generator will not use SQL, MySQL, Supabase, or a continuously running server.
 
 Cubify will continue to obtain a competitor's personal records from the official WCA person API. It will replace its current per-event requests to the unofficial full-ranking JSON files with one request to the compact generated `data/rank-totals.json` file.
 
@@ -51,36 +53,33 @@ A competitor can therefore count toward single but not average for the same even
 
 Rank numbers themselves are not used as totals. This is important because ties can make the largest rank differ from the number of ranked competitors. The generator counts unique rank rows instead.
 
-## Repository boundaries
+## Monorepo boundaries
 
-### `peterish8/wca-rank-totals`
+### `peterish8/Cubify` on `main`
 
-Owns downloading, parsing, validating, and publishing official aggregate totals.
+Owns the website, downloading, parsing, validating, and the scheduled publisher. The generator is isolated below `tools/wca-rank-totals/`.
 
 Proposed structure:
 
 ```text
-.github/workflows/update-rank-totals.yml
-data/rank-totals.json
-src/wca_rank_totals/cli.py
-src/wca_rank_totals/download.py
-src/wca_rank_totals/parse.py
-src/wca_rank_totals/validate.py
-tests/fixtures/
-tests/test_download.py
-tests/test_parse.py
-tests/test_validate.py
-README.md
-pyproject.toml
+.github/workflows/update-wca-rank-totals.yml
+tools/wca-rank-totals/src/wca_rank_totals/cli.py
+tools/wca-rank-totals/src/wca_rank_totals/acquire.py
+tools/wca-rank-totals/src/wca_rank_totals/parse.py
+tools/wca-rank-totals/src/wca_rank_totals/document.py
+tools/wca-rank-totals/tests/fixtures/
+tools/wca-rank-totals/tests/
+tools/wca-rank-totals/README.md
+tools/wca-rank-totals/pyproject.toml
 ```
 
 The implementation will use pinned Python 3 and the standard library. Runtime package installation is not required.
 
-### `peterish8/Cubify`
+### `peterish8/Cubify` on `rank-data`
 
-Owns fetching a player, looking up the corresponding totals, calculating the displayed top percentage, and presenting source freshness.
+Owns only the last-known-good `data/rank-totals.json` publication. Separating generated data from `main` avoids daily website-source commits and deployments.
 
-The two repositories communicate only through the versioned JSON contract below.
+The website on `main` reads the versioned JSON contract from `rank-data`.
 
 ## Update workflow
 
@@ -229,7 +228,7 @@ GET https://www.worldcubeassociation.org/api/v0/persons/{WCA_ID}
 For each search, Cubify will fetch the following file once and reuse it for every event:
 
 ```text
-https://raw.githubusercontent.com/peterish8/wca-rank-totals/main/data/rank-totals.json
+https://raw.githubusercontent.com/peterish8/Cubify/rank-data/data/rank-totals.json
 ```
 
 It will look up:
@@ -295,12 +294,11 @@ The design is successful when:
 
 ## Rollout
 
-1. Create the public `peterish8/wca-rank-totals` repository.
-2. Implement fixtures, parser, validation, downloader, and deterministic serializer.
-3. Run locally against fixtures, then against the current official export.
-4. Enable and manually run the GitHub Actions workflow.
-5. Inspect the generated totals and workflow benchmark.
-6. Integrate Cubify with the compact file and corrected percentage formula.
-7. Build and smoke-test Cubify with multiple known WCA IDs and regions.
-8. Push Cubify and verify its production deployment.
-9. Optionally submit the independent `sub_id = 1` bug fix upstream to `robiningelbrecht/wca-rest-api`; Cubify will no longer depend on that project for totals.
+1. Add the generator, fixtures, validation, downloader, and deterministic serializer under `tools/wca-rank-totals/`.
+2. Add the scheduled workflow to `main` and let it bootstrap the `rank-data` branch.
+3. Run locally against fixtures, then run the workflow against the current official export.
+4. Inspect the generated totals and workflow benchmark.
+5. Integrate Cubify with the compact file and corrected percentage formula.
+6. Build and smoke-test Cubify with multiple known WCA IDs and regions.
+7. Push Cubify and verify its production deployment.
+8. Optionally submit the independent `sub_id = 1` bug fix upstream to `robiningelbrecht/wca-rest-api`; Cubify will no longer depend on that project for totals.
