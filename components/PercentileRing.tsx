@@ -1,12 +1,11 @@
 "use client"
 
-import { useEffect, useId, useRef, useState } from "react"
-import { motion, useInView, useSpring, useMotionValue } from "framer-motion"
+import { useEffect, useRef, useState } from "react"
+import { useInView, useSpring, useMotionValue } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { formatTopPercent } from "@/lib/wca-rank-totals"
 
 interface PercentileRingProps {
-  /** Top X% value (e.g. 2.5 means Top 2.5%). Lower = better. */
   topPercent: number | null
   size?: number
   stroke?: number
@@ -15,10 +14,8 @@ interface PercentileRingProps {
   color?: string
 }
 
-/** Map top-percent into a 0–1 progress for the ring (better percentile = fuller ring). */
 function toProgress(topPercent: number | null): number {
   if (topPercent === null || topPercent <= 0) return 0
-  // Logarithmic feel so elite ranks still fill most of the ring
   const clamped = Math.min(100, Math.max(0.01, topPercent))
   const progress = 1 - Math.log10(clamped + 1) / Math.log10(101)
   return Math.max(0.04, Math.min(1, progress))
@@ -26,13 +23,12 @@ function toProgress(topPercent: number | null): number {
 
 export function PercentileRing({
   topPercent,
-  size = 120,
-  stroke = 8,
+  size = 88,
+  stroke = 3,
   className,
-  label = "World",
-  color = "var(--rank-wr)",
+  label = "WR",
+  color = "var(--foreground)",
 }: PercentileRingProps) {
-  const id = useId()
   const ref = useRef<SVGSVGElement>(null)
   const inView = useInView(ref, { once: true, margin: "-20px" })
   const radius = (size - stroke) / 2
@@ -40,7 +36,7 @@ export function PercentileRing({
   const target = toProgress(topPercent)
 
   const progress = useMotionValue(0)
-  const spring = useSpring(progress, { stiffness: 70, damping: 22, mass: 0.8 })
+  const spring = useSpring(progress, { stiffness: 90, damping: 24, mass: 0.7 })
   const [offset, setOffset] = useState(circumference)
   const labelText = formatTopPercent(topPercent)
 
@@ -56,42 +52,34 @@ export function PercentileRing({
   }, [spring, circumference])
 
   return (
-    <div className={cn("flex flex-col items-center gap-2", className)}>
+    <div className={cn("flex flex-col items-center gap-1", className)}>
       <div className="relative" style={{ width: size, height: size }}>
         <svg ref={ref} width={size} height={size} className="rotate-[-90deg]">
-          <defs>
-            <linearGradient id={`ring-${id}`} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor={color} stopOpacity="1" />
-              <stop offset="100%" stopColor={color} stopOpacity="0.55" />
-            </linearGradient>
-          </defs>
           <circle
             cx={size / 2}
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="currentColor"
+            stroke="var(--border)"
             strokeWidth={stroke}
-            className="text-border/60"
           />
-          <motion.circle
+          <circle
             cx={size / 2}
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke={`url(#ring-${id})`}
+            stroke={color}
             strokeWidth={stroke}
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={offset}
-            style={{ filter: `drop-shadow(0 0 6px ${color})` }}
           />
         </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-2">
-          <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium">
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-1">
+          <span className="text-[9px] uppercase tracking-[0.14em] text-muted-foreground font-medium">
             {label}
           </span>
-          <span className="text-sm font-semibold tabular-nums text-foreground leading-tight">
+          <span className="text-xs font-medium tabular-nums text-foreground leading-tight mt-0.5">
             {labelText ?? "—"}
           </span>
         </div>
