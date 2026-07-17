@@ -60,9 +60,25 @@ jobs:
           PYTHONDONTWRITEBYTECODE: "1"
           PYTHONPATH: src
         run: |
-          mkdir -p .work
+          set -euo pipefail
+          mkdir -p .work data
           START_SECONDS=$SECONDS
-          python -m wca_rank_totals.cli | tee generation.log
+          # pipefail ensures a failing CLI fails this step (tee alone always exits 0).
+          python -m wca_rank_totals.cli 2>&1 | tee generation.log
+          # Refuse empty or schema-invalid output so rank-data never gets a placeholder.
+          python - <<'PY'
+          from pathlib import Path
+          import sys
+
+          from wca_rank_totals.document import load_document
+
+          path = Path("data/rank-totals.json")
+          if not path.is_file() or path.stat().st_size == 0:
+              raise SystemExit("rank-totals.json is missing or empty after generation")
+          document = load_document(path)
+          events = document["events"]
+          print(f"Validated rank totals: {len(events)} events, {path.stat().st_size} bytes")
+          PY
           echo "### WCA rank totals" >> "$GITHUB_STEP_SUMMARY"
           echo "- Runtime: $((SECONDS - START_SECONDS)) seconds" >> "$GITHUB_STEP_SUMMARY"
           echo "- $(tail -1 generation.log)" >> "$GITHUB_STEP_SUMMARY"
@@ -70,6 +86,18 @@ jobs:
 
       - name: Publish only changed data to rank-data
         run: |
+          set -euo pipefail
+          # Final gate: never publish zero-byte or unparseable totals.
+          python - <<'PY'
+          from pathlib import Path
+          import sys
+          sys.path.insert(0, "tools/wca-rank-totals/src")
+          from wca_rank_totals.document import load_document
+          path = Path("tools/wca-rank-totals/data/rank-totals.json")
+          if path.stat().st_size == 0:
+              raise SystemExit("refusing to publish empty rank-totals.json")
+          load_document(path)
+          PY
           if git show-ref --verify --quiet refs/remotes/origin/rank-data; then
             DATA_BASE=origin/rank-data
           else
