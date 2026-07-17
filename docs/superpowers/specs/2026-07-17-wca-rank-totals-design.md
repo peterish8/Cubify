@@ -2,7 +2,7 @@
 
 ## Status
 
-Approved architecture; detailed specification awaiting user review.
+Approved for implementation on 2026-07-17.
 
 ## Summary
 
