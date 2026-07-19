@@ -4,49 +4,29 @@ import {
   type RankType,
   getScopedTotals,
 } from "@/lib/wca-rank-totals"
+import {
+  assertRankListDocument,
+  decodeRankListDocument,
+  isPlainPositiveInt,
+  type RankListDocument,
+  type RankListIndex,
+} from "@/lib/wca-rank-list-codec"
+
+// Re-export the codec's public surface so existing importers keep their paths.
+export {
+  assertRankListDocument,
+  decodeRankListDocument,
+} from "@/lib/wca-rank-list-codec"
+export type {
+  RankListDocument,
+  RankListIndex,
+  RankListSource,
+} from "@/lib/wca-rank-list-codec"
 
 export const RANK_LISTS_BASE_URL =
   "https://raw.githubusercontent.com/peterish8/Cubify/rank-data/data/rank-lists"
 
 export type RankScope = "nr" | "cr" | "wr"
-
-export interface RankListSource {
-  name: string
-  exportDate: string
-  exportFormatVersion: string
-  archiveUrl: string
-  url: string
-  attribution: string
-}
-
-export interface RankListDocument {
-  schemaVersion: 1
-  eventId: string
-  rankType: RankType
-  encoding: "delta-i32+u16+u8-b64"
-  source: RankListSource
-  count: number
-  countries: string[]
-  continents: string[]
-  bestsB64: string
-  countryIdxB64: string
-  continentIdxB64: string
-}
-
-/** Decoded in-memory shard ready for binary search. */
-export interface RankListIndex {
-  eventId: string
-  rankType: RankType
-  source: RankListSource
-  count: number
-  bests: Int32Array
-  /** country iso2 per row */
-  countryIso2: string[]
-  /** continent id per row */
-  continentId: string[]
-  /** Lazy NR/CR filtered caches keyed by region code */
-  _scopeCache?: Map<string, Int32Array>
-}
 
 export interface ScopeRankResult {
   rank: number
@@ -61,156 +41,106 @@ export interface AllScopeRanks {
   wr: ScopeRankResult
 }
 
-const SOURCE_NAME = "World Cube Association Results Export"
-const SOURCE_URL = "https://www.worldcubeassociation.org/export/results"
-const ENCODING = "delta-i32+u16+u8-b64"
+/**
+ * In-memory decoded-shard cache with a TTL. rank-data refreshes ~daily, so a
+ * cached shard is allowed to go stale for a few hours before we re-fetch,
+ * instead of being held for the entire tab session (which showed stale ranks
+ * until a hard reload).
+ */
+const CACHE_TTL_MS = 6 * 60 * 60 * 1000 // 6 hours
+interface CacheEntry {
+  index: RankListIndex
+  storedAt: number
+}
+const memoryCache = new Map<string, CacheEntry>()
 
-const memoryCache = new Map<string, RankListIndex>()
-
-function isPlainPositiveInt(value: unknown): value is number {
-  return typeof value === "number" && Number.isInteger(value) && value > 0
+function getCachedIndex(key: string): RankListIndex | null {
+  const entry = memoryCache.get(key)
+  if (!entry) return null
+  if (Date.now() - entry.storedAt > CACHE_TTL_MS) {
+    memoryCache.delete(key)
+    return null
+  }
+  return entry.index
 }
 
-function isPlainNonNegInt(value: unknown): value is number {
-  return typeof value === "number" && Number.isInteger(value) && value >= 0
+function setCachedIndex(key: string, index: RankListIndex): void {
+  memoryCache.set(key, { index, storedAt: Date.now() })
 }
 
-function base64ToBytes(b64: string): Uint8Array {
-  // Prefer browser-native decoder so the client bundle never depends on Node Buffer.
-  if (typeof globalThis.atob === "function") {
-    const bin = globalThis.atob(b64)
-    const out = new Uint8Array(bin.length)
-    for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i)
-    return out
-  }
-  // Node / tsx tests only
-  const NodeBuffer = (globalThis as { Buffer?: { from(data: string, enc: string): Uint8Array } }).Buffer
-  if (NodeBuffer) return Uint8Array.from(NodeBuffer.from(b64, "base64"))
-  throw new Error("No base64 decoder available")
-}
+// --- Off-main-thread decode -------------------------------------------------
+// A single reusable worker decodes shards so the UI thread never unpacks a
+// multi-MB payload. Falls back to synchronous decode when workers are
+// unavailable (SSR, tests, older browsers, or worker init failure).
 
-function unpackI32Deltas(b64: string, count: number): Int32Array {
-  if (count === 0) {
-    if (b64) throw new Error("unexpected bests payload")
-    return new Int32Array(0)
-  }
-  const bytes = base64ToBytes(b64)
-  if (bytes.byteLength !== count * 4) throw new Error("bests payload length mismatch")
-  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
-  const bests = new Int32Array(count)
-  let acc = 0
-  for (let i = 0; i < count; i++) {
-    acc += view.getInt32(i * 4, true)
-    bests[i] = acc
-  }
-  return bests
-}
+let decodeWorker: Worker | null = null
+let workerUnavailable = false
+let nextMessageId = 0
+const pendingDecodes = new Map<
+  number,
+  { resolve: (index: RankListIndex) => void; reject: (err: Error) => void }
+>()
 
-function unpackU16(b64: string, count: number): Uint16Array {
-  if (count === 0) {
-    if (b64) throw new Error("unexpected country payload")
-    return new Uint16Array(0)
-  }
-  const bytes = base64ToBytes(b64)
-  if (bytes.byteLength !== count * 2) throw new Error("country payload length mismatch")
-  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
-  const out = new Uint16Array(count)
-  for (let i = 0; i < count; i++) out[i] = view.getUint16(i * 2, true)
-  return out
-}
-
-function unpackU8(b64: string, count: number): Uint8Array {
-  if (count === 0) {
-    if (b64) throw new Error("unexpected continent payload")
-    return new Uint8Array(0)
-  }
-  const bytes = base64ToBytes(b64)
-  if (bytes.byteLength !== count) throw new Error("continent payload length mismatch")
-  return bytes
-}
-
-export function assertRankListDocument(value: unknown): asserts value is RankListDocument {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    throw new Error("Invalid rank list document")
-  }
-  const doc = value as Partial<RankListDocument>
-  if (doc.schemaVersion !== 1) throw new Error("Unsupported rank list schema")
-  if (doc.encoding !== ENCODING) throw new Error("Unsupported rank list encoding")
-  if (typeof doc.eventId !== "string" || !doc.eventId) throw new Error("Invalid event id")
-  if (doc.rankType !== "single" && doc.rankType !== "average") throw new Error("Invalid rank type")
-  if (!isPlainNonNegInt(doc.count)) throw new Error("Invalid count")
-  const source = doc.source
-  if (
-    !source ||
-    source.name !== SOURCE_NAME ||
-    source.url !== SOURCE_URL ||
-    typeof source.exportDate !== "string" ||
-    !source.exportDate ||
-    typeof source.exportFormatVersion !== "string" ||
-    !source.exportFormatVersion.startsWith("2.") ||
-    typeof source.archiveUrl !== "string" ||
-    !source.archiveUrl.startsWith("https://") ||
-    typeof source.attribution !== "string" ||
-    !source.attribution
-  ) {
-    throw new Error("Rank list source metadata is invalid")
-  }
-  if (!Array.isArray(doc.countries) || !Array.isArray(doc.continents)) {
-    throw new Error("Missing region tables")
-  }
-  if (doc.count > 0 && (doc.countries.length === 0 || doc.continents.length === 0)) {
-    throw new Error("Empty region tables")
-  }
-  for (const iso2 of doc.countries) {
-    if (typeof iso2 !== "string" || !/^[A-Z]{2}$/.test(iso2)) throw new Error("Invalid country code")
-  }
-  for (const continentId of doc.continents) {
-    if (typeof continentId !== "string" || !continentId.startsWith("_")) {
-      throw new Error("Invalid continent id")
+function getDecodeWorker(): Worker | null {
+  if (workerUnavailable) return null
+  if (typeof window === "undefined" || typeof Worker === "undefined") return null
+  if (decodeWorker) return decodeWorker
+  try {
+    decodeWorker = new Worker(new URL("./wca-rank-list.worker.ts", import.meta.url))
+    decodeWorker.onmessage = (
+      event: MessageEvent<
+        | { id: number; ok: true; index: RankListIndex }
+        | { id: number; ok: false; error: string }
+      >,
+    ) => {
+      const data = event.data
+      const pending = pendingDecodes.get(data.id)
+      if (!pending) return
+      pendingDecodes.delete(data.id)
+      if (data.ok) pending.resolve(data.index)
+      else pending.reject(new Error(data.error))
     }
-  }
-  if (
-    typeof doc.bestsB64 !== "string" ||
-    typeof doc.countryIdxB64 !== "string" ||
-    typeof doc.continentIdxB64 !== "string"
-  ) {
-    throw new Error("Missing packed payloads")
-  }
-
-  // Structural decode check (also validates sorted bests)
-  const bests = unpackI32Deltas(doc.bestsB64, doc.count)
-  const countryIdx = unpackU16(doc.countryIdxB64, doc.count)
-  const continentIdx = unpackU8(doc.continentIdxB64, doc.count)
-  let previous = 0
-  for (let i = 0; i < doc.count; i++) {
-    const best = bests[i]
-    if (!isPlainPositiveInt(best)) throw new Error("Non-positive best in list")
-    if (i > 0 && best < previous) throw new Error("Bests must be non-decreasing")
-    previous = best
-    if (countryIdx[i] >= doc.countries.length) throw new Error("Country index out of range")
-    if (continentIdx[i] >= doc.continents.length) throw new Error("Continent index out of range")
+    decodeWorker.onerror = () => {
+      // Reject everything in flight; callers fall back to sync decode.
+      for (const [, pending] of pendingDecodes) pending.reject(new Error("worker error"))
+      pendingDecodes.clear()
+      decodeWorker = null
+      workerUnavailable = true
+    }
+    return decodeWorker
+  } catch {
+    workerUnavailable = true
+    return null
   }
 }
 
-export function decodeRankListDocument(doc: RankListDocument): RankListIndex {
-  assertRankListDocument(doc)
-  const bests = unpackI32Deltas(doc.bestsB64, doc.count)
-  const countryIdx = unpackU16(doc.countryIdxB64, doc.count)
-  const continentIdx = unpackU8(doc.continentIdxB64, doc.count)
-  const countryIso2 = new Array<string>(doc.count)
-  const continentId = new Array<string>(doc.count)
-  for (let i = 0; i < doc.count; i++) {
-    countryIso2[i] = doc.countries[countryIdx[i]]
-    continentId[i] = doc.continents[continentIdx[i]]
-  }
-  return {
-    eventId: doc.eventId,
-    rankType: doc.rankType,
-    source: doc.source,
-    count: doc.count,
-    bests,
-    countryIso2,
-    continentId,
+function decodeOnWorker(doc: RankListDocument): Promise<RankListIndex> {
+  return new Promise((resolve, reject) => {
+    const worker = getDecodeWorker()
+    if (!worker) {
+      reject(new Error("worker unavailable"))
+      return
+    }
+    const id = nextMessageId++
+    pendingDecodes.set(id, { resolve, reject })
+    try {
+      worker.postMessage({ id, doc })
+    } catch (err) {
+      pendingDecodes.delete(id)
+      reject(err instanceof Error ? err : new Error("postMessage failed"))
+    }
+  })
+}
+
+async function decodeRankList(doc: unknown): Promise<RankListIndex> {
+  try {
+    // Worker decode runs the same full validation inside decodeRankListDocument.
+    return await decodeOnWorker(doc as RankListDocument)
+  } catch {
+    // Fallback: validate + decode synchronously on the current thread. On an
+    // invalid document this re-throws the real validation error to the caller.
+    assertRankListDocument(doc)
+    return decodeRankListDocument(doc)
   }
 }
 
@@ -224,7 +154,7 @@ export async function fetchRankList(
   signal?: AbortSignal,
 ): Promise<RankListIndex> {
   const cacheKey = `${eventId}/${rankType}`
-  const cached = memoryCache.get(cacheKey)
+  const cached = getCachedIndex(cacheKey)
   if (cached) return cached
 
   const response = await fetch(rankListUrl(eventId, rankType), {
@@ -241,9 +171,8 @@ export async function fetchRankList(
     throw new Error(`Rank list request failed with ${response.status}`)
   }
   const document: unknown = await response.json()
-  assertRankListDocument(document)
-  const index = decodeRankListDocument(document)
-  memoryCache.set(cacheKey, index)
+  const index = await decodeRankList(document)
+  setCachedIndex(cacheKey, index)
   // Intentionally skip sessionStorage: large events (e.g. 333 single ~2.5MB) blow quota.
   return index
 }
@@ -256,7 +185,7 @@ export function prefetchRankLists(
   const run = () => {
     for (const { eventId, rankType } of pairs) {
       const key = `${eventId}/${rankType}`
-      if (memoryCache.has(key)) continue
+      if (getCachedIndex(key)) continue
       void fetchRankList(eventId, rankType).catch(() => {
         /* ignore prefetch failures */
       })
@@ -309,11 +238,17 @@ export function rankAfterReplace(
   let equal = countEqual(sortedBests, newBest)
 
   if (previousBest !== null && isPlainPositiveInt(previousBest)) {
-    // Remove one occurrence of previousBest from the multiset conceptually.
-    if (previousBest < newBest) {
-      better = Math.max(0, better - 1)
-    } else if (previousBest === newBest) {
-      equal = Math.max(0, equal - 1)
+    // Only remove a copy of previousBest if it is actually present in this scoped
+    // multiset. If the person improved after the export snapshot (their WCA-API PB
+    // is newer than the shard), previousBest won't be in the list and subtracting
+    // would phantom-remove an unrelated competitor, making the rank one place too good.
+    const prevInList = countEqual(sortedBests, previousBest) > 0
+    if (prevInList) {
+      if (previousBest < newBest) {
+        better = Math.max(0, better - 1)
+      } else if (previousBest === newBest) {
+        equal = Math.max(0, equal - 1)
+      }
     }
   }
 
