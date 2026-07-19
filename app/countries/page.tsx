@@ -372,7 +372,6 @@ function VirtualCountryBars({
   const dragRef = useRef<{ pointerId: number; x: number; left: number } | null>(null)
   const [viewportWidth, setViewportWidth] = useState(940)
   const totalWidth = countries.length * BAR_WIDTH
-  const maxScrollLeft = Math.max(0, totalWidth - viewportWidth)
   const first = Math.max(0, Math.floor(scrollLeft / BAR_WIDTH) - OVERSCAN)
   const last = Math.min(
     countries.length,
@@ -383,11 +382,6 @@ function VirtualCountryBars({
     const node = scrollerRef.current
     if (!node) return
     node.scrollBy({ left: direction * Math.max(320, node.clientWidth * 0.75), behavior: "smooth" })
-  }
-  const scrollToPercent = (value: number) => {
-    const node = scrollerRef.current
-    if (!node) return
-    node.scrollLeft = (value / 100) * maxScrollLeft
   }
 
   useEffect(() => {
@@ -423,7 +417,7 @@ function VirtualCountryBars({
           <div>
             <p className="eyebrow">Vertical bars</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Wheel, drag the chart, scrub, or use arrows to move through countries
+              Slide naturally with a trackpad, mouse wheel, or drag. Bars render only as they enter view.
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -447,24 +441,6 @@ function VirtualCountryBars({
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>
-        </div>
-        <div className="border-b border-border px-5 py-3">
-          <div className="mb-2 flex items-center justify-between text-[11px] text-muted-foreground">
-            <span className="stat-num">
-              #{Math.min(countries.length, Math.floor(scrollLeft / BAR_WIDTH) + 1)}
-            </span>
-            <span>Drag this to jump across all countries</span>
-            <span className="stat-num">#{countries.length}</span>
-          </div>
-          <input
-            type="range"
-            min={0}
-            max={100}
-            value={maxScrollLeft ? (scrollLeft / maxScrollLeft) * 100 : 0}
-            onChange={(event) => scrollToPercent(Number(event.target.value))}
-            className="w-full accent-[var(--blue-bright)]"
-            aria-label="Scroll country bars"
-          />
         </div>
         <div
           ref={scrollerRef}
@@ -541,7 +517,7 @@ function VirtualCountryBars({
                     </div>
                   </div>
 
-                  <div className="flex h-28 w-full flex-col items-center border-t border-border pt-3 text-center">
+                  <div className="flex h-28 w-full flex-col items-start border-t border-border pt-3 text-left">
                     <img
                       src={flagUrl(country.iso2, 40)}
                       alt={`${country.name} flag`}
@@ -773,7 +749,7 @@ export default function CountriesPage() {
                 ) : (
                   <VirtualCountryList countries={filtered} max={overallMax} />
                 )}
-                <aside className="bezel">
+                <aside className="bezel lg:relative lg:before:absolute lg:before:-left-3 lg:before:top-2 lg:before:h-[calc(100%-1rem)] lg:before:w-px lg:before:bg-gradient-to-b lg:before:from-transparent lg:before:via-[rgba(var(--theme-bright-rgb),0.42)] lg:before:to-transparent">
                   <div className="bezel-inner flex h-full flex-col justify-between p-5">
                     <div>
                       <p className="eyebrow">Metric</p>
