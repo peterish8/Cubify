@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 32 32" fill="none" role="img" aria-label="Cubify cube logo — WR top, NR left, CR right">
+  <!-- Top face — WR silver -->
+  <path d="M16 3L28 10L16 17L4 10L16 3Z" fill="#E8E8EC"/>
+  <!-- Left face — NR emerald -->
+  <path d="M4 10L16 17V29L4 22V10Z" fill="#3DFFA8"/>
+  <!-- Right face — CR amber -->
+  <path d="M16 17L28 10V22L16 29V17Z" fill="#FFC14A"/>
+  <!-- Edge hairlines -->
+  <path
+    d="M16 3L28 10L16 17L4 10L16 3Z M4 10L16 17V29L4 22V10Z M16 17L28 10V22L16 29V17Z"
+    stroke="#050506"
+    stroke-width="0.6"
+    stroke-linejoin="round"
+    opacity="0.25"
+  />
+</svg>

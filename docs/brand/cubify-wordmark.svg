@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="64" viewBox="0 0 280 64" fill="none" role="img" aria-label="Cubify wordmark">
+  <rect width="280" height="64" rx="16" fill="#050506"/>
+  <!-- Cube mark (scaled from 32×32 → ~36×36) -->
+  <g transform="translate(16,14) scale(1.125)">
+    <path d="M16 3L28 10L16 17L4 10L16 3Z" fill="#E8E8EC"/>
+    <path d="M4 10L16 17V29L4 22V10Z" fill="#3DFFA8"/>
+    <path d="M16 17L28 10V22L16 29V17Z" fill="#FFC14A"/>
+    <path
+      d="M16 3L28 10L16 17L4 10L16 3Z M4 10L16 17V29L4 22V10Z M16 17L28 10V22L16 29V17Z"
+      stroke="#050506"
+      stroke-width="0.6"
+      stroke-linejoin="round"
+      opacity="0.25"
+    />
+  </g>
+  <text x="64" y="42" fill="#F4F4F5" font-family="ui-sans-serif, system-ui, sans-serif" font-size="28" font-weight="800" letter-spacing="-0.8">Cubify</text>
+</svg>
