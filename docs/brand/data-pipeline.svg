@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="140" viewBox="0 0 720 140" fill="none" role="img" aria-label="Data pipeline: WCA export to Cubify">
+  <rect width="720" height="140" rx="18" fill="#020617" stroke="#3b82f6" stroke-opacity="0.3"/>
+  <!-- boxes -->
+  <rect x="24" y="36" width="140" height="68" rx="12" fill="#0b1224" stroke="#60a5fa" stroke-width="1.5"/>
+  <text x="94" y="66" text-anchor="middle" fill="#dbeafe" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="700">WCA Export</text>
+  <text x="94" y="86" text-anchor="middle" fill="#60a5fa" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11">Results v2 ZIP</text>
+
+  <path d="M174 70H214" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+  <path d="M206 62l10 8-10 8" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <rect x="224" y="36" width="140" height="68" rx="12" fill="#0b1224" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="294" y="66" text-anchor="middle" fill="#dbeafe" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="700">Python CLI</text>
+  <text x="294" y="86" text-anchor="middle" fill="#60a5fa" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11">parse · reconcile</text>
+
+  <path d="M374 70H414" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+  <path d="M406 62l10 8-10 8" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <rect x="424" y="36" width="140" height="68" rx="12" fill="#0b1224" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="494" y="66" text-anchor="middle" fill="#dbeafe" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="700">rank-data</text>
+  <text x="494" y="86" text-anchor="middle" fill="#60a5fa" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11">static JSON</text>
+
+  <path d="M574 70H614" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+  <path d="M606 62l10 8-10 8" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <rect x="624" y="44" width="72" height="52" rx="12" fill="#3b82f6" fill-opacity="0.2" stroke="#60a5fa" stroke-width="1.5"/>
+  <text x="660" y="75" text-anchor="middle" fill="#dbeafe" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="800">App</text>
+
+  <text x="360" y="22" text-anchor="middle" fill="#93c5fd" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" font-weight="600" letter-spacing="1.5">NO DATABASE · DAILY REFRESH</text>
+</svg>

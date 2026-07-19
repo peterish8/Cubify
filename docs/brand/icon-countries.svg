@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" role="img" aria-label="Countries">
+  <rect width="96" height="96" rx="22" fill="#020617" stroke="#3b82f6" stroke-opacity="0.4"/>
+  <circle cx="48" cy="42" r="18" stroke="#60a5fa" stroke-width="2.5" fill="#3b82f6" fill-opacity="0.12"/>
+  <ellipse cx="48" cy="42" rx="8" ry="18" stroke="#93c5fd" stroke-width="1.5" fill="none"/>
+  <path d="M30 42H66M32 34H64M32 50H64" stroke="#3b82f6" stroke-opacity="0.7" stroke-width="1.5"/>
+  <text x="48" y="86" text-anchor="middle" fill="#93c5fd" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10" font-weight="700">COUNTRIES</text>
+</svg>

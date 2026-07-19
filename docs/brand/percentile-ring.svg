@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" fill="none" role="img" aria-label="Top percent ring">
+  <rect width="160" height="160" rx="28" fill="#020617" stroke="#3b82f6" stroke-opacity="0.3"/>
+  <circle cx="80" cy="80" r="52" stroke="#1e3a5f" stroke-width="10" fill="none"/>
+  <circle cx="80" cy="80" r="52" stroke="#3b82f6" stroke-width="10" fill="none"
+    stroke-linecap="round" stroke-dasharray="245 327" transform="rotate(-90 80 80)"/>
+  <circle cx="80" cy="80" r="52" stroke="#60a5fa" stroke-width="3" fill="none" opacity="0.5"
+    stroke-linecap="round" stroke-dasharray="245 327" transform="rotate(-90 80 80)"/>
+  <text x="80" y="76" text-anchor="middle" fill="#dbeafe" font-family="ui-sans-serif, system-ui, sans-serif" font-size="22" font-weight="800">Top</text>
+  <text x="80" y="100" text-anchor="middle" fill="#60a5fa" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="700">12%</text>
+</svg>

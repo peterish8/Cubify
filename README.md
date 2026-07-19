@@ -1,5 +1,9 @@
 <p align="center">
-  <img src="docs/brand/cubify-wordmark.svg" alt="Cubify" width="280" />
+  <img src="docs/brand/hero-banner.svg" alt="Cubify Blue Matrix hero" width="960" />
+</p>
+
+<p align="center">
+  <img src="docs/brand/cubify-wordmark.svg" alt="Cubify" width="320" />
 </p>
 
 <p align="center">
@@ -8,10 +12,12 @@
 </p>
 
 <p align="center">
-  <img src="docs/brand/cubify-cube.svg" alt="Cubify isometric cube logo" width="96" />
+  <img src="docs/brand/badge-row.svg" alt="Official WCA · Top % · Goal sim · No database · Blue Matrix · Themes" width="640" />
 </p>
 
----
+<p align="center">
+  <img src="docs/brand/divider.svg" alt="" width="720" />
+</p>
 
 ## What is Cubify?
 
@@ -19,21 +25,47 @@ Look up any official **WCA ID** and get an easy-to-read speedcubing profile: per
 
 Everything else builds on that same accurate dataset — goal simulation, head-to-head compare, and country populations.
 
----
+<p align="center">
+  <img src="docs/brand/rank-scopes.svg" alt="NR CR WR rank scopes on the cube logo" width="480" />
+</p>
+
+<p align="center">
+  <img src="docs/brand/matrix-grid.svg" alt="" width="720" />
+</p>
 
 ## Features
 
 ### Pages
 
-| Route | Feature | Description |
-| --- | --- | --- |
-| `/` | **Lookup** | WCA ID → name, country, avatar, PRs, NR/CR/WR ranks, Top % rings |
-| `/goal` | **Goal simulator** | Result → predicted NR/CR/WR · reverse (target rank or Top % → required result) |
-| `/compare` | **Compare** | Side-by-side two cubers — times, ranks, facelet-style winners |
-| `/countries` | **Countries** | Country cuber totals — search, virtualized list, chart views |
-| `/settings` | **Settings** | Theme families, custom cursor on/off, smooth scroll on/off |
+<p align="center">
+  <img src="docs/brand/icon-lookup.svg" alt="Lookup" width="88" />
+  &nbsp;
+  <img src="docs/brand/icon-goal.svg" alt="Goal" width="88" />
+  &nbsp;
+  <img src="docs/brand/icon-compare.svg" alt="Compare" width="88" />
+  &nbsp;
+  <img src="docs/brand/icon-countries.svg" alt="Countries" width="88" />
+  &nbsp;
+  <img src="docs/brand/icon-settings.svg" alt="Settings" width="88" />
+</p>
+
+| | Route | Feature | Description |
+| :---: | --- | --- | --- |
+| <img src="docs/brand/icon-lookup.svg" width="40" alt="" /> | `/` | **Lookup** | WCA ID → name, country, avatar, PRs, NR/CR/WR ranks, Top % rings |
+| <img src="docs/brand/icon-goal.svg" width="40" alt="" /> | `/goal` | **Goal simulator** | Result → predicted NR/CR/WR · reverse (target rank or Top % → required result) |
+| <img src="docs/brand/icon-compare.svg" width="40" alt="" /> | `/compare` | **Compare** | Side-by-side two cubers — times, ranks, facelet-style winners |
+| <img src="docs/brand/icon-countries.svg" width="40" alt="" /> | `/countries` | **Countries** | Country cuber totals — search, virtualized list, chart views |
+| <img src="docs/brand/icon-settings.svg" width="40" alt="" /> | `/settings` | **Settings** | Theme families, custom cursor on/off, smooth scroll on/off |
+
+<p align="center">
+  <img src="docs/brand/divider.svg" alt="" width="720" />
+</p>
 
 ### Stats & accuracy
+
+<p align="center">
+  <img src="docs/brand/percentile-ring.svg" alt="Top percent ring" width="140" />
+</p>
 
 - Official **WCA person API** for identity, avatar, and personal records  
 - Ranked-competitor totals from the official **WCA Results Export v2**  
@@ -41,7 +73,11 @@ Everything else builds on that same accurate dataset — goal simulation, head-t
 - **Top %** = `rank ÷ ranked competitors × 100`  
 - If a live rank is newer than the totals snapshot, the % is **hidden** (never faked)  
 - Daily GitHub Action refreshes data when the WCA export date changes  
-- No SQL · no paid backend · compact rank-list shards for Goal
+- No SQL · no paid backend · compact rank-list shards for Goal  
+
+<p align="center">
+  <img src="docs/brand/data-pipeline.svg" alt="WCA export to Python CLI to rank-data to App" width="720" />
+</p>
 
 ### Product / UX
 
@@ -53,19 +89,26 @@ Everything else builds on that same accurate dataset — goal simulation, head-t
 - Motion: count-up stats, floating theme cube, glass sheen, percentile rings  
 - Loading / error / 404 pages wired in App Router  
 
----
+<p align="center">
+  <img src="docs/brand/divider.svg" alt="" width="720" />
+</p>
 
-## Brand SVGs
+## Brand & Blue Matrix
 
-Source of truth in code: [`components/brand/CubeLogo.tsx`](components/brand/CubeLogo.tsx)  
-Static copies for docs / favicon-style use:
+Default theme: **Blue Matrix** (`blue`) — electric blue glow on pure black.
 
-| File | Use |
-| --- | --- |
-| [`docs/brand/cubify-cube.svg`](docs/brand/cubify-cube.svg) | Isometric cube mark |
-| [`docs/brand/cubify-wordmark.svg`](docs/brand/cubify-wordmark.svg) | Logo + “Cubify” wordmark |
-| [`docs/brand/cubify-facelets.svg`](docs/brand/cubify-facelets.svg) | NR / CR / WR color legend |
-| [`public/cubify-cube.svg`](public/cubify-cube.svg) | Served at `/cubify-cube.svg` |
+| Token | Hex | Role |
+| --- | --- | --- |
+| Bright | `#dbeafe` | Highlights, labels |
+| Glow | `#60a5fa` | Borders, secondary glow |
+| Core | `#3b82f6` | Primary accent |
+| Sky | `#38bdf8` | Accents / charts |
+| Deep | `#1d4ed8` | Depth rings |
+| Stage | `#020617` | Background |
+
+<p align="center">
+  <img src="docs/brand/theme-swatches.svg" alt="Blue Matrix swatches" width="560" />
+</p>
 
 ### Cube mark
 
@@ -88,18 +131,14 @@ Isometric cube — each face is a ranking scope:
 <path d="M16 17L28 10V22L16 29V17Z" fill="#FFC14A"/>   <!-- CR right -->
 ```
 
-React usage:
-
 ```tsx
 import { CubeLogo, CubeWordmark } from "@/components/brand/CubeLogo"
 
 <CubeLogo size={28} />
-<CubeWordmark />  // header nav
+<CubeWordmark />
 ```
 
-### Facelet legend (UI chips)
-
-Same palette as rank rows, compare winners, and footer legend:
+### Facelets
 
 <p align="center">
   <img src="docs/brand/cubify-facelets.svg" alt="NR CR WR facelet colors" width="420" />
@@ -111,18 +150,42 @@ Same palette as rank rows, compare winners, and footer legend:
 | `.facelet-cr` | Continental | Amber `#FFC14A` |
 | `.facelet-wr` | World | Silver `#E8E8EC` |
 
-### Other custom graphics (in code)
+### SVG kit (`docs/brand/`)
 
-| Component | Type | Role |
-| --- | --- | --- |
-| `CubeLogo` / `CubeWordmark` | SVG | Brand mark + header |
-| `PercentileRing` | SVG + Framer Motion | Animated Top % ring |
-| `FloatingThemeCube` | DOM / motion | Decorative theme cube on Goal |
-| Theme swatches | CSS variables | Per-family bright / core / deep colors |
+All graphics use the Blue Matrix palette (`#020617` stage · `#3b82f6` / `#60a5fa` glow).
 
-`public/placeholder-*.svg|png|jpg` are generic Next/shadcn leftovers — not brand assets. Prefer `cubify-cube.svg` / `CubeLogo`.
+| File | What |
+| --- | --- |
+| `hero-banner.svg` | Full-width matrix grid + cube hero |
+| `cubify-wordmark.svg` | Logo + wordmark card |
+| `cubify-cube.svg` | Isometric cube mark |
+| `cubify-facelets.svg` | NR / CR / WR chips |
+| `badge-row.svg` | Feature pill strip |
+| `divider.svg` | Section divider with glow node |
+| `matrix-grid.svg` | Thin grid band |
+| `icon-lookup.svg` | Lookup page icon |
+| `icon-goal.svg` | Goal page icon |
+| `icon-compare.svg` | Compare page icon |
+| `icon-countries.svg` | Countries page icon |
+| `icon-settings.svg` | Settings page icon |
+| `percentile-ring.svg` | Top % ring mock |
+| `rank-scopes.svg` | Cube + NR/CR/WR map |
+| `data-pipeline.svg` | Export → CLI → rank-data → app |
+| `theme-swatches.svg` | Blue Matrix swatches |
+| `stack-pills.svg` | Tech stack chips |
+| `footer-glow.svg` | Footer cube + glow |
 
----
+Also served: [`public/cubify-cube.svg`](public/cubify-cube.svg) → `/cubify-cube.svg`
+
+In-app source of truth: [`components/brand/CubeLogo.tsx`](components/brand/CubeLogo.tsx)
+
+Other custom graphics in code: `PercentileRing` (SVG motion), `FloatingThemeCube`, theme CSS variables.
+
+`public/placeholder-*.svg|png|jpg` are generic leftovers — not brand.
+
+<p align="center">
+  <img src="docs/brand/divider.svg" alt="" width="720" />
+</p>
 
 ## Themes (`/settings`)
 
@@ -130,7 +193,7 @@ Dark-stage only (brighter vs deeper glow on black — not light mode).
 
 | Family | Lighter | Darker | Deep |
 | --- | --- | --- | --- |
-| **Blue** (default) | Blue Pastel | Blue Matrix | Midnight Core |
+| **Blue** (default) | Blue Pastel | **Blue Matrix** | Midnight Core |
 | **Green** | Mint Pastel | Emerald Circuit | Forest Link |
 | **Pink** | Sakura Pastel | Neon Sakura | Rose Void |
 | **Violet** | Lavender Pastel | Violet Nebula | Ion Shadow |
@@ -138,14 +201,13 @@ Dark-stage only (brighter vs deeper glow on black — not light mode).
 | **Purple** | Lilac Pastel | Royal Pulse | Grape Depth |
 | **Night** | Tokyo Pastel | Tokyo Night | Tokyo Deeper |
 
-Stored in `localStorage` under `cubify-theme`. Legacy id `dark-blue` (Abyss Drive) still resolves if previously saved.
+Stored in `localStorage` as `cubify-theme`. Legacy id `dark-blue` still resolves.
 
-Prefs (also localStorage):
+Prefs: `cubify-custom-cursor` · `cubify-smooth-scroll` (both default on).
 
-- `cubify-custom-cursor` — custom cursor (default on)  
-- `cubify-smooth-scroll` — Lenis smooth scroll (default on)  
-
----
+<p align="center">
+  <img src="docs/brand/matrix-grid.svg" alt="" width="720" />
+</p>
 
 ## Data sources
 
@@ -155,7 +217,7 @@ Prefs (also localStorage):
 | Ranked totals + rank lists | Official **WCA Results Export v2** |
 | Country populations | Same export → `country-totals.json` |
 
-Publication target: git branch **`rank-data`**
+Publication branch: **`rank-data`**
 
 ```text
 rank-totals.json
@@ -163,7 +225,7 @@ country-totals.json
 rank-lists/{event}/{single|average}.json
 ```
 
-Before publish, both must hold:
+Reconciliation before publish:
 
 ```text
 world total = sum of country totals
@@ -172,7 +234,9 @@ world total = sum of continent totals
 
 Failed validation keeps the previous JSON as last-known-good.
 
----
+<p align="center">
+  <img src="docs/brand/divider.svg" alt="" width="720" />
+</p>
 
 ## Repo layout
 
@@ -185,24 +249,16 @@ components/
   theme/CubifyThemeProvider  Theme families → CSS vars
   PercentileRing.tsx         Top % SVG ring
   ui/                        shadcn primitives + editorial fields
-docs/brand/                  README SVG assets (cube · wordmark · facelets)
+docs/brand/                  README SVG kit (Blue Matrix)
 lib/
   cubify-themes.ts           Theme catalog
   cubify-prefs.ts            Cursor / scroll prefs
-  wca-person.ts              Person fetch
-  wca-rank-totals.ts         Totals + Top % helpers
-  wca-rank-list.ts           Goal rank-list shards
-  wca-rank-list.worker.ts    Decode worker for large shards
-  wca-country-totals.ts      Country totals client
-  wca-events.ts · format.ts · result-input.ts
+  wca-*.ts                   Person, totals, rank lists, countries, format
 public/cubify-cube.svg       Public brand mark
-tests/                       Unit / contract tests
-e2e/                         Playwright smoke tests
-tools/wca-rank-totals/       Python 3.12 export → JSON generator
+tests/ · e2e/                Unit + Playwright
+tools/wca-rank-totals/       Python 3.12 export → JSON
 .github/workflows/           Daily validation + publish
 ```
-
----
 
 ## Development
 
@@ -222,7 +278,7 @@ PYTHONPATH=src python -m unittest discover -s tests -v
 PYTHONPATH=src python -m wca_rank_totals.cli
 ```
 
-### Gitignored local clutter (safe to delete)
+### Gitignored local clutter
 
 | Path | What |
 | --- | --- |
@@ -232,9 +288,11 @@ PYTHONPATH=src python -m wca_rank_totals.cli
 | `*.tsbuildinfo` | TS incremental cache |
 | `node_modules/`, `__pycache__/` | Dependencies / bytecode |
 
----
-
 ## Stack
+
+<p align="center">
+  <img src="docs/brand/stack-pills.svg" alt="Next.js React TypeScript Tailwind Framer Motion Lenis Python Playwright pnpm Vercel Geist" width="680" />
+</p>
 
 - **Next.js 14** (App Router) · **React 18** · **TypeScript**  
 - **Tailwind CSS v4** · **Framer Motion** · **Lenis**  
@@ -249,3 +307,7 @@ PYTHONPATH=src python -m wca_rank_totals.cli
 
 Competition results are owned and maintained by the [World Cube Association](https://www.worldcubeassociation.org/).  
 **Cubify is an independent project and is not an official WCA service.**
+
+<p align="center">
+  <img src="docs/brand/footer-glow.svg" alt="" width="720" />
+</p>

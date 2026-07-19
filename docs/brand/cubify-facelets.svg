@@ -1,14 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="420" height="72" viewBox="0 0 420 72" fill="none" role="img" aria-label="NR, CR, WR facelet color legend">
-  <rect width="420" height="72" rx="16" fill="#0a0a0c"/>
-  <!-- NR -->
+  <rect width="420" height="72" rx="16" fill="#020617" stroke="#3b82f6" stroke-opacity="0.35"/>
   <rect x="16" y="16" width="112" height="40" rx="10" fill="#0f2a1c" stroke="#3DFFA8" stroke-width="1.5"/>
   <circle cx="40" cy="36" r="8" fill="#3DFFA8"/>
   <text x="56" y="41" fill="#E8E8EC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="700">NR · #3DFFA8</text>
-  <!-- CR -->
   <rect x="144" y="16" width="120" height="40" rx="10" fill="#2a200c" stroke="#FFC14A" stroke-width="1.5"/>
   <circle cx="168" cy="36" r="8" fill="#FFC14A"/>
   <text x="184" y="41" fill="#E8E8EC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="700">CR · #FFC14A</text>
-  <!-- WR -->
   <rect x="280" y="16" width="124" height="40" rx="10" fill="#1c1c20" stroke="#E8E8EC" stroke-width="1.5"/>
   <circle cx="304" cy="36" r="8" fill="#E8E8EC"/>
   <text x="320" y="41" fill="#E8E8EC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="700">WR · #E8E8EC</text>

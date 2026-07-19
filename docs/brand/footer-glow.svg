@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="64" viewBox="0 0 720 64" fill="none" role="img" aria-label="">
+  <defs>
+    <radialGradient id="fg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#020617" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="line" x1="0" y1="32" x2="720" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#60a5fa" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="720" height="64" fill="#020617"/>
+  <ellipse cx="360" cy="32" rx="200" ry="28" fill="url(#fg)"/>
+  <line x1="40" y1="32" x2="680" y2="32" stroke="url(#line)" stroke-width="1"/>
+  <g transform="translate(344,16) scale(1)">
+    <path d="M16 3L28 10L16 17L4 10L16 3Z" fill="#E8E8EC"/>
+    <path d="M4 10L16 17V29L4 22V10Z" fill="#3DFFA8"/>
+    <path d="M16 17L28 10V22L16 29V17Z" fill="#FFC14A"/>
+  </g>
+</svg>
