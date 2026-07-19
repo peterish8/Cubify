@@ -416,7 +416,7 @@ function VirtualCountryBars({
     if (!node) return
 
     const onWheel = (event: WheelEvent) => {
-      const delta = Math.abs(event.deltaX) >= Math.abs(event.deltaY) ? event.deltaX : event.deltaY
+      const delta = event.deltaX
       if (!delta) return
       const previous = node.scrollLeft
       node.scrollLeft += delta
@@ -437,7 +437,7 @@ function VirtualCountryBars({
           <div>
             <p className="eyebrow">Vertical bars</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Slide sideways with your trackpad gesture or drag the chart. Bars render only as they enter view.
+              Swipe sideways with your trackpad or drag the chart. Bars render only as they enter view.
             </p>
           </div>
         </div>
@@ -476,6 +476,7 @@ function VirtualCountryBars({
               const rank = first + offset + 1
               const glow = barGlow(rank)
               const pct = percentOf(country.cubers, max)
+              const barHeight = Math.max(4, pct)
               return (
                 <div
                   key={country.iso2}
@@ -486,7 +487,7 @@ function VirtualCountryBars({
                     <div
                       className="relative w-14 overflow-hidden rounded-t-xl border border-white/15 transition-transform duration-300 group-hover:-translate-y-1"
                       style={{
-                        height: `${Math.max(4, pct)}%`,
+                        height: `${barHeight}%`,
                         boxShadow: `0 22px 52px -20px ${glow}, inset 0 1px 0 rgba(255,255,255,0.42), inset -12px 0 22px rgba(0,0,0,0.24)`,
                       }}
                     >
@@ -494,7 +495,12 @@ function VirtualCountryBars({
                       <div className="absolute inset-x-0 top-0 h-4 bg-white/28" />
                       <div className="absolute inset-y-0 right-0 w-4 bg-black/16" />
                     </div>
-                    <div className="absolute bottom-7 rounded-md border border-border bg-black/65 px-2 py-1 opacity-0 shadow-xl backdrop-blur transition group-hover:opacity-100">
+                    <div
+                      className="absolute rounded-md border border-[rgba(var(--theme-bright-rgb),0.25)] bg-[rgba(5,8,16,0.78)] px-2 py-1 shadow-[0_14px_34px_-18px_rgba(var(--theme-rgb),0.9)] backdrop-blur"
+                      style={{
+                        bottom: barHeight > 88 ? "calc(100% - 2.25rem)" : `calc(${barHeight}% + 1.25rem)`,
+                      }}
+                    >
                       <p className="stat-num whitespace-nowrap text-[11px] text-foreground">
                         {country.cubers.toLocaleString()}
                       </p>

@@ -190,7 +190,7 @@ test("countries page loads data, filters, and switches graph modes", async ({ pa
 
   const barScroller = page.getByTestId("country-bar-scroller")
   await barScroller.hover()
-  await page.mouse.wheel(0, 900)
+  await page.mouse.wheel(900, 0)
   await expect.poll(() => barScroller.evaluate((node) => node.scrollLeft)).toBeGreaterThan(0)
 
   await page.getByRole("button", { name: /Horizontal/i }).click()
