@@ -6,6 +6,7 @@ import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import { Providers } from "@/components/Providers"
+import { ALL_THEME_IDS, DEFAULT_THEME, THEME_STORAGE_KEY } from "@/lib/cubify-themes"
 import "./globals.css"
 
 /** Site display face — cinematic tech (replaces Syne site-wide). */
@@ -36,7 +37,15 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem("cubify-theme");var ok=["blue","green","pink","violet","orange","purple","dark-blue","tokyo-night"].includes(t);document.documentElement.dataset.cubifyTheme=ok?t:"blue"}catch(e){document.documentElement.dataset.cubifyTheme="blue"}`,
+            __html: `try{var t=localStorage.getItem(${JSON.stringify(
+              THEME_STORAGE_KEY,
+            )});var ok=${JSON.stringify(
+              ALL_THEME_IDS,
+            )}.includes(t);document.documentElement.dataset.cubifyTheme=ok?t:${JSON.stringify(
+              DEFAULT_THEME,
+            )}}catch(e){document.documentElement.dataset.cubifyTheme=${JSON.stringify(
+              DEFAULT_THEME,
+            )}}`,
           }}
         />
       </head>

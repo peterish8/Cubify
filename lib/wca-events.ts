@@ -16,6 +16,8 @@ export const EVENT_NAMES: Record<string, string> = {
   "444bf": "4×4 Blindfolded",
   "555bf": "5×5 Blindfolded",
   "333mbf": "3×3 Multi-Blind",
+  "333ft": "3×3 With Feet",
+  "333mbo": "3×3 Multi-Blind Old",
   magic: "Rubik's Magic",
   mmagic: "Master Magic",
 }

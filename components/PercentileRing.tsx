@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
-import { useInView, useSpring, useMotionValue } from "framer-motion"
+import { useEffect, useRef } from "react"
+import { motion, useInView, useSpring, useMotionValue, useTransform } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { formatTopPercent } from "@/lib/wca-rank-totals"
 
@@ -37,19 +37,14 @@ export function PercentileRing({
 
   const progress = useMotionValue(0)
   const spring = useSpring(progress, { stiffness: 90, damping: 24, mass: 0.7 })
-  const [offset, setOffset] = useState(circumference)
+  // Derive the stroke offset from the spring as a motion value so the SVG
+  // attribute animates without a React re-render per frame.
+  const offset = useTransform(spring, (v) => circumference * (1 - v))
   const labelText = formatTopPercent(topPercent)
 
   useEffect(() => {
     if (inView) progress.set(target)
   }, [inView, target, progress])
-
-  useEffect(() => {
-    const unsub = spring.on("change", (v) => {
-      setOffset(circumference * (1 - v))
-    })
-    return unsub
-  }, [spring, circumference])
 
   return (
     <div className={cn("flex flex-col items-center gap-1", className)}>
@@ -67,7 +62,7 @@ export function PercentileRing({
               stroke="var(--border)"
               strokeWidth={stroke}
             />
-            <circle
+            <motion.circle
               cx={size / 2}
               cy={size / 2}
               r={radius}

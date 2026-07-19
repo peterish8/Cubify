@@ -563,7 +563,7 @@ function VirtualCountryBars({
 }
 
 export default function CountriesPage() {
-  const [document, setDocument] = useState<CountryTotalsDocument | null>(null)
+  const [totalsDoc, setTotalsDoc] = useState<CountryTotalsDocument | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [query, setQuery] = useState("")
@@ -575,7 +575,7 @@ export default function CountriesPage() {
     setLoading(true)
     fetchCountryTotals(controller.signal)
       .then((next) => {
-        setDocument(next)
+        setTotalsDoc(next)
         setError("")
       })
       .catch((err) => {
@@ -587,13 +587,13 @@ export default function CountriesPage() {
   }, [])
 
   const continents = useMemo(() => {
-    if (!document) return []
-    return Array.from(new Set(document.countries.map((country) => country.continentId))).sort()
-  }, [document])
+    if (!totalsDoc) return []
+    return Array.from(new Set(totalsDoc.countries.map((country) => country.continentId))).sort()
+  }, [totalsDoc])
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase()
-    return (document?.countries ?? []).filter((country) => {
+    return (totalsDoc?.countries ?? []).filter((country) => {
       const matchesQuery =
         !needle ||
         country.name.toLowerCase().includes(needle) ||
@@ -601,10 +601,10 @@ export default function CountriesPage() {
       const matchesContinent = continent === "all" || country.continentId === continent
       return matchesQuery && matchesContinent
     })
-  }, [continent, document, query])
+  }, [continent, totalsDoc, query])
 
-  const overallMax = document?.countries[0]?.cubers ?? 1
-  const podium = document?.countries.slice(0, 3) ?? []
+  const overallMax = totalsDoc?.countries[0]?.cubers ?? 1
+  const podium = totalsDoc?.countries.slice(0, 3) ?? []
 
   return (
     <div className="editorial-page flex min-h-[100dvh] flex-col">
@@ -630,19 +630,19 @@ export default function CountriesPage() {
                 <div className="surface-card rounded-lg p-4">
                   <p className="eyebrow">Total cubers</p>
                   <p className="stat-num mt-3 text-3xl font-bold text-foreground sm:text-4xl">
-                    {document ? <CountUp value={document.totalCubers} /> : "--"}
+                    {totalsDoc ? <CountUp value={totalsDoc.totalCubers} /> : "--"}
                   </p>
                 </div>
                 <div className="surface-card rounded-lg p-4">
                   <p className="eyebrow">Countries</p>
                   <p className="stat-num mt-3 text-3xl font-bold text-foreground sm:text-4xl">
-                    {document ? <CountUp value={document.countries.length} /> : "--"}
+                    {totalsDoc ? <CountUp value={totalsDoc.countries.length} /> : "--"}
                   </p>
                 </div>
               </div>
-              {document && (
+              {totalsDoc && (
                 <p className="mt-5 text-xs text-muted-foreground">
-                  Updated from the {formatMonth(document.source.exportDate)} WCA results export.
+                  Updated from the {formatMonth(totalsDoc.source.exportDate)} WCA results export.
                 </p>
               )}
             </motion.div>
@@ -721,7 +721,7 @@ export default function CountriesPage() {
               />
               <ViewToggle value={view} onChange={setView} />
               <a
-                href={document?.source.url ?? "https://www.worldcubeassociation.org/export/results"}
+                href={totalsDoc?.source.url ?? "https://www.worldcubeassociation.org/export/results"}
                 target="_blank"
                 rel="noreferrer"
                 className="btn-ghost inline-flex h-12 items-center justify-center gap-2 rounded-lg px-4 text-sm"
