@@ -9,6 +9,7 @@ import {
   rankAfterReplace,
   rankToRequiredBest,
   resultToAllScopeRanks,
+  targetToRequiredBest,
   type RankListDocument,
 } from "../lib/wca-rank-list"
 import type { RankTotalsDocument } from "../lib/wca-rank-totals"
@@ -137,5 +138,70 @@ describe("wca-rank-list", () => {
     assert.equal(ranks.nr.rank, 2) // IN only: 1000, 1100 → 1050 is rank 2
     assert.equal(ranks.cr.rank, 2)
     assert.ok(ranks.wr.topPercent !== null)
+  })
+
+  it("does not subtract a previousBest that is absent from the list", () => {
+    const bests = [1000, 1100, 1100, 1200]
+    // 950 is not in the multiset → must behave EXACTLY like previousBest = null
+    // (no phantom removal of an unrelated competitor).
+    const withPhantom = rankAfterReplace(bests, 1150, 950)
+    const withNull = rankAfterReplace(bests, 1150, null)
+    // 1000, 1100, 1100 are strictly better than 1150 → rank 4, no ties.
+    assert.deepEqual(withNull, { rank: 4, tiesWith: 0 })
+    assert.deepEqual(withPhantom, withNull)
+    // Sanity: a previousBest that IS present still gets subtracted (1000 < 1150
+    // was counted as "better", removing it drops the rank from 4 to 3).
+    assert.deepEqual(rankAfterReplace(bests, 1150, 1000), { rank: 3, tiesWith: 0 })
+  })
+
+  it("targetToRequiredBest drives rank and percent modes", () => {
+    // WR-scoped list (all rows IN / _Asia) sorted ascending: 1000, 1100, 1100, 1200.
+    const doc = makeDoc({
+      bests: [1000, 1100, 1100, 1200],
+      countryIdx: [0, 0, 0, 0],
+      continentIdx: [0, 0, 0, 0],
+    })
+    assertRankListDocument(doc)
+    const index = decodeRankListDocument(doc)
+
+    const targetTotals: RankTotalsDocument = {
+      schemaVersion: 1,
+      source: SOURCE,
+      events: {
+        "333": {
+          single: { world: 4, continents: { _Asia: 4 }, countries: { IN: 4 } },
+        },
+      },
+    }
+
+    // mode "rank", no previousBest: rank R → value at position R-1.
+    assert.deepEqual(
+      targetToRequiredBest(index, "wr", "rank", 1, null, "IN", "_Asia", targetTotals),
+      { requiredBest: 1000, targetRank: 1 },
+    )
+    assert.deepEqual(
+      targetToRequiredBest(index, "wr", "rank", 3, null, "IN", "_Asia", targetTotals),
+      { requiredBest: 1100, targetRank: 3 },
+    )
+
+    // mode "rank", with previousBest present: your own 1000 is skipped, so reaching
+    // rank 1 now requires beating the next competitor's 1100.
+    assert.deepEqual(
+      targetToRequiredBest(index, "wr", "rank", 1, 1000, "IN", "_Asia", targetTotals),
+      { requiredBest: 1100, targetRank: 1 },
+    )
+
+    // mode "percent", no previousBest: ceil(25% * 4) = 1 → rank 1 → 1000.
+    assert.deepEqual(
+      targetToRequiredBest(index, "wr", "percent", 25, null, "IN", "_Asia", targetTotals),
+      { requiredBest: 1000, targetRank: 1 },
+    )
+
+    // mode "percent", with previousBest present: ceil(50% * 4) = 2 → skip own 1000,
+    // second "other" value is 1100.
+    assert.deepEqual(
+      targetToRequiredBest(index, "wr", "percent", 50, 1000, "IN", "_Asia", targetTotals),
+      { requiredBest: 1100, targetRank: 2 },
+    )
   })
 })

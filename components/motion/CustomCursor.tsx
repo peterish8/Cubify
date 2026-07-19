@@ -2,11 +2,17 @@
 
 import { useEffect, useRef, useState } from "react"
 import { motion, useMotionValue, useSpring } from "framer-motion"
+import { useCubifyTheme } from "@/components/theme/CubifyThemeProvider"
 
 const INTERACTIVE =
   'a, button, [role="button"], input, textarea, select, label, [data-cursor="hover"]'
 
+/**
+ * Cubify’s own custom cursor (dot + ring) — not from another project.
+ * Respects Settings → Custom cursor toggle + reduced-motion / touch.
+ */
 export function CustomCursor() {
+  const { customCursor: preferCustom } = useCubifyTheme()
   const [enabled, setEnabled] = useState(false)
   const [hovering, setHovering] = useState(false)
   const [visible, setVisible] = useState(false)
@@ -24,7 +30,13 @@ export function CustomCursor() {
   useEffect(() => {
     const fine = window.matchMedia("(pointer: fine)").matches
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    if (!fine || reduced) return
+    const canUse = preferCustom && fine && !reduced
+
+    if (!canUse) {
+      setEnabled(false)
+      document.documentElement.classList.remove("has-custom-cursor")
+      return
+    }
 
     setEnabled(true)
     document.documentElement.classList.add("has-custom-cursor")
@@ -52,7 +64,7 @@ export function CustomCursor() {
       document.removeEventListener("mouseleave", onLeave)
       cancelAnimationFrame(rafRef.current)
     }
-  }, [mouseX, mouseY])
+  }, [preferCustom, mouseX, mouseY])
 
   if (!enabled) return null
 

@@ -5,6 +5,7 @@
 
 # next.js
 /.next/
+/.next-e2e/
 /out/
 
 # production
@@ -36,3 +37,7 @@ tools/wca-rank-totals/data/rank-totals.json
 
 .next-dev.out.log
 .next-dev.err.log
+
+/test-results/
+/playwright-report/
+/blob-report/

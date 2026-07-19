@@ -2,11 +2,15 @@
 
 import { useEffect } from "react"
 import Lenis from "lenis"
+import { useCubifyTheme } from "@/components/theme/CubifyThemeProvider"
 
-/** Optional smooth wheel — never mutates layout in a way that hides content. */
+/** Optional smooth wheel — respects Settings toggle + reduced-motion. Default on. */
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
+  const { smoothScroll } = useCubifyTheme()
+
   useEffect(() => {
     if (typeof window === "undefined") return
+    if (!smoothScroll) return
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
 
     let lenis: Lenis | null = null
@@ -16,7 +20,6 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
       lenis = new Lenis({
         duration: 1.05,
         smoothWheel: true,
-        // Keep native document scroll so sticky + layout stay correct
         autoRaf: false,
       })
 
@@ -33,7 +36,7 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
       cancelAnimationFrame(frame)
       lenis?.destroy()
     }
-  }, [])
+  }, [smoothScroll])
 
   return <>{children}</>
 }
