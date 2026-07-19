@@ -7,7 +7,7 @@
     "dev": "node scripts/run-next.cjs dev",
     "lint": "next lint",
     "start": "node scripts/run-next.cjs start",
-    "test": "tsx --test tests/**/*.test.ts",
+    "test": "node scripts/run-unit-tests.cjs",
     "test:e2e": "playwright test",
     "test:website": "npm run test && npm run test:wca-generator && npx tsc --noEmit --pretty false && npm run test:e2e",
     "test:wca-generator": "node scripts/run-wca-generator-tests.cjs"
