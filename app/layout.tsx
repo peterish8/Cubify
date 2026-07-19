@@ -59,6 +59,7 @@ export default function RootLayout({
         <Providers>
           <Suspense fallback={null}>{children}</Suspense>
         </Providers>
+        {/* Vercel Web Analytics — production page views (enable in Vercel → Analytics) */}
         <Analytics />
       </body>
     </html>
