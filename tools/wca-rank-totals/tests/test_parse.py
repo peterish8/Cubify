@@ -31,8 +31,8 @@ class ParseTest(unittest.TestCase):
 
     def test_duplicate_rank_fails(self) -> None:
         path = self.temporary_tsv(
-            "person_id\tevent_id\tworld_rank\tcontinent_rank\tcountry_rank\n"
-            "2020TEST01\t333\t1\t1\t1\n2020TEST01\t333\t1\t1\t1\n"
+            "person_id\tevent_id\tbest\tworld_rank\tcontinent_rank\tcountry_rank\n"
+            "2020TEST01\t333\t1000\t1\t1\t1\n2020TEST01\t333\t1000\t1\t1\t1\n"
         )
         with self.assertRaisesRegex(CountingError, "duplicate rank row"):
             count_ranks(path, "single", self.people(), {})
@@ -41,9 +41,9 @@ class ParseTest(unittest.TestCase):
         for value in ("0", "-1"):
             with self.subTest(value=value):
                 path = self.temporary_tsv(
-                    "person_id\tevent_id\tworld_rank\tcontinent_rank\tcountry_rank\n"
-                    f"2020TEST01\t333\t{value}\t1\t1\n"
-                    "2022SING01\t333\t2\t1\t1\n"
+                    "person_id\tevent_id\tbest\tworld_rank\tcontinent_rank\tcountry_rank\n"
+                    f"2020TEST01\t333\t1000\t{value}\t1\t1\n"
+                    "2022SING01\t333\t1100\t2\t1\t1\n"
                 )
                 totals: dict = {}
                 count_ranks(path, "single", self.people(), totals)
@@ -53,9 +53,9 @@ class ParseTest(unittest.TestCase):
     def test_zero_country_rank_still_counts_when_world_rank_valid(self) -> None:
         """Real WCA export can contain country_rank=0; still count via persons region."""
         path = self.temporary_tsv(
-            "person_id\tevent_id\tworld_rank\tcontinent_rank\tcountry_rank\n"
-            "2020TEST01\t333\t1\t1\t0\n"
-            "2022SING01\t333\t2\t1\t1\n"
+            "person_id\tevent_id\tbest\tworld_rank\tcontinent_rank\tcountry_rank\n"
+            "2020TEST01\t333\t1000\t1\t1\t0\n"
+            "2022SING01\t333\t1100\t2\t1\t1\n"
         )
         totals: dict = {}
         count_ranks(path, "single", self.people(), totals)
@@ -64,16 +64,16 @@ class ParseTest(unittest.TestCase):
 
     def test_invalid_numeric_rank_is_counting_error(self) -> None:
         path = self.temporary_tsv(
-            "person_id\tevent_id\tworld_rank\tcontinent_rank\tcountry_rank\n"
-            "2020TEST01\t333\tnope\t1\t1\n"
+            "person_id\tevent_id\tbest\tworld_rank\tcontinent_rank\tcountry_rank\n"
+            "2020TEST01\t333\t1000\tnope\t1\t1\n"
         )
         with self.assertRaisesRegex(CountingError, "invalid rank"):
             count_ranks(path, "single", self.people(), {})
 
     def test_missing_current_person_fails(self) -> None:
         path = self.temporary_tsv(
-            "person_id\tevent_id\tworld_rank\tcontinent_rank\tcountry_rank\n"
-            "2099NONE01\t333\t1\t1\t1\n"
+            "person_id\tevent_id\tbest\tworld_rank\tcontinent_rank\tcountry_rank\n"
+            "2099NONE01\t333\t1000\t1\t1\t1\n"
         )
         with self.assertRaisesRegex(CountingError, "missing current person"):
             count_ranks(path, "single", self.people(), {})
@@ -116,8 +116,8 @@ class ParseTest(unittest.TestCase):
 
     def test_extra_tsv_fields_fail(self) -> None:
         path = self.temporary_tsv(
-            "person_id\tevent_id\tworld_rank\tcontinent_rank\tcountry_rank\n"
-            "2020TEST01\t333\t1\t1\t1\textra\n"
+            "person_id\tevent_id\tbest\tworld_rank\tcontinent_rank\tcountry_rank\n"
+            "2020TEST01\t333\t1000\t1\t1\t1\textra\n"
         )
         with self.assertRaisesRegex(CountingError, "extra TSV fields"):
             count_ranks(path, "single", self.people(), {})

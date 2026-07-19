@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "next build",
-    "dev": "next dev",
+    "build": "node scripts/run-next.cjs build",
+    "dev": "node scripts/run-next.cjs dev",
     "lint": "next lint",
-    "start": "next start",
+    "start": "node scripts/run-next.cjs start",
     "test": "tsx --test tests/**/*.test.ts",
-    "test:wca-generator": "cd tools/wca-rank-totals && PYTHONPATH=src python -m unittest discover -s tests -v"
+    "test:wca-generator": "node scripts/run-wca-generator-tests.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -66,6 +66,7 @@
     "zod": "3.25.67"
   },
   "devDependencies": {
+    "@next/swc-win32-x64-msvc": "14.2.33",
     "@tailwindcss/postcss": "^4.1.9",
     "@types/node": "^22",
     "@types/react": "^18",

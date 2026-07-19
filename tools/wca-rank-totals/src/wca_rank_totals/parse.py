@@ -4,7 +4,7 @@ import csv
 from pathlib import Path
 from typing import Iterator
 
-from .model import RankBucket, Region, Totals
+from .model import RankBucket, RankEntries, RankListEntry, Region, Totals
 
 
 class CountingError(ValueError):
@@ -56,6 +56,17 @@ def load_countries(path: Path) -> dict[str, Region]:
     return countries
 
 
+def load_country_names(path: Path) -> dict[str, str]:
+    """Map ISO2 -> display name from countries.tsv. Lenient: for labels only."""
+    names: dict[str, str] = {}
+    for row in _rows(path, {"name", "iso2"}):
+        iso2 = row["iso2"].strip().upper()
+        name = row["name"].strip()
+        if len(iso2) == 2 and iso2.isalpha() and name:
+            names.setdefault(iso2, name)
+    return names
+
+
 def load_current_people(path: Path, countries: dict[str, Region]) -> dict[str, Region]:
     people: dict[str, Region] = {}
     for row in _rows(path, {"wca_id", "sub_id", "country_id"}):
@@ -89,11 +100,17 @@ def _parse_rank(value: str, path: Path, event_id: str, person_id: str) -> int:
         raise CountingError(f"{path.name}: invalid rank for {event_id}/{person_id}") from error
 
 
-def count_ranks(path: Path, rank_type: str, people: dict[str, Region], totals: Totals) -> None:
+def count_ranks(
+    path: Path,
+    rank_type: str,
+    people: dict[str, Region],
+    totals: Totals,
+    entries: RankEntries | None = None,
+) -> None:
     if rank_type not in {"single", "average"}:
         raise CountingError(f"unsupported rank type {rank_type}")
     seen: set[tuple[str, str]] = set()
-    required = {"person_id", "event_id", "world_rank", "continent_rank", "country_rank"}
+    required = {"person_id", "event_id", "best", "world_rank", "continent_rank", "country_rank"}
     for row in _rows(path, required):
         person_id = row["person_id"].strip().upper()
         event_id = row["event_id"].strip()
@@ -111,7 +128,17 @@ def count_ranks(path: Path, rank_type: str, people: dict[str, Region], totals: T
         if world_rank <= 0:
             continue
         try:
+            best = int(row["best"].strip())
+        except (TypeError, ValueError) as error:
+            raise CountingError(f"{path.name}: invalid best for {event_id}/{person_id}") from error
+        if best <= 0:
+            raise CountingError(f"{path.name}: non-positive best for {event_id}/{person_id}")
+        try:
             region = people[person_id]
         except KeyError as error:
             raise CountingError(f"{path.name}: missing current person {person_id}") from error
         totals.setdefault(event_id, {}).setdefault(rank_type, RankBucket()).add(region)
+        if entries is not None:
+            entries.setdefault(event_id, {}).setdefault(rank_type, []).append(
+                RankListEntry(best=best, world_rank=world_rank, region=region)
+            )

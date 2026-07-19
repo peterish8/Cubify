@@ -41,4 +41,14 @@ class RankBucket:
         self.countries[region.iso2] = self.countries.get(region.iso2, 0) + 1
 
 
+@dataclass(frozen=True)
+class RankListEntry:
+    """One ranked competitor result for anonymous rank-list shards."""
+
+    best: int
+    world_rank: int
+    region: Region
+
+
 Totals: TypeAlias = dict[str, dict[str, RankBucket]]
+RankEntries: TypeAlias = dict[str, dict[str, list[RankListEntry]]]

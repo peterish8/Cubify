@@ -53,35 +53,40 @@ export function PercentileRing({
 
   return (
     <div className={cn("flex flex-col items-center gap-1", className)}>
-      <div className="relative" style={{ width: size, height: size }}>
-        <svg ref={ref} width={size} height={size} className="rotate-[-90deg]">
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            fill="none"
-            stroke="var(--border)"
-            strokeWidth={stroke}
-          />
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            fill="none"
-            stroke={color}
-            strokeWidth={stroke}
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={offset}
-          />
-        </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-1">
-          <span className="text-[9px] uppercase tracking-[0.14em] text-muted-foreground font-medium">
-            {label}
-          </span>
-          <span className="text-xs font-medium tabular-nums text-foreground leading-tight mt-0.5">
-            {labelText ?? "—"}
-          </span>
+      <div
+        className="relative rounded-md border border-border bg-secondary/40 p-1"
+        style={{ width: size + 8, height: size + 8 }}
+      >
+        <div className="relative" style={{ width: size, height: size }}>
+          <svg ref={ref} width={size} height={size} className="rotate-[-90deg]">
+            <circle
+              cx={size / 2}
+              cy={size / 2}
+              r={radius}
+              fill="none"
+              stroke="var(--border)"
+              strokeWidth={stroke}
+            />
+            <circle
+              cx={size / 2}
+              cy={size / 2}
+              r={radius}
+              fill="none"
+              stroke={color}
+              strokeWidth={stroke}
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={offset}
+            />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center px-1 text-center">
+            <span className="text-[8px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+              {label}
+            </span>
+            <span className="font-data mt-0.5 text-[11px] font-bold tabular-nums leading-tight text-foreground">
+              {labelText ?? "-"}
+            </span>
+          </div>
         </div>
       </div>
     </div>

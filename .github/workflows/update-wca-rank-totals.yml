@@ -49,6 +49,9 @@ jobs:
           if git ls-remote --exit-code --heads origin rank-data > /dev/null; then
             git fetch origin rank-data
             git show origin/rank-data:data/rank-totals.json > data/rank-totals.json || true
+            git show origin/rank-data:data/country-totals.json > data/country-totals.json || true
+            # Restore prior rank-list shards so skip-if-unchanged can validate them.
+            git archive origin/rank-data data/rank-lists 2>/dev/null | tar -x -C . 2>/dev/null || true
           else
             echo "rank-data does not exist yet; the first successful run will create it"
           fi
@@ -71,6 +74,8 @@ jobs:
           import sys
 
           from wca_rank_totals.document import load_document
+          from wca_rank_totals.population import load_population_document
+          from wca_rank_totals.rank_list import load_manifest, load_shard
 
           path = Path("data/rank-totals.json")
           if not path.is_file() or path.stat().st_size == 0:
@@ -78,11 +83,28 @@ jobs:
           document = load_document(path)
           events = document["events"]
           print(f"Validated rank totals: {len(events)} events, {path.stat().st_size} bytes")
+
+          population = Path("data/country-totals.json")
+          if not population.is_file() or population.stat().st_size == 0:
+              raise SystemExit("country-totals.json is missing or empty after generation")
+          pop = load_population_document(population)
+          print(f"Validated country totals: {pop['totalCubers']} cubers, {len(pop['countries'])} countries")
+
+          lists_dir = Path("data/rank-lists")
+          manifest_path = lists_dir / "manifest.json"
+          if not manifest_path.is_file():
+              raise SystemExit("rank-lists/manifest.json missing after generation")
+          manifest = load_manifest(manifest_path)
+          for rel in manifest["files"]:
+              load_shard(lists_dir / rel)
+          print(f"Validated rank lists: {len(manifest['files'])} shards")
           PY
           echo "### WCA rank totals" >> "$GITHUB_STEP_SUMMARY"
           echo "- Runtime: $((SECONDS - START_SECONDS)) seconds" >> "$GITHUB_STEP_SUMMARY"
           echo "- $(tail -1 generation.log)" >> "$GITHUB_STEP_SUMMARY"
-          echo "- JSON size: $(wc -c < data/rank-totals.json) bytes" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Rank totals size: $(wc -c < data/rank-totals.json) bytes" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Country totals size: $(wc -c < data/country-totals.json) bytes" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Rank-list shards: $(find data/rank-lists -name '*.json' ! -name 'manifest.json' | wc -l)" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Publish only changed data to rank-data
         run: |
@@ -93,10 +115,20 @@ jobs:
           import sys
           sys.path.insert(0, "tools/wca-rank-totals/src")
           from wca_rank_totals.document import load_document
-          path = Path("tools/wca-rank-totals/data/rank-totals.json")
-          if path.stat().st_size == 0:
+          from wca_rank_totals.population import load_population_document
+          from wca_rank_totals.rank_list import load_manifest, load_shard
+          rank = Path("tools/wca-rank-totals/data/rank-totals.json")
+          population = Path("tools/wca-rank-totals/data/country-totals.json")
+          lists_dir = Path("tools/wca-rank-totals/data/rank-lists")
+          if rank.stat().st_size == 0:
               raise SystemExit("refusing to publish empty rank-totals.json")
-          load_document(path)
+          if population.stat().st_size == 0:
+              raise SystemExit("refusing to publish empty country-totals.json")
+          load_document(rank)
+          load_population_document(population)
+          manifest = load_manifest(lists_dir / "manifest.json")
+          for rel in manifest["files"]:
+              load_shard(lists_dir / rel)
           PY
           if git show-ref --verify --quiet refs/remotes/origin/rank-data; then
             DATA_BASE=origin/rank-data
@@ -106,15 +138,18 @@ jobs:
           git worktree add --detach "$RUNNER_TEMP/rank-data" "$DATA_BASE"
           mkdir -p "$RUNNER_TEMP/rank-data/data"
           cp tools/wca-rank-totals/data/rank-totals.json "$RUNNER_TEMP/rank-data/data/rank-totals.json"
+          cp tools/wca-rank-totals/data/country-totals.json "$RUNNER_TEMP/rank-data/data/country-totals.json"
+          rm -rf "$RUNNER_TEMP/rank-data/data/rank-lists"
+          cp -a tools/wca-rank-totals/data/rank-lists "$RUNNER_TEMP/rank-data/data/rank-lists"
           cd "$RUNNER_TEMP/rank-data"
           git switch -C rank-data
-          git add data/rank-totals.json
+          git add data/rank-totals.json data/country-totals.json data/rank-lists
           if git diff --cached --quiet; then
             echo "- Publication: no data change" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "data: update WCA rank totals"
+          git commit -m "data: update WCA rank totals and rank lists"
           git push origin HEAD:rank-data
           echo "- Publication: rank-data updated" >> "$GITHUB_STEP_SUMMARY"

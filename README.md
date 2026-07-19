@@ -2,6 +2,8 @@
 
 Cubify turns an official WCA ID into an easy-to-read speedcubing profile: personal records, national/continental/world ranks, and mathematically correct **Top X%** labels.
 
+**Goal** (`/goal`) answers “if my single/average were this result, what NR/CR/WR would I have?” and the reverse (target rank or Top % → required result). It uses the same official export, published as compact per-event rank-list shards on the `rank-data` branch (no database).
+
 ## Accurate data sources
 
 - Player identity and personal records come directly from the official WCA person API.
@@ -12,12 +14,13 @@ Cubify turns an official WCA ID into an easy-to-read speedcubing profile: person
 ## Monorepo architecture
 
 ```text
-app/                         Next.js Cubify website
+app/                         Next.js Cubify website (lookup, goal, compare, countries)
 lib/wca-rank-totals.ts       Typed totals client and percentage helpers
+lib/wca-rank-list.ts         Lazy rank-list shards (time ↔ rank)
 tests/                       Frontend data-contract tests
 tools/wca-rank-totals/       Python 3.12 official-export generator
 .github/workflows/           Daily validation and publication
-rank-data branch             Last-known-good rank-totals.json
+rank-data branch             rank-totals.json, country-totals.json, rank-lists/
 ```
 
 The generator uses no SQL database and no paid backend. It first tries HTTP byte-range access so Python's ZIP reader downloads only the required archive blocks. If the WCA host does not support a trustworthy range response, it safely falls back to the complete ZIP.

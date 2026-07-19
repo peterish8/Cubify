@@ -31,3 +31,8 @@ next-env.d.ts
 *.py[cod]
 tools/wca-rank-totals/.work/
 tools/wca-rank-totals/data/rank-totals.json
+
+.env
+
+.next-dev.out.log
+.next-dev.err.log

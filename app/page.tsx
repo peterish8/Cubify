@@ -1,8 +1,6 @@
 "use client"
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useMemo, useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import {
   calculateTopPercent,
@@ -14,12 +12,12 @@ import {
 import { eventDisplayName } from "@/lib/wca-events"
 import { formatResult } from "@/lib/wca-format"
 import { PercentileRing } from "@/components/PercentileRing"
-import { Magnetic } from "@/components/motion/Magnetic"
-import { Reveal, Stagger, StaggerItem } from "@/components/motion/Reveal"
 import { CountUp } from "@/components/motion/CountUp"
-import { ExternalLink, Loader2, ArrowRight, Users } from "lucide-react"
-import Link from "next/link"
+import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome"
+import { EditorialButton, EditorialInput } from "@/components/ui/editorial-field"
+import { ExternalLink, Loader2, ArrowRight } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { cn } from "@/lib/utils"
 
 interface PlayerInfo {
   name: string
@@ -72,6 +70,9 @@ interface EventStats {
   }
 }
 
+const FEATURED_EVENTS = new Set(["333", "222", "444", "333oh", "555", "333bf"])
+const ease = [0.16, 1, 0.3, 1] as const
+
 const formatExportDate = (value: string): string =>
   new Intl.DateTimeFormat("en", {
     year: "numeric",
@@ -90,20 +91,51 @@ function RankRow({
   topPercent: number | null
 }) {
   if (rank <= 0) return null
-  const chip = scope === "NR" ? "chip-nr" : scope === "CR" ? "chip-cr" : "chip-wr"
+  const face =
+    scope === "NR" ? "facelet-nr" : scope === "CR" ? "facelet-cr" : "facelet-wr"
   const pct = formatTopPercent(topPercent)
 
   return (
-    <div className="flex items-center justify-between gap-3 py-1">
-      <div className="flex items-center gap-2.5 min-w-0">
-        <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium tracking-wide ${chip}`}>
-          {scope}
+    <div className="flex items-center justify-between gap-3 py-1.5">
+      <div className="flex min-w-0 items-center gap-2.5">
+        <span className={`facelet ${face}`}>{scope}</span>
+        <span className="stat-num text-[13px] text-foreground">
+          #{rank.toLocaleString()}
         </span>
-        <span className="tabular-nums text-sm text-foreground">#{rank.toLocaleString()}</span>
       </div>
       {pct && (
-        <span className="tabular-nums text-xs text-muted-foreground shrink-0">{pct}</span>
+        <span className="stat-num shrink-0 text-[11px] text-muted-foreground">{pct}</span>
       )}
+    </div>
+  )
+}
+
+function ResultBlock({
+  label,
+  time,
+  ranks,
+}: {
+  label: string
+  time: string
+  ranks: {
+    nr: { rank: number; topPercent: number | null }
+    cr: { rank: number; topPercent: number | null }
+    wr: { rank: number; topPercent: number | null }
+  }
+}) {
+  return (
+    <div className="rounded-lg border border-border bg-secondary/60 p-4">
+      <div className="mb-3 flex items-baseline justify-between gap-3">
+        <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+          {label}
+        </span>
+        <span className="time-display text-2xl text-foreground sm:text-3xl">{time}</span>
+      </div>
+      <div className="border-t border-border/80 pt-1.5">
+        <RankRow scope="NR" rank={ranks.nr.rank} topPercent={ranks.nr.topPercent} />
+        <RankRow scope="CR" rank={ranks.cr.rank} topPercent={ranks.cr.topPercent} />
+        <RankRow scope="WR" rank={ranks.wr.rank} topPercent={ranks.wr.topPercent} />
+      </div>
     </div>
   )
 }
@@ -112,100 +144,245 @@ function EventCard({
   eventId,
   eventStats,
   playerInfo,
+  featured,
+  index,
 }: {
   eventId: string
   eventStats: EventStats
   playerInfo: PlayerInfo
+  featured?: boolean
+  index: number
 }) {
   const record = playerInfo.personal_records[eventId]
   const bestWrPercent =
     eventStats.single.wr.topPercent ?? eventStats.average.wr.topPercent ?? null
 
   return (
-    <article className="surface-card surface-card-hover rounded-lg p-5 h-full flex flex-col">
-      <header className="flex items-start justify-between gap-3 mb-5">
-        <div className="min-w-0 pt-0.5">
-          <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground mb-1">
-            Event
-          </p>
-          <h3 className="text-[15px] font-medium tracking-tight text-foreground leading-snug">
+    <motion.article
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: Math.min(index * 0.035, 0.35), ease }}
+      className={cn(
+        "surface-card surface-card-hover flex h-full flex-col rounded-xl p-5 sm:p-6",
+        featured && "ring-1 ring-[var(--rank-nr)]/20",
+      )}
+    >
+      <header className="mb-5 flex items-start justify-between gap-3 border-b border-border pb-4">
+        <div>
+          {featured && (
+            <span className="mb-2 inline-block rounded-full border border-border px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+              Featured
+            </span>
+          )}
+          <h3 className="font-display text-lg font-extrabold leading-tight tracking-tight text-foreground">
             {eventDisplayName(eventId)}
           </h3>
+          <p className="mt-1 font-data text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+            {eventId}
+          </p>
         </div>
         {bestWrPercent !== null && (
           <PercentileRing
             topPercent={bestWrPercent}
-            size={68}
-            stroke={2.5}
+            size={featured ? 84 : 72}
+            stroke={3}
             label="WR"
             className="shrink-0"
           />
         )}
       </header>
 
-      <div className="space-y-4 flex-1">
+      <div className="flex flex-1 flex-col gap-3">
         {record.single && (
-          <section>
-            <div className="flex items-baseline justify-between mb-2">
-              <span className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-                Single
-              </span>
-              <span className="tabular-nums text-xl font-medium tracking-tight text-foreground">
-                {formatResult(eventId, record.single.best, "single")}
-              </span>
-            </div>
-            <div className="border-t border-border pt-1.5">
-              <RankRow scope="NR" rank={eventStats.single.rank.nr} topPercent={eventStats.single.nr.topPercent} />
-              <RankRow scope="CR" rank={eventStats.single.rank.cr} topPercent={eventStats.single.cr.topPercent} />
-              <RankRow scope="WR" rank={eventStats.single.rank.wr} topPercent={eventStats.single.wr.topPercent} />
-            </div>
-          </section>
+          <ResultBlock
+            label="Single"
+            time={formatResult(eventId, record.single.best, "single")}
+            ranks={{
+              nr: {
+                rank: eventStats.single.rank.nr,
+                topPercent: eventStats.single.nr.topPercent,
+              },
+              cr: {
+                rank: eventStats.single.rank.cr,
+                topPercent: eventStats.single.cr.topPercent,
+              },
+              wr: {
+                rank: eventStats.single.rank.wr,
+                topPercent: eventStats.single.wr.topPercent,
+              },
+            }}
+          />
         )}
-
         {record.average && (
-          <section className={record.single ? "border-t border-border pt-4" : ""}>
-            <div className="flex items-baseline justify-between mb-2">
-              <span className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-                Average
-              </span>
-              <span className="tabular-nums text-xl font-medium tracking-tight text-foreground">
-                {formatResult(eventId, record.average.best, "average")}
-              </span>
-            </div>
-            <div className="border-t border-border pt-1.5">
-              <RankRow scope="NR" rank={eventStats.average.rank.nr} topPercent={eventStats.average.nr.topPercent} />
-              <RankRow scope="CR" rank={eventStats.average.rank.cr} topPercent={eventStats.average.cr.topPercent} />
-              <RankRow scope="WR" rank={eventStats.average.rank.wr} topPercent={eventStats.average.wr.topPercent} />
-            </div>
-          </section>
+          <ResultBlock
+            label="Average"
+            time={formatResult(eventId, record.average.best, "average")}
+            ranks={{
+              nr: {
+                rank: eventStats.average.rank.nr,
+                topPercent: eventStats.average.nr.topPercent,
+              },
+              cr: {
+                rank: eventStats.average.rank.cr,
+                topPercent: eventStats.average.cr.topPercent,
+              },
+              wr: {
+                rank: eventStats.average.rank.wr,
+                topPercent: eventStats.average.wr.topPercent,
+              },
+            }}
+          />
         )}
       </div>
-    </article>
+    </motion.article>
   )
 }
 
 function LoadingSkeleton() {
   return (
-    <div className="space-y-8">
-      <div className="surface-card rounded-lg p-6">
-        <div className="flex items-center gap-4">
-          <div className="skeleton-shimmer h-14 w-14 rounded-full" />
-          <div className="flex-1 space-y-2.5">
-            <div className="skeleton-shimmer h-4 w-44 rounded" />
-            <div className="skeleton-shimmer h-3 w-28 rounded" />
+    <div className="space-y-6">
+      <div className="bezel">
+        <div className="bezel-inner p-6 sm:p-8">
+          <div className="flex items-center gap-5">
+            <div className="skeleton-shimmer cube-frame h-24 w-24" />
+            <div className="flex-1 space-y-3">
+              <div className="skeleton-shimmer h-8 w-52 rounded" />
+              <div className="skeleton-shimmer h-3 w-36 rounded" />
+            </div>
           </div>
         </div>
       </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid gap-3 sm:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="surface-card space-y-3 rounded-xl p-5">
+            <div className="skeleton-shimmer h-3 w-20 rounded" />
+            <div className="skeleton-shimmer h-10 w-28 rounded" />
+          </div>
+        ))}
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="surface-card rounded-lg p-5 space-y-4">
-            <div className="skeleton-shimmer h-3 w-16 rounded" />
-            <div className="skeleton-shimmer h-4 w-28 rounded" />
-            <div className="skeleton-shimmer h-8 w-20 rounded ml-auto" />
+          <div key={i} className="surface-card space-y-4 rounded-xl p-5">
+            <div className="skeleton-shimmer h-4 w-32 rounded" />
+            <div className="skeleton-shimmer ml-auto h-9 w-20 rounded" />
             <div className="skeleton-shimmer h-3 w-full rounded" />
             <div className="skeleton-shimmer h-3 w-4/5 rounded" />
           </div>
         ))}
+      </div>
+    </div>
+  )
+}
+
+function LookupForm({
+  wcaId,
+  setWcaId,
+  loading,
+  error,
+  onSubmit,
+  compact,
+}: {
+  wcaId: string
+  setWcaId: (v: string) => void
+  loading: boolean
+  error: string
+  onSubmit: () => void
+  compact?: boolean
+}) {
+  if (compact) {
+    return (
+      <div>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="eyebrow">Lookup</p>
+            <p className="font-display mt-1 text-xl font-extrabold tracking-tight">
+              Another competitor
+            </p>
+          </div>
+          <div className="flex w-full max-w-md gap-2">
+            <EditorialInput
+              placeholder="WCA ID"
+              value={wcaId}
+              onChange={(e) => setWcaId(e.target.value.toUpperCase())}
+              onKeyDown={(e) => e.key === "Enter" && onSubmit()}
+              disabled={loading}
+              className="flex-1"
+            />
+            <EditorialButton
+              onClick={onSubmit}
+              disabled={loading}
+              className="inline-flex h-12 shrink-0 items-center justify-center rounded-lg px-5"
+            >
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Go"}
+            </EditorialButton>
+          </div>
+        </div>
+        <AnimatePresence>
+          {error && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="mt-3 text-sm font-medium text-rose-400"
+            >
+              {error}
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
+    )
+  }
+
+  return (
+    <div className="bezel">
+      <div className="bezel-inner p-6 sm:p-8">
+        <label className="eyebrow mb-4 block">Enter WCA ID</label>
+        <EditorialInput
+          placeholder="2022RPRA01"
+          value={wcaId}
+          onChange={(e) => setWcaId(e.target.value.toUpperCase())}
+          onKeyDown={(e) => e.key === "Enter" && onSubmit()}
+          disabled={loading}
+          className="mb-4"
+          autoFocus
+        />
+        <EditorialButton
+          onClick={onSubmit}
+          disabled={loading}
+          className="inline-flex h-12 w-full items-center justify-center rounded-lg text-sm"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Loading
+            </>
+          ) : (
+            <>
+              Look up
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </>
+          )}
+        </EditorialButton>
+        <AnimatePresence>
+          {error && (
+            <motion.p
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="mt-4 text-sm font-medium text-rose-400"
+            >
+              {error}
+            </motion.p>
+          )}
+        </AnimatePresence>
+        <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
+          <p className="text-[11px] text-muted-foreground">Any official WCA ID</p>
+          <div className="flex gap-1">
+            <span className="facelet facelet-nr">NR</span>
+            <span className="facelet facelet-cr">CR</span>
+            <span className="facelet facelet-wr">WR</span>
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -216,7 +393,9 @@ export default function CubifyAnalyzer() {
   const [loading, setLoading] = useState(false)
   const [playerInfo, setPlayerInfo] = useState<PlayerInfo | null>(null)
   const [eventsData, setEventsData] = useState<Record<string, EventStats> | null>(null)
-  const [rankTotalsSource, setRankTotalsSource] = useState<RankTotalsDocument["source"] | null>(null)
+  const [rankTotalsSource, setRankTotalsSource] = useState<RankTotalsDocument["source"] | null>(
+    null,
+  )
   const [error, setError] = useState("")
 
   const calculateStats = (rank: number, totalCompetitors: number | null): RegionStats => ({
@@ -239,16 +418,18 @@ export default function CubifyAnalyzer() {
     setRankTotalsSource(null)
 
     try {
-      const rankTotalsPromise: Promise<RankTotalsDocument | null> = fetchRankTotals().catch((totalsError) => {
-        console.error("Rank percentages are temporarily unavailable", totalsError)
-        return null
-      })
+      const rankTotalsPromise: Promise<RankTotalsDocument | null> = fetchRankTotals().catch(
+        (totalsError) => {
+          console.error("Rank percentages are temporarily unavailable", totalsError)
+          return null
+        },
+      )
       const playerResponse = await fetch(
         `https://www.worldcubeassociation.org/api/v0/persons/${normalizedWcaId}`,
       )
 
       if (!playerResponse.ok) {
-        throw new Error("Player not found. Please check the WCA ID.")
+        throw new Error("Player not found. Check the WCA ID and try again.")
       }
 
       const playerData = await playerResponse.json()
@@ -364,261 +545,324 @@ export default function CubifyAnalyzer() {
   const eventCount = eventsData ? Object.keys(eventsData).length : 0
   const hasResults = Boolean(playerInfo && eventsData && !loading)
 
+  const highlight = useMemo(() => {
+    if (!eventsData || !playerInfo) return null
+
+    let best: {
+      eventId: string
+      topPercent: number
+      kind: "single" | "average"
+      time: string
+      wr: number
+    } | null = null
+
+    for (const [eventId, stats] of Object.entries(eventsData)) {
+      const rec = playerInfo.personal_records[eventId]
+      for (const kind of ["single", "average"] as const) {
+        const pct = stats[kind].wr.topPercent
+        const rank = stats[kind].rank.wr
+        const result = rec?.[kind]
+        if (pct == null || !result || rank <= 0) continue
+        if (!best || pct < best.topPercent) {
+          best = {
+            eventId,
+            topPercent: pct,
+            kind,
+            time: formatResult(eventId, result.best, kind),
+            wr: rank,
+          }
+        }
+      }
+    }
+
+    let bestSingle: { eventId: string; time: string; wr: number } | null = null
+    for (const [eventId, rec] of Object.entries(playerInfo.personal_records)) {
+      if (!rec.single) continue
+      const wr = rec.single.world_ranking
+      if (!bestSingle || wr < bestSingle.wr) {
+        bestSingle = {
+          eventId,
+          time: formatResult(eventId, rec.single.best, "single"),
+          wr,
+        }
+      }
+    }
+
+    return { best, bestSingle }
+  }, [eventsData, playerInfo])
+
+  const sortedEvents = useMemo(() => {
+    if (!eventsData) return []
+    return Object.entries(eventsData).sort(([a], [b]) => {
+      const af = FEATURED_EVENTS.has(a) ? 0 : 1
+      const bf = FEATURED_EVENTS.has(b) ? 0 : 1
+      if (af !== bf) return af - bf
+      return a.localeCompare(b)
+    })
+  }, [eventsData])
+
   return (
-    <div className="editorial-page">
-      {/* Top bar */}
-      <header className="sticky top-0 z-40 border-b border-border bg-background">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <Link href="/" className="flex items-center gap-2.5" data-cursor="hover">
-            <span className="flex h-6 w-6 items-center justify-center rounded border border-border text-[10px] font-semibold tracking-tight">
-              C
-            </span>
-            <span className="text-sm font-medium tracking-tight">Cubify</span>
-          </Link>
-          <nav className="flex items-center gap-1">
-            <Link
-              href="/compare"
-              className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary"
-              data-cursor="hover"
-            >
-              <Users className="h-3.5 w-3.5" />
-              Compare
-            </Link>
-          </nav>
-        </div>
-      </header>
+    <div className="editorial-page flex min-h-[100dvh] flex-col">
+      <div className="editorial-shell flex min-h-[100dvh] flex-col">
+        <SiteHeader active="home" />
 
-      <main className="mx-auto max-w-6xl px-4 sm:px-6">
-        {/* Hero — left editorial, not centered carnival */}
-        {!hasResults && !loading && (
-          <section className="grid gap-10 border-b border-border py-16 md:grid-cols-12 md:gap-8 md:py-24">
-            <Reveal className="md:col-span-7">
-              <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
-                WCA stats analyzer
-              </p>
-              <h1 className="max-w-xl text-4xl font-medium tracking-tight text-foreground sm:text-5xl md:text-[3.25rem] md:leading-[1.1]">
-                Know exactly where you rank.
-              </h1>
-              <p className="mt-5 max-w-md text-[15px] leading-relaxed text-muted-foreground">
-                Live NR, CR, and WR ranks with Top X% percentiles for every official event —
-                built for the speedcubing community.
-              </p>
-            </Reveal>
-
-            <Reveal delay={0.06} className="md:col-span-5 md:pt-2">
-              <div className="surface-card rounded-lg p-5 sm:p-6">
-                <label className="mb-3 block text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
-                  WCA ID
-                </label>
-                <Input
-                  placeholder="2022RPRA01"
-                  value={wcaId}
-                  onChange={(e) => setWcaId(e.target.value.toUpperCase())}
-                  onKeyDown={(e) => e.key === "Enter" && fetchStats()}
-                  disabled={loading}
-                  className="input-editorial mb-3"
-                  autoFocus
-                />
-                <Magnetic className="w-full" strength={0.2}>
-                  <Button
-                    onClick={fetchStats}
-                    disabled={loading}
-                    className="btn-solid w-full h-11 rounded-md text-sm"
-                    data-cursor="hover"
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Loading
-                      </>
-                    ) : (
-                      <>
-                        Look up
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </>
-                    )}
-                  </Button>
-                </Magnetic>
-                <AnimatePresence>
-                  {error && (
-                    <motion.p
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      className="mt-3 text-sm text-red-400"
-                    >
-                      {error}
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-              </div>
-              <p className="mt-3 text-xs text-muted-foreground">
-                Try any official WCA ID · Data from the World Cube Association
-              </p>
-            </Reveal>
-          </section>
-        )}
-
-        {/* Compact search when results shown */}
-        {(hasResults || loading) && (
-          <section className="border-b border-border py-6">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
-                  Lookup
+        <main className="mx-auto w-full max-w-6xl flex-1 px-4 sm:px-6">
+          {!hasResults && !loading && (
+            <section className="grid min-h-[calc(100dvh-15rem)] items-center gap-10 border-b border-border py-10 md:grid-cols-12 md:gap-10 md:py-12">
+              <motion.div
+                className="md:col-span-7"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, ease }}
+              >
+                <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-3 py-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--rank-nr)]" />
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                    WCA stats
+                  </span>
+                </div>
+                <h1 className="display-title max-w-xl text-[2.75rem] text-foreground sm:text-6xl md:text-7xl">
+                  Know exactly
+                  <br />
+                  where you rank.
+                </h1>
+                <p className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
+                  Live NR, CR, and WR with real Top X% across every official event.
                 </p>
-                <p className="text-sm text-foreground mt-0.5">Another competitor</p>
-              </div>
-              <div className="flex w-full max-w-md gap-2">
-                <Input
-                  placeholder="WCA ID"
-                  value={wcaId}
-                  onChange={(e) => setWcaId(e.target.value.toUpperCase())}
-                  onKeyDown={(e) => e.key === "Enter" && fetchStats()}
-                  disabled={loading}
-                  className="input-editorial flex-1"
+                <div className="mt-8 flex flex-wrap gap-2">
+                  <span className="rounded-full border border-border px-3 py-1 text-[11px] font-semibold text-muted-foreground">
+                    Official WCA data
+                  </span>
+                  <span className="rounded-full border border-border px-3 py-1 text-[11px] font-semibold text-muted-foreground">
+                    All events
+                  </span>
+                  <span className="rounded-full border border-border px-3 py-1 text-[11px] font-semibold text-muted-foreground">
+                    True percentiles
+                  </span>
+                </div>
+              </motion.div>
+
+              <motion.div
+                className="md:col-span-5"
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.08, ease }}
+              >
+                <LookupForm
+                  wcaId={wcaId}
+                  setWcaId={setWcaId}
+                  loading={loading}
+                  error={error}
+                  onSubmit={fetchStats}
                 />
-                <Button
-                  onClick={fetchStats}
-                  disabled={loading}
-                  className="btn-solid h-11 rounded-md px-4 shrink-0"
-                  data-cursor="hover"
-                >
-                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Go"}
-                </Button>
-              </div>
-            </div>
-            <AnimatePresence>
-              {error && (
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="mt-3 text-sm text-red-400"
-                >
-                  {error}
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </section>
-        )}
+              </motion.div>
+            </section>
+          )}
 
-        {loading && (
-          <section className="py-10">
-            <LoadingSkeleton />
-          </section>
-        )}
+          {(hasResults || loading) && (
+            <section className="border-b border-border py-8">
+              <LookupForm
+                wcaId={wcaId}
+                setWcaId={setWcaId}
+                loading={loading}
+                error={error}
+                onSubmit={fetchStats}
+                compact
+              />
+            </section>
+          )}
 
-        {playerInfo && !loading && (
-          <section className="py-10">
-            <Reveal>
-              <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-                <div className="flex items-start gap-4">
-                  {playerInfo.avatar?.url ? (
-                    <img
-                      src={playerInfo.avatar.url}
-                      alt={playerInfo.name}
-                      className="h-16 w-16 rounded-full object-cover border border-border"
-                    />
-                  ) : (
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border text-lg font-medium text-muted-foreground">
-                      {playerInfo.name.charAt(0)}
+          {loading && (
+            <section className="py-12">
+              <LoadingSkeleton />
+            </section>
+          )}
+
+          {playerInfo && !loading && (
+            <section className="py-10 sm:py-12">
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, ease }}
+                className="bezel"
+              >
+                <div className="bezel-inner relative overflow-hidden p-6 sm:p-8">
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[var(--rank-nr)]/6 via-transparent to-[var(--rank-cr)]/5" />
+                  <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-5">
+                      {playerInfo.avatar?.url ? (
+                        <img
+                          src={playerInfo.avatar.url}
+                          alt={playerInfo.name}
+                          className="cube-frame h-20 w-20 object-cover sm:h-24 sm:w-24"
+                        />
+                      ) : (
+                        <div className="cube-frame flex h-20 w-20 items-center justify-center bg-secondary font-display text-2xl font-bold text-muted-foreground sm:h-24 sm:w-24 sm:text-3xl">
+                          {playerInfo.name.charAt(0)}
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--rank-nr)]">
+                          Competitor
+                        </p>
+                        <h2 className="font-display mt-1 text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+                          {playerInfo.name}
+                        </h2>
+                        <div className="mt-2.5 flex flex-wrap items-center gap-2.5 text-sm text-muted-foreground">
+                          <img
+                            src={`https://flagcdn.com/20x15/${playerInfo.country.iso2}.png`}
+                            alt={playerInfo.country.name}
+                            className="rounded-[2px]"
+                          />
+                          <span className="font-medium">{playerInfo.country.name}</span>
+                          <span className="text-border">/</span>
+                          <Badge
+                            variant="outline"
+                            className="rounded border-border bg-secondary font-data text-[11px] font-semibold tabular-nums"
+                          >
+                            {playerInfo.wca_id}
+                          </Badge>
+                          {eventCount > 0 && (
+                            <>
+                              <span className="text-border">/</span>
+                              <span className="font-semibold text-foreground">
+                                <CountUp value={eventCount} /> events
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  )}
-                  <div>
-                    <h2 className="text-2xl sm:text-3xl font-medium tracking-tight text-foreground">
-                      {playerInfo.name}
-                    </h2>
-                    <div className="mt-2 flex flex-wrap items-center gap-2.5 text-sm text-muted-foreground">
-                      <img
-                        src={`https://flagcdn.com/20x15/${playerInfo.country.iso2}.png`}
-                        alt={playerInfo.country.name}
-                        className="rounded-[2px]"
-                      />
-                      <span>{playerInfo.country.name}</span>
-                      <span className="text-border">·</span>
-                      <Badge
-                        variant="outline"
-                        className="font-mono text-[11px] tabular-nums rounded border-border bg-transparent font-normal"
+                    <a
+                      href={`https://www.worldcubeassociation.org/persons/${playerInfo.wca_id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-ghost relative inline-flex items-center gap-2 self-start rounded-full px-4 py-2 text-sm"
+                    >
+                      WCA profile
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </a>
+                  </div>
+                  {rankTotalsSource ? (
+                    <p className="relative mt-6 border-t border-border pt-4 text-xs text-muted-foreground">
+                      Rank totals as of {formatExportDate(rankTotalsSource.exportDate)}.{" "}
+                      <a
+                        href={rankTotalsSource.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="underline underline-offset-2 hover:text-foreground"
                       >
-                        {playerInfo.wca_id}
-                      </Badge>
-                      {eventCount > 0 && (
+                        {rankTotalsSource.attribution}
+                      </a>
+                    </p>
+                  ) : (
+                    <p className="relative mt-6 border-t border-border pt-4 text-xs text-amber-400">
+                      Official ranks loaded; percentage totals temporarily unavailable.
+                    </p>
+                  )}
+                </div>
+              </motion.div>
+
+              {highlight && (
+                <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                  <div className="bezel">
+                    <div className="bezel-inner p-5 sm:p-6">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                        Peak WR percentile
+                      </p>
+                      {highlight.best ? (
                         <>
-                          <span className="text-border">·</span>
-                          <span>
-                            <CountUp value={eventCount} className="text-foreground font-medium" />{" "}
-                            events
-                          </span>
+                          <p className="time-display mt-3 text-4xl text-foreground sm:text-5xl">
+                            {formatTopPercent(highlight.best.topPercent)}
+                          </p>
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            {eventDisplayName(highlight.best.eventId)} · {highlight.best.kind}
+                          </p>
+                          <p className="stat-num mt-1 text-xs text-muted-foreground">
+                            #{highlight.best.wr.toLocaleString()} · {highlight.best.time}
+                          </p>
                         </>
+                      ) : (
+                        <p className="mt-3 text-sm text-muted-foreground">No WR % yet</p>
                       )}
                     </div>
                   </div>
+                  <div className="bezel">
+                    <div className="bezel-inner p-5 sm:p-6">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                        Best world rank
+                      </p>
+                      {highlight.bestSingle ? (
+                        <>
+                          <p className="time-display mt-3 text-4xl text-foreground sm:text-5xl">
+                            #{highlight.bestSingle.wr.toLocaleString()}
+                          </p>
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            {eventDisplayName(highlight.bestSingle.eventId)} single
+                          </p>
+                          <p className="stat-num mt-1 text-xs text-muted-foreground">
+                            {highlight.bestSingle.time}
+                          </p>
+                        </>
+                      ) : (
+                        <p className="mt-3 text-sm text-muted-foreground">No singles</p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="bezel">
+                    <div className="bezel-inner p-5 sm:p-6">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                        Events ranked
+                      </p>
+                      <p className="time-display mt-3 text-4xl text-foreground sm:text-5xl">
+                        <CountUp value={eventCount} />
+                      </p>
+                      <p className="mt-2 text-sm text-muted-foreground">With official PRs</p>
+                      <div className="mt-3 flex gap-1">
+                        <span className="facelet facelet-nr">NR</span>
+                        <span className="facelet facelet-cr">CR</span>
+                        <span className="facelet facelet-wr">WR</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <a
-                  href={`https://www.worldcubeassociation.org/persons/${playerInfo.wca_id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-                  data-cursor="hover"
-                >
-                  WCA profile
-                  <ExternalLink className="h-3.5 w-3.5" />
-                </a>
-              </div>
-              {rankTotalsSource ? (
-                <p className="mt-4 text-xs text-muted-foreground">
-                  Rank totals as of {formatExportDate(rankTotalsSource.exportDate)}.{" "}
-                  <a
-                    href={rankTotalsSource.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="underline underline-offset-2 hover:text-foreground"
-                  >
-                    {rankTotalsSource.attribution}
-                  </a>
-                </p>
-              ) : (
-                <p className="mt-4 text-xs text-amber-500/90">
-                  Official ranks loaded; percentage totals temporarily unavailable.
-                </p>
               )}
-            </Reveal>
-          </section>
-        )}
+            </section>
+          )}
 
-        {eventsData && playerInfo && !loading && (
-          <section className="pb-16">
-            <div className="mb-5 flex items-baseline justify-between border-b border-border pb-3">
-              <h3 className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                Results
-              </h3>
-              <span className="text-xs tabular-nums text-muted-foreground">
-                {eventCount} events
-              </span>
-            </div>
-            <Stagger
-              className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
-              stagger={0.04}
-            >
-              {Object.entries(eventsData).map(([eventId, eventStats]) => (
-                <StaggerItem key={eventId} className="h-full min-h-0">
-                  <EventCard eventId={eventId} eventStats={eventStats} playerInfo={playerInfo} />
-                </StaggerItem>
-              ))}
-            </Stagger>
-          </section>
-        )}
-      </main>
+          {eventsData && playerInfo && !loading && (
+            <section className="pb-20">
+              <div className="mb-6 flex items-end justify-between border-b border-border pb-4">
+                <div>
+                  <h3 className="font-display text-2xl font-extrabold tracking-tight">
+                    Event board
+                  </h3>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Face by face · times, ranks, percentiles
+                  </p>
+                </div>
+                <span className="stat-num text-sm text-muted-foreground">
+                  {eventCount} events
+                </span>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {sortedEvents.map(([eventId, eventStats], index) => (
+                  <EventCard
+                    key={eventId}
+                    eventId={eventId}
+                    eventStats={eventStats}
+                    playerInfo={playerInfo}
+                    featured={FEATURED_EVENTS.has(eventId)}
+                    index={index}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+        </main>
 
-      <footer className="border-t border-border">
-        <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <p className="text-xs text-muted-foreground">
-            Records derived from official WCA data
-          </p>
-          <p className="text-xs text-muted-foreground">Cubify</p>
-        </div>
-      </footer>
+        <SiteFooter />
+      </div>
     </div>
   )
 }

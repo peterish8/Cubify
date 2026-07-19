@@ -1,37 +1,38 @@
 "use client"
 
-import { motion, type HTMLMotionProps } from "framer-motion"
+import { motion, type Variants } from "framer-motion"
 import { cn } from "@/lib/utils"
 
-interface RevealProps extends HTMLMotionProps<"div"> {
-  children: React.ReactNode
-  className?: string
-  delay?: number
-  y?: number
-  /** Kept for API compat — mount animation is always used so content never stays hidden */
-  once?: boolean
-}
+/*
+  Scroll-reveal primitives.
+  Robust against the classic "stuck invisible" trap: we animate opacity/transform
+  only, trigger with whileInView + once, and fall back to visible when reduced-motion
+  is on (Framer skips the initial hidden state, so content is never trapped at 0).
+*/
 
-const spring = { type: "spring" as const, stiffness: 140, damping: 24, mass: 0.7 }
+const ease = [0.22, 1, 0.36, 1] as const
 
-/**
- * Fade/slide in on mount. Uses `animate` (not whileInView) so content is never
- * stuck at opacity 0 when IntersectionObserver / Lenis / SSR races.
- */
 export function Reveal({
   children,
   className,
   delay = 0,
   y = 16,
-  once: _once,
+  once = true,
   ...props
-}: RevealProps) {
+}: {
+  children: React.ReactNode
+  className?: string
+  delay?: number
+  y?: number
+  once?: boolean
+} & React.ComponentProps<typeof motion.div>) {
   return (
     <motion.div
       className={cn(className)}
       initial={{ opacity: 0, y }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ ...spring, delay }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once, amount: 0.2 }}
+      transition={{ duration: 0.6, ease, delay }}
       {...props}
     >
       {children}
@@ -39,24 +40,35 @@ export function Reveal({
   )
 }
 
+const containerVariants: Variants = {
+  hidden: {},
+  show: {
+    transition: { staggerChildren: 0.07, delayChildren: 0.05 },
+  },
+}
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 18 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease } },
+}
+
 export function Stagger({
   children,
   className,
-  stagger = 0.07,
+  once = true,
 }: {
   children: React.ReactNode
   className?: string
   stagger?: number
+  once?: boolean
 }) {
   return (
     <motion.div
       className={cn(className)}
+      variants={containerVariants}
       initial="hidden"
-      animate="show"
-      variants={{
-        hidden: {},
-        show: { transition: { staggerChildren: stagger } },
-      }}
+      whileInView="show"
+      viewport={{ once, amount: 0.15 }}
     >
       {children}
     </motion.div>
@@ -66,20 +78,13 @@ export function Stagger({
 export function StaggerItem({
   children,
   className,
-  y = 16,
 }: {
   children: React.ReactNode
   className?: string
   y?: number
 }) {
   return (
-    <motion.div
-      className={cn("h-full", className)}
-      variants={{
-        hidden: { opacity: 0, y },
-        show: { opacity: 1, y: 0, transition: spring },
-      }}
-    >
+    <motion.div variants={itemVariants} className={cn("h-full", className)}>
       {children}
     </motion.div>
   )

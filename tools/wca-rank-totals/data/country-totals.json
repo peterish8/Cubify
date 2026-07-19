@@ -1,0 +1,1010 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "name": "World Cube Association Results Export",
+    "exportDate": "2026-07-18T00:00:26Z",
+    "exportFormatVersion": "2.0.2",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_199_20260718T000026Z.tsv.zip",
+    "url": "https://www.worldcubeassociation.org/export/results",
+    "attribution": "Based on competition results owned and maintained by the World Cube Association."
+  },
+  "totalCubers": 292637,
+  "countries": [
+    {
+      "iso2": "US",
+      "name": "United States",
+      "continentId": "_North America",
+      "cubers": 61067
+    },
+    {
+      "iso2": "CN",
+      "name": "China",
+      "continentId": "_Asia",
+      "cubers": 28966
+    },
+    {
+      "iso2": "IN",
+      "name": "India",
+      "continentId": "_Asia",
+      "cubers": 21081
+    },
+    {
+      "iso2": "AU",
+      "name": "Australia",
+      "continentId": "_Oceania",
+      "cubers": 11948
+    },
+    {
+      "iso2": "CA",
+      "name": "Canada",
+      "continentId": "_North America",
+      "cubers": 10719
+    },
+    {
+      "iso2": "BR",
+      "name": "Brazil",
+      "continentId": "_South America",
+      "cubers": 10026
+    },
+    {
+      "iso2": "GB",
+      "name": "United Kingdom",
+      "continentId": "_Europe",
+      "cubers": 6891
+    },
+    {
+      "iso2": "PL",
+      "name": "Poland",
+      "continentId": "_Europe",
+      "cubers": 6823
+    },
+    {
+      "iso2": "RU",
+      "name": "Russia",
+      "continentId": "_Europe",
+      "cubers": 6794
+    },
+    {
+      "iso2": "PH",
+      "name": "Philippines",
+      "continentId": "_Asia",
+      "cubers": 6215
+    },
+    {
+      "iso2": "CO",
+      "name": "Colombia",
+      "continentId": "_South America",
+      "cubers": 6027
+    },
+    {
+      "iso2": "ES",
+      "name": "Spain",
+      "continentId": "_Europe",
+      "cubers": 5380
+    },
+    {
+      "iso2": "FR",
+      "name": "France",
+      "continentId": "_Europe",
+      "cubers": 4846
+    },
+    {
+      "iso2": "PE",
+      "name": "Peru",
+      "continentId": "_South America",
+      "cubers": 4561
+    },
+    {
+      "iso2": "KR",
+      "name": "Republic of Korea",
+      "continentId": "_Asia",
+      "cubers": 4486
+    },
+    {
+      "iso2": "MX",
+      "name": "Mexico",
+      "continentId": "_North America",
+      "cubers": 4357
+    },
+    {
+      "iso2": "ID",
+      "name": "Indonesia",
+      "continentId": "_Asia",
+      "cubers": 4308
+    },
+    {
+      "iso2": "DE",
+      "name": "Germany",
+      "continentId": "_Europe",
+      "cubers": 4185
+    },
+    {
+      "iso2": "TW",
+      "name": "Chinese Taipei",
+      "continentId": "_Asia",
+      "cubers": 4055
+    },
+    {
+      "iso2": "MY",
+      "name": "Malaysia",
+      "continentId": "_Asia",
+      "cubers": 3815
+    },
+    {
+      "iso2": "JP",
+      "name": "Japan",
+      "continentId": "_Asia",
+      "cubers": 3313
+    },
+    {
+      "iso2": "SE",
+      "name": "Sweden",
+      "continentId": "_Europe",
+      "cubers": 2993
+    },
+    {
+      "iso2": "VN",
+      "name": "Vietnam",
+      "continentId": "_Asia",
+      "cubers": 2977
+    },
+    {
+      "iso2": "IT",
+      "name": "Italy",
+      "continentId": "_Europe",
+      "cubers": 2970
+    },
+    {
+      "iso2": "UA",
+      "name": "Ukraine",
+      "continentId": "_Europe",
+      "cubers": 2962
+    },
+    {
+      "iso2": "BO",
+      "name": "Bolivia",
+      "continentId": "_South America",
+      "cubers": 2648
+    },
+    {
+      "iso2": "NL",
+      "name": "Netherlands",
+      "continentId": "_Europe",
+      "cubers": 2367
+    },
+    {
+      "iso2": "MN",
+      "name": "Mongolia",
+      "continentId": "_Asia",
+      "cubers": 2345
+    },
+    {
+      "iso2": "TR",
+      "name": "Turkey",
+      "continentId": "_Europe",
+      "cubers": 2286
+    },
+    {
+      "iso2": "ZA",
+      "name": "South Africa",
+      "continentId": "_Africa",
+      "cubers": 2201
+    },
+    {
+      "iso2": "CL",
+      "name": "Chile",
+      "continentId": "_South America",
+      "cubers": 2159
+    },
+    {
+      "iso2": "NZ",
+      "name": "New Zealand",
+      "continentId": "_Oceania",
+      "cubers": 2136
+    },
+    {
+      "iso2": "IL",
+      "name": "Israel",
+      "continentId": "_Europe",
+      "cubers": 2059
+    },
+    {
+      "iso2": "TH",
+      "name": "Thailand",
+      "continentId": "_Asia",
+      "cubers": 1955
+    },
+    {
+      "iso2": "AR",
+      "name": "Argentina",
+      "continentId": "_South America",
+      "cubers": 1794
+    },
+    {
+      "iso2": "NO",
+      "name": "Norway",
+      "continentId": "_Europe",
+      "cubers": 1669
+    },
+    {
+      "iso2": "IR",
+      "name": "Iran",
+      "continentId": "_Asia",
+      "cubers": 1655
+    },
+    {
+      "iso2": "SG",
+      "name": "Singapore",
+      "continentId": "_Asia",
+      "cubers": 1637
+    },
+    {
+      "iso2": "RO",
+      "name": "Romania",
+      "continentId": "_Europe",
+      "cubers": 1607
+    },
+    {
+      "iso2": "IE",
+      "name": "Ireland",
+      "continentId": "_Europe",
+      "cubers": 1468
+    },
+    {
+      "iso2": "HK",
+      "name": "Hong Kong, China",
+      "continentId": "_Asia",
+      "cubers": 1393
+    },
+    {
+      "iso2": "KZ",
+      "name": "Kazakhstan",
+      "continentId": "_Asia",
+      "cubers": 1359
+    },
+    {
+      "iso2": "HU",
+      "name": "Hungary",
+      "continentId": "_Europe",
+      "cubers": 1299
+    },
+    {
+      "iso2": "GT",
+      "name": "Guatemala",
+      "continentId": "_North America",
+      "cubers": 1253
+    },
+    {
+      "iso2": "DK",
+      "name": "Denmark",
+      "continentId": "_Europe",
+      "cubers": 1226
+    },
+    {
+      "iso2": "CH",
+      "name": "Switzerland",
+      "continentId": "_Europe",
+      "cubers": 1225
+    },
+    {
+      "iso2": "EC",
+      "name": "Ecuador",
+      "continentId": "_South America",
+      "cubers": 1154
+    },
+    {
+      "iso2": "BE",
+      "name": "Belgium",
+      "continentId": "_Europe",
+      "cubers": 1114
+    },
+    {
+      "iso2": "GR",
+      "name": "Greece",
+      "continentId": "_Europe",
+      "cubers": 1033
+    },
+    {
+      "iso2": "VE",
+      "name": "Venezuela",
+      "continentId": "_South America",
+      "cubers": 997
+    },
+    {
+      "iso2": "FI",
+      "name": "Finland",
+      "continentId": "_Europe",
+      "cubers": 910
+    },
+    {
+      "iso2": "CZ",
+      "name": "Czech Republic",
+      "continentId": "_Europe",
+      "cubers": 797
+    },
+    {
+      "iso2": "BY",
+      "name": "Belarus",
+      "continentId": "_Europe",
+      "cubers": 774
+    },
+    {
+      "iso2": "BD",
+      "name": "Bangladesh",
+      "continentId": "_Asia",
+      "cubers": 734
+    },
+    {
+      "iso2": "DO",
+      "name": "Dominican Republic",
+      "continentId": "_North America",
+      "cubers": 614
+    },
+    {
+      "iso2": "BG",
+      "name": "Bulgaria",
+      "continentId": "_Europe",
+      "cubers": 612
+    },
+    {
+      "iso2": "LK",
+      "name": "Sri Lanka",
+      "continentId": "_Asia",
+      "cubers": 599
+    },
+    {
+      "iso2": "NP",
+      "name": "Nepal",
+      "continentId": "_Asia",
+      "cubers": 565
+    },
+    {
+      "iso2": "PT",
+      "name": "Portugal",
+      "continentId": "_Europe",
+      "cubers": 556
+    },
+    {
+      "iso2": "UY",
+      "name": "Uruguay",
+      "continentId": "_South America",
+      "cubers": 534
+    },
+    {
+      "iso2": "AT",
+      "name": "Austria",
+      "continentId": "_Europe",
+      "cubers": 532
+    },
+    {
+      "iso2": "EG",
+      "name": "Egypt",
+      "continentId": "_Africa",
+      "cubers": 493
+    },
+    {
+      "iso2": "UZ",
+      "name": "Uzbekistan",
+      "continentId": "_Asia",
+      "cubers": 474
+    },
+    {
+      "iso2": "SK",
+      "name": "Slovakia",
+      "continentId": "_Europe",
+      "cubers": 460
+    },
+    {
+      "iso2": "RS",
+      "name": "Serbia",
+      "continentId": "_Europe",
+      "cubers": 425
+    },
+    {
+      "iso2": "SI",
+      "name": "Slovenia",
+      "continentId": "_Europe",
+      "cubers": 389
+    },
+    {
+      "iso2": "CR",
+      "name": "Costa Rica",
+      "continentId": "_North America",
+      "cubers": 385
+    },
+    {
+      "iso2": "JO",
+      "name": "Jordan",
+      "continentId": "_Asia",
+      "cubers": 385
+    },
+    {
+      "iso2": "KE",
+      "name": "Kenya",
+      "continentId": "_Africa",
+      "cubers": 379
+    },
+    {
+      "iso2": "DZ",
+      "name": "Algeria",
+      "continentId": "_Africa",
+      "cubers": 378
+    },
+    {
+      "iso2": "AZ",
+      "name": "Azerbaijan",
+      "continentId": "_Europe",
+      "cubers": 376
+    },
+    {
+      "iso2": "SV",
+      "name": "El Salvador",
+      "continentId": "_North America",
+      "cubers": 372
+    },
+    {
+      "iso2": "HR",
+      "name": "Croatia",
+      "continentId": "_Europe",
+      "cubers": 369
+    },
+    {
+      "iso2": "PY",
+      "name": "Paraguay",
+      "continentId": "_South America",
+      "cubers": 350
+    },
+    {
+      "iso2": "LV",
+      "name": "Latvia",
+      "continentId": "_Europe",
+      "cubers": 329
+    },
+    {
+      "iso2": "LT",
+      "name": "Lithuania",
+      "continentId": "_Europe",
+      "cubers": 327
+    },
+    {
+      "iso2": "EE",
+      "name": "Estonia",
+      "continentId": "_Europe",
+      "cubers": 322
+    },
+    {
+      "iso2": "NG",
+      "name": "Nigeria",
+      "continentId": "_Africa",
+      "cubers": 310
+    },
+    {
+      "iso2": "PK",
+      "name": "Pakistan",
+      "continentId": "_Asia",
+      "cubers": 301
+    },
+    {
+      "iso2": "TN",
+      "name": "Tunisia",
+      "continentId": "_Africa",
+      "cubers": 288
+    },
+    {
+      "iso2": "PA",
+      "name": "Panama",
+      "continentId": "_North America",
+      "cubers": 286
+    },
+    {
+      "iso2": "HN",
+      "name": "Honduras",
+      "continentId": "_North America",
+      "cubers": 234
+    },
+    {
+      "iso2": "KG",
+      "name": "Kyrgyzstan",
+      "continentId": "_Asia",
+      "cubers": 230
+    },
+    {
+      "iso2": "AM",
+      "name": "Armenia",
+      "continentId": "_Europe",
+      "cubers": 225
+    },
+    {
+      "iso2": "GE",
+      "name": "Georgia",
+      "continentId": "_Europe",
+      "cubers": 222
+    },
+    {
+      "iso2": "MA",
+      "name": "Morocco",
+      "continentId": "_Africa",
+      "cubers": 212
+    },
+    {
+      "iso2": "IS",
+      "name": "Iceland",
+      "continentId": "_Europe",
+      "cubers": 209
+    },
+    {
+      "iso2": "CY",
+      "name": "Cyprus",
+      "continentId": "_Europe",
+      "cubers": 207
+    },
+    {
+      "iso2": "PS",
+      "name": "Palestine",
+      "continentId": "_Asia",
+      "cubers": 194
+    },
+    {
+      "iso2": "MG",
+      "name": "Madagascar",
+      "continentId": "_Africa",
+      "cubers": 189
+    },
+    {
+      "iso2": "KW",
+      "name": "Kuwait",
+      "continentId": "_Asia",
+      "cubers": 182
+    },
+    {
+      "iso2": "MK",
+      "name": "North Macedonia",
+      "continentId": "_Europe",
+      "cubers": 165
+    },
+    {
+      "iso2": "BA",
+      "name": "Bosnia and Herzegovina",
+      "continentId": "_Europe",
+      "cubers": 150
+    },
+    {
+      "iso2": "MD",
+      "name": "Moldova",
+      "continentId": "_Europe",
+      "cubers": 144
+    },
+    {
+      "iso2": "MU",
+      "name": "Mauritius",
+      "continentId": "_Africa",
+      "cubers": 107
+    },
+    {
+      "iso2": "AO",
+      "name": "Angola",
+      "continentId": "_Africa",
+      "cubers": 96
+    },
+    {
+      "iso2": "BH",
+      "name": "Bahrain",
+      "continentId": "_Asia",
+      "cubers": 92
+    },
+    {
+      "iso2": "KH",
+      "name": "Cambodia",
+      "continentId": "_Asia",
+      "cubers": 89
+    },
+    {
+      "iso2": "SA",
+      "name": "Saudi Arabia",
+      "continentId": "_Asia",
+      "cubers": 83
+    },
+    {
+      "iso2": "LB",
+      "name": "Lebanon",
+      "continentId": "_Asia",
+      "cubers": 77
+    },
+    {
+      "iso2": "LU",
+      "name": "Luxembourg",
+      "continentId": "_Europe",
+      "cubers": 71
+    },
+    {
+      "iso2": "GH",
+      "name": "Ghana",
+      "continentId": "_Africa",
+      "cubers": 69
+    },
+    {
+      "iso2": "SY",
+      "name": "Syria",
+      "continentId": "_Asia",
+      "cubers": 68
+    },
+    {
+      "iso2": "ME",
+      "name": "Montenegro",
+      "continentId": "_Europe",
+      "cubers": 59
+    },
+    {
+      "iso2": "TT",
+      "name": "Trinidad and Tobago",
+      "continentId": "_North America",
+      "cubers": 57
+    },
+    {
+      "iso2": "MO",
+      "name": "Macau, China",
+      "continentId": "_Asia",
+      "cubers": 51
+    },
+    {
+      "iso2": "AE",
+      "name": "United Arab Emirates",
+      "continentId": "_Asia",
+      "cubers": 49
+    },
+    {
+      "iso2": "AL",
+      "name": "Albania",
+      "continentId": "_Europe",
+      "cubers": 46
+    },
+    {
+      "iso2": "MT",
+      "name": "Malta",
+      "continentId": "_Europe",
+      "cubers": 45
+    },
+    {
+      "iso2": "AD",
+      "name": "Andorra",
+      "continentId": "_Europe",
+      "cubers": 42
+    },
+    {
+      "iso2": "FJ",
+      "name": "Fiji",
+      "continentId": "_Oceania",
+      "cubers": 31
+    },
+    {
+      "iso2": "TJ",
+      "name": "Tajikistan",
+      "continentId": "_Asia",
+      "cubers": 31
+    },
+    {
+      "iso2": "UG",
+      "name": "Uganda",
+      "continentId": "_Africa",
+      "cubers": 31
+    },
+    {
+      "iso2": "BB",
+      "name": "Barbados",
+      "continentId": "_North America",
+      "cubers": 29
+    },
+    {
+      "iso2": "AF",
+      "name": "Afghanistan",
+      "continentId": "_Asia",
+      "cubers": 27
+    },
+    {
+      "iso2": "IQ",
+      "name": "Iraq",
+      "continentId": "_Asia",
+      "cubers": 27
+    },
+    {
+      "iso2": "BZ",
+      "name": "Belize",
+      "continentId": "_North America",
+      "cubers": 26
+    },
+    {
+      "iso2": "XK",
+      "name": "Kosovo",
+      "continentId": "_Europe",
+      "cubers": 26
+    },
+    {
+      "iso2": "LA",
+      "name": "Laos",
+      "continentId": "_Asia",
+      "cubers": 24
+    },
+    {
+      "iso2": "CI",
+      "name": "Côte d'Ivoire",
+      "continentId": "_Africa",
+      "cubers": 22
+    },
+    {
+      "iso2": "ZW",
+      "name": "Zimbabwe",
+      "continentId": "_Africa",
+      "cubers": 22
+    },
+    {
+      "iso2": "OM",
+      "name": "Oman",
+      "continentId": "_Asia",
+      "cubers": 15
+    },
+    {
+      "iso2": "CU",
+      "name": "Cuba",
+      "continentId": "_North America",
+      "cubers": 14
+    },
+    {
+      "iso2": "LY",
+      "name": "Libya",
+      "continentId": "_Africa",
+      "cubers": 14
+    },
+    {
+      "iso2": "MM",
+      "name": "Myanmar",
+      "continentId": "_Asia",
+      "cubers": 14
+    },
+    {
+      "iso2": "SD",
+      "name": "Sudan",
+      "continentId": "_Africa",
+      "cubers": 14
+    },
+    {
+      "iso2": "BS",
+      "name": "Bahamas",
+      "continentId": "_North America",
+      "cubers": 13
+    },
+    {
+      "iso2": "YE",
+      "name": "Yemen",
+      "continentId": "_Asia",
+      "cubers": 12
+    },
+    {
+      "iso2": "CV",
+      "name": "Cabo Verde",
+      "continentId": "_Africa",
+      "cubers": 11
+    },
+    {
+      "iso2": "NI",
+      "name": "Nicaragua",
+      "continentId": "_North America",
+      "cubers": 10
+    },
+    {
+      "iso2": "WS",
+      "name": "Samoa",
+      "continentId": "_Oceania",
+      "cubers": 10
+    },
+    {
+      "iso2": "BN",
+      "name": "Brunei",
+      "continentId": "_Asia",
+      "cubers": 9
+    },
+    {
+      "iso2": "ET",
+      "name": "Ethiopia",
+      "continentId": "_Africa",
+      "cubers": 9
+    },
+    {
+      "iso2": "MZ",
+      "name": "Mozambique",
+      "continentId": "_Africa",
+      "cubers": 8
+    },
+    {
+      "iso2": "PG",
+      "name": "Papua New Guinea",
+      "continentId": "_Oceania",
+      "cubers": 8
+    },
+    {
+      "iso2": "TO",
+      "name": "Tonga",
+      "continentId": "_Oceania",
+      "cubers": 8
+    },
+    {
+      "iso2": "JM",
+      "name": "Jamaica",
+      "continentId": "_North America",
+      "cubers": 6
+    },
+    {
+      "iso2": "TM",
+      "name": "Turkmenistan",
+      "continentId": "_Asia",
+      "cubers": 6
+    },
+    {
+      "iso2": "NA",
+      "name": "Namibia",
+      "continentId": "_Africa",
+      "cubers": 5
+    },
+    {
+      "iso2": "BT",
+      "name": "Bhutan",
+      "continentId": "_Asia",
+      "cubers": 4
+    },
+    {
+      "iso2": "KN",
+      "name": "Saint Kitts and Nevis",
+      "continentId": "_North America",
+      "cubers": 4
+    },
+    {
+      "iso2": "LI",
+      "name": "Liechtenstein",
+      "continentId": "_Europe",
+      "cubers": 4
+    },
+    {
+      "iso2": "MW",
+      "name": "Malawi",
+      "continentId": "_Africa",
+      "cubers": 4
+    },
+    {
+      "iso2": "QA",
+      "name": "Qatar",
+      "continentId": "_Asia",
+      "cubers": 4
+    },
+    {
+      "iso2": "SR",
+      "name": "Suriname",
+      "continentId": "_South America",
+      "cubers": 4
+    },
+    {
+      "iso2": "TZ",
+      "name": "Tanzania",
+      "continentId": "_Africa",
+      "cubers": 4
+    },
+    {
+      "iso2": "CM",
+      "name": "Cameroon",
+      "continentId": "_Africa",
+      "cubers": 3
+    },
+    {
+      "iso2": "ER",
+      "name": "Eritrea",
+      "continentId": "_Africa",
+      "cubers": 3
+    },
+    {
+      "iso2": "LS",
+      "name": "Lesotho",
+      "continentId": "_Africa",
+      "cubers": 3
+    },
+    {
+      "iso2": "ZM",
+      "name": "Zambia",
+      "continentId": "_Africa",
+      "cubers": 3
+    },
+    {
+      "iso2": "CD",
+      "name": "Democratic Republic of the Congo",
+      "continentId": "_Africa",
+      "cubers": 2
+    },
+    {
+      "iso2": "CG",
+      "name": "Congo",
+      "continentId": "_Africa",
+      "cubers": 2
+    },
+    {
+      "iso2": "HT",
+      "name": "Haiti",
+      "continentId": "_North America",
+      "cubers": 2
+    },
+    {
+      "iso2": "LC",
+      "name": "Saint Lucia",
+      "continentId": "_North America",
+      "cubers": 2
+    },
+    {
+      "iso2": "RW",
+      "name": "Rwanda",
+      "continentId": "_Africa",
+      "cubers": 2
+    },
+    {
+      "iso2": "SN",
+      "name": "Senegal",
+      "continentId": "_Africa",
+      "cubers": 2
+    },
+    {
+      "iso2": "AG",
+      "name": "Antigua and Barbuda",
+      "continentId": "_North America",
+      "cubers": 1
+    },
+    {
+      "iso2": "BW",
+      "name": "Botswana",
+      "continentId": "_Africa",
+      "cubers": 1
+    },
+    {
+      "iso2": "GD",
+      "name": "Grenada",
+      "continentId": "_North America",
+      "cubers": 1
+    },
+    {
+      "iso2": "GY",
+      "name": "Guyana",
+      "continentId": "_South America",
+      "cubers": 1
+    },
+    {
+      "iso2": "MC",
+      "name": "Monaco",
+      "continentId": "_Europe",
+      "cubers": 1
+    },
+    {
+      "iso2": "MR",
+      "name": "Mauritania",
+      "continentId": "_Africa",
+      "cubers": 1
+    },
+    {
+      "iso2": "MV",
+      "name": "Maldives",
+      "continentId": "_Asia",
+      "cubers": 1
+    },
+    {
+      "iso2": "SM",
+      "name": "San Marino",
+      "continentId": "_Europe",
+      "cubers": 1
+    },
+    {
+      "iso2": "SO",
+      "name": "Somalia",
+      "continentId": "_Africa",
+      "cubers": 1
+    },
+    {
+      "iso2": "TG",
+      "name": "Togo",
+      "continentId": "_Africa",
+      "cubers": 1
+    }
+  ]
+}
