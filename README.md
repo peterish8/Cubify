@@ -1,8 +1,4 @@
 <p align="center">
-  <img src="docs/brand/hero-banner.svg" alt="Cubify Blue Matrix hero" width="960" />
-</p>
-
-<p align="center">
   <img src="docs/brand/cubify-wordmark.svg" alt="Cubify" width="320" />
 </p>
 
@@ -156,7 +152,6 @@ All graphics use the Blue Matrix palette (`#020617` stage · `#3b82f6` / `#60a5f
 
 | File | What |
 | --- | --- |
-| `hero-banner.svg` | Full-width matrix grid + cube hero |
 | `cubify-wordmark.svg` | Logo + wordmark card |
 | `cubify-cube.svg` | Isometric cube mark |
 | `cubify-facelets.svg` | NR / CR / WR chips |
