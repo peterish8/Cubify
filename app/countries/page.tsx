@@ -6,8 +6,6 @@ import {
   ArrowRight,
   BarChart3,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   ExternalLink,
   Loader2,
   Rows3,
@@ -222,6 +220,7 @@ function VirtualCountryList({
   max: number
 }) {
   const [scrollTop, setScrollTop] = useState(0)
+  const scrollerRef = useRef<HTMLDivElement | null>(null)
   const totalHeight = countries.length * ROW_HEIGHT
   const first = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT) - OVERSCAN)
   const last = Math.min(
@@ -230,8 +229,27 @@ function VirtualCountryList({
   )
   const visible = countries.slice(first, last)
 
+  useEffect(() => {
+    const node = scrollerRef.current
+    if (!node) return
+
+    const onWheel = (event: WheelEvent) => {
+      const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX
+      if (!delta) return
+      const previous = node.scrollTop
+      node.scrollTop += delta
+      if (node.scrollTop !== previous) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+    }
+
+    node.addEventListener("wheel", onWheel, { passive: false })
+    return () => node.removeEventListener("wheel", onWheel)
+  }, [])
+
   return (
-    <div className="bezel">
+    <div className="bezel min-w-0 w-full">
       <div className="bezel-inner overflow-hidden p-0">
         <div className="grid grid-cols-[3.25rem_1fr_auto] border-b border-border px-6 py-3 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground sm:grid-cols-[4.25rem_1.35fr_2fr_auto]">
           <span>Rank</span>
@@ -240,8 +258,10 @@ function VirtualCountryList({
           <span className="text-right">Cubers</span>
         </div>
         <div
+          ref={scrollerRef}
           role="list"
-          className="relative overflow-y-auto overscroll-contain py-3 [scrollbar-color:rgba(96,165,250,0.42)_rgba(8,12,22,0.75)] [scrollbar-width:thin]"
+          data-testid="country-list-scroller"
+          className="relative touch-pan-y overflow-y-auto overscroll-contain py-3 [scrollbar-color:rgba(96,165,250,0.42)_rgba(8,12,22,0.75)] [scrollbar-width:thin]"
           style={{ height: LIST_HEIGHT }}
           onScroll={(event) => setScrollTop(event.currentTarget.scrollTop)}
         >
@@ -378,11 +398,6 @@ function VirtualCountryBars({
     Math.ceil((scrollLeft + viewportWidth) / BAR_WIDTH) + OVERSCAN,
   )
   const visible = countries.slice(first, last)
-  const scrollByPage = (direction: -1 | 1) => {
-    const node = scrollerRef.current
-    if (!node) return
-    node.scrollBy({ left: direction * Math.max(320, node.clientWidth * 0.75), behavior: "smooth" })
-  }
 
   useEffect(() => {
     const node = scrollerRef.current
@@ -401,9 +416,14 @@ function VirtualCountryBars({
     if (!node) return
 
     const onWheel = (event: WheelEvent) => {
-      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return
-      event.preventDefault()
-      node.scrollLeft += event.deltaY
+      const delta = Math.abs(event.deltaX) >= Math.abs(event.deltaY) ? event.deltaX : event.deltaY
+      if (!delta) return
+      const previous = node.scrollLeft
+      node.scrollLeft += delta
+      if (node.scrollLeft !== previous) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
     }
 
     node.addEventListener("wheel", onWheel, { passive: false })
@@ -411,39 +431,19 @@ function VirtualCountryBars({
   }, [])
 
   return (
-    <div className="bezel">
+    <div className="bezel min-w-0 w-full">
       <div className="bezel-inner overflow-hidden p-0">
-        <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
+        <div className="border-b border-border px-5 py-4">
           <div>
             <p className="eyebrow">Vertical bars</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Slide naturally with a trackpad, mouse wheel, or drag. Bars render only as they enter view.
+              Slide sideways with your trackpad gesture or drag the chart. Bars render only as they enter view.
             </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => scrollByPage(-1)}
-              className="btn-ghost inline-flex h-9 w-9 items-center justify-center rounded-lg"
-              aria-label="Previous countries"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <span className="stat-num hidden text-sm text-muted-foreground sm:inline">
-              {countries.length.toLocaleString()} countries
-            </span>
-            <button
-              type="button"
-              onClick={() => scrollByPage(1)}
-              className="btn-ghost inline-flex h-9 w-9 items-center justify-center rounded-lg"
-              aria-label="Next countries"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
           </div>
         </div>
         <div
           ref={scrollerRef}
+          data-testid="country-bar-scroller"
           className="relative cursor-grab touch-pan-x select-none overflow-x-auto overflow-y-hidden overscroll-contain active:cursor-grabbing [scrollbar-color:rgba(var(--theme-bright-rgb),0.42)_rgba(8,12,22,0.75)] [scrollbar-width:thin]"
           style={{ height: CHART_HEIGHT }}
           onScroll={(event) => setScrollLeft(event.currentTarget.scrollLeft)}
@@ -470,22 +470,6 @@ function VirtualCountryBars({
             dragRef.current = null
           }}
         >
-          <button
-            type="button"
-            onClick={() => scrollByPage(-1)}
-            className="btn-ghost absolute left-4 top-1/2 z-20 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full"
-            aria-label="Previous countries"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <button
-            type="button"
-            onClick={() => scrollByPage(1)}
-            className="btn-ghost absolute right-4 top-1/2 z-20 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full"
-            aria-label="Next countries"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
           <div className="relative h-full" style={{ width: totalWidth }}>
             <div className="pointer-events-none absolute inset-x-0 bottom-[112px] h-px bg-border" />
             {visible.map((country, offset) => {
@@ -743,7 +727,7 @@ export default function CountriesPage() {
             )}
 
             {!loading && !error && filtered.length > 0 && (
-              <div className="grid gap-6 lg:grid-cols-[1fr_20rem]">
+              <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
                 {view === "vertical" ? (
                   <VirtualCountryBars countries={filtered} max={overallMax} />
                 ) : (

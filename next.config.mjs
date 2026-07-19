@@ -13,6 +13,7 @@ const nextConfig = {
   typescript: {
     // Type errors must fail the build. `tsc --noEmit` is clean; keep it that way.
     ignoreBuildErrors: false,
+    tsconfigPath: process.env.NEXT_DIST_DIR === ".next-e2e" ? "tsconfig.e2e.json" : "tsconfig.json",
   },
   images: {
     unoptimized: true,

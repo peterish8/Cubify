@@ -32,11 +32,20 @@ function packU8(values: number[]) {
 const countryTotals = {
   schemaVersion: 1,
   source,
-  totalCubers: 6,
+  totalCubers: 165,
   countries: [
-    { iso2: "US", name: "United States", continentId: "_North America", cubers: 3 },
-    { iso2: "IN", name: "India", continentId: "_Asia", cubers: 2 },
-    { iso2: "CA", name: "Canada", continentId: "_North America", cubers: 1 },
+    { iso2: "US", name: "United States", continentId: "_North America", cubers: 30 },
+    { iso2: "IN", name: "India", continentId: "_Asia", cubers: 25 },
+    { iso2: "CA", name: "Canada", continentId: "_North America", cubers: 20 },
+    { iso2: "BR", name: "Brazil", continentId: "_South America", cubers: 18 },
+    { iso2: "GB", name: "United Kingdom", continentId: "_Europe", cubers: 16 },
+    { iso2: "AU", name: "Australia", continentId: "_Oceania", cubers: 14 },
+    { iso2: "PL", name: "Poland", continentId: "_Europe", cubers: 12 },
+    { iso2: "JP", name: "Japan", continentId: "_Asia", cubers: 10 },
+    { iso2: "DE", name: "Germany", continentId: "_Europe", cubers: 8 },
+    { iso2: "FR", name: "France", continentId: "_Europe", cubers: 6 },
+    { iso2: "ES", name: "Spain", continentId: "_Europe", cubers: 4 },
+    { iso2: "MX", name: "Mexico", continentId: "_North America", cubers: 2 },
   ],
 }
 
@@ -176,11 +185,21 @@ test("countries page loads data, filters, and switches graph modes", async ({ pa
   // Scope the total to the "Total cubers" stat card so a bare "6" can't match
   // unrelated text like "67%" or "6 cubers" elsewhere on the page.
   const totalCubersCard = page.locator(".surface-card", { hasText: "Total cubers" })
-  await expect(totalCubersCard.getByText("6", { exact: true })).toBeVisible()
-  await expect(page.getByText("3 ranked countries")).toBeVisible()
+  await expect(totalCubersCard.getByText("165", { exact: true })).toBeVisible()
+  await expect(page.getByText("12 ranked countries")).toBeVisible()
+
+  const barScroller = page.getByTestId("country-bar-scroller")
+  await barScroller.hover()
+  await page.mouse.wheel(0, 900)
+  await expect.poll(() => barScroller.evaluate((node) => node.scrollLeft)).toBeGreaterThan(0)
 
   await page.getByRole("button", { name: /Horizontal/i }).click()
   await expect(page.getByText(/The horizontal view virtualizes/i)).toBeVisible()
+
+  const listScroller = page.getByTestId("country-list-scroller")
+  await listScroller.hover()
+  await page.mouse.wheel(0, 900)
+  await expect.poll(() => listScroller.evaluate((node) => node.scrollTop)).toBeGreaterThan(0)
 
   await page.getByPlaceholder(/Search country/i).fill("India")
   await expect(page.getByText("1 ranked countries")).toBeVisible()
