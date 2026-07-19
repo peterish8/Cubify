@@ -11,13 +11,16 @@
 # production
 /build
 
-# debug
+# debug / local process logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+.next-dev*.log
+*.log
 
 # env files
+.env
 .env*
 
 # vercel
@@ -33,11 +36,8 @@ next-env.d.ts
 tools/wca-rank-totals/.work/
 tools/wca-rank-totals/data/rank-totals.json
 
-.env
-
-.next-dev.out.log
-.next-dev.err.log
-
+# Playwright / local test artifacts
 /test-results/
 /playwright-report/
 /blob-report/
+/test-results

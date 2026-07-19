@@ -1,5 +1,5 @@
 {
-  "name": "my-v0-project",
+  "name": "cubify",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -68,7 +68,7 @@
     "zod": "3.25.67"
   },
   "devDependencies": {
-    "@next/swc-win32-x64-msvc": "14.2.35",
+    "@next/swc-win32-x64-msvc": "14.2.33",
     "@playwright/test": "^1.61.1",
     "@tailwindcss/postcss": "^4.1.9",
     "@types/node": "^22",
