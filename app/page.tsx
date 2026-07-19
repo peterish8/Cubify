@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import {
   calculateTopPercent,
@@ -9,6 +9,7 @@ import {
   getScopedTotals,
   type RankTotalsDocument,
 } from "@/lib/wca-rank-totals"
+import { fetchWcaPerson } from "@/lib/wca-person"
 import { eventDisplayName } from "@/lib/wca-events"
 import { formatResult } from "@/lib/wca-format"
 import { PercentileRing } from "@/components/PercentileRing"
@@ -397,6 +398,7 @@ export default function CubifyAnalyzer() {
     null,
   )
   const [error, setError] = useState("")
+  const abortRef = useRef<AbortController | null>(null)
 
   const calculateStats = (rank: number, totalCompetitors: number | null): RegionStats => ({
     totalCompetitors,
@@ -411,6 +413,11 @@ export default function CubifyAnalyzer() {
       return
     }
 
+    // Cancel any in-flight lookup so a slower earlier response can't overwrite this one.
+    abortRef.current?.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
+
     setLoading(true)
     setError("")
     setPlayerInfo(null)
@@ -418,68 +425,17 @@ export default function CubifyAnalyzer() {
     setRankTotalsSource(null)
 
     try {
-      const rankTotalsPromise: Promise<RankTotalsDocument | null> = fetchRankTotals().catch(
-        (totalsError) => {
-          console.error("Rank percentages are temporarily unavailable", totalsError)
-          return null
-        },
-      )
-      const playerResponse = await fetch(
-        `https://www.worldcubeassociation.org/api/v0/persons/${normalizedWcaId}`,
-      )
+      const rankTotalsPromise: Promise<RankTotalsDocument | null> = fetchRankTotals(
+        controller.signal,
+      ).catch((totalsError) => {
+        if (controller.signal.aborted) return null
+        console.error("Rank percentages are temporarily unavailable", totalsError)
+        return null
+      })
 
-      if (!playerResponse.ok) {
-        throw new Error("Player not found. Check the WCA ID and try again.")
-      }
-
-      const playerData = await playerResponse.json()
-      const player = playerData.person
-
-      if (!player || !player.name) {
-        throw new Error("Invalid player data received from API")
-      }
-
-      const countryIso = (player.country?.iso2 || player.country_iso2 || "XX").toUpperCase()
-      const continentId = player.country?.continent_id || ""
-      const continent = continentId.replace(/^_/, "")
-
-      const transformedPlayer: PlayerInfo = {
-        name: player.name,
-        country: {
-          name: player.country?.name || countryIso,
-          iso2: countryIso.toLowerCase(),
-          continentId,
-        },
-        continent,
-        wca_id: player.wca_id || player.id || normalizedWcaId,
-        avatar: player.avatar?.url ? { url: player.avatar.url } : undefined,
-        personal_records: {},
-      }
-
-      for (const [eventId, records] of Object.entries(playerData.personal_records || {}) as [
-        string,
-        any,
-      ][]) {
-        transformedPlayer.personal_records[eventId] = {}
-
-        if (records.single) {
-          transformedPlayer.personal_records[eventId].single = {
-            best: records.single.best,
-            world_ranking: records.single.world_rank,
-            continental_ranking: records.single.continent_rank,
-            national_ranking: records.single.country_rank,
-          }
-        }
-
-        if (records.average) {
-          transformedPlayer.personal_records[eventId].average = {
-            best: records.average.best,
-            world_ranking: records.average.world_rank,
-            continental_ranking: records.average.continent_rank,
-            national_ranking: records.average.country_rank,
-          }
-        }
-      }
+      const transformedPlayer = await fetchWcaPerson(normalizedWcaId, controller.signal)
+      const countryIso = transformedPlayer.country.iso2
+      const continentId = transformedPlayer.country.continentId
 
       if (Object.keys(transformedPlayer.personal_records).length === 0) {
         throw new Error("No competition records found for this player.")
@@ -536,9 +492,11 @@ export default function CubifyAnalyzer() {
 
       setEventsData(allEventsData)
     } catch (err) {
+      // A superseded lookup was aborted — a newer request owns the UI now.
+      if (controller.signal.aborted) return
       setError(err instanceof Error ? err.message : "An error occurred while fetching data")
     } finally {
-      setLoading(false)
+      if (!controller.signal.aborted) setLoading(false)
     }
   }
 
@@ -710,8 +668,10 @@ export default function CubifyAnalyzer() {
                         </h2>
                         <div className="mt-2.5 flex flex-wrap items-center gap-2.5 text-sm text-muted-foreground">
                           <img
-                            src={`https://flagcdn.com/20x15/${playerInfo.country.iso2}.png`}
+                            src={`https://flagcdn.com/20x15/${playerInfo.country.iso2.toLowerCase()}.png`}
                             alt={playerInfo.country.name}
+                            loading="lazy"
+                            decoding="async"
                             className="rounded-[2px]"
                           />
                           <span className="font-medium">{playerInfo.country.name}</span>

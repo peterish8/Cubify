@@ -30,6 +30,7 @@ import {
   resultInputKind,
   resultInputPlaceholder,
 } from "@/lib/wca-result-input"
+import { fetchWcaPerson } from "@/lib/wca-person"
 import { cn } from "@/lib/utils"
 
 interface PlayerInfo {
@@ -267,44 +268,7 @@ export default function GoalPage() {
     setResultDraft("")
 
     try {
-      const response = await fetch(
-        `https://www.worldcubeassociation.org/api/v0/persons/${normalized}`,
-      )
-      if (!response.ok) throw new Error("Player not found. Check the WCA ID and try again.")
-      const playerData = await response.json()
-      const person = playerData.person
-      if (!person?.name) throw new Error("Invalid player data received from API")
-
-      const countryIso = (person.country?.iso2 || person.country_iso2 || "XX").toUpperCase()
-      const continentId = person.country?.continent_id || ""
-      const continent = continentId.replace(/^_/, "")
-
-      const transformed: PlayerInfo = {
-        name: person.name,
-        country: {
-          name: person.country?.name || countryIso,
-          iso2: countryIso,
-          continentId,
-        },
-        continent,
-        wca_id: person.wca_id || person.id || normalized,
-        avatar: person.avatar?.url ? { url: person.avatar.url } : undefined,
-        personal_records: {},
-      }
-
-      for (const [eid, records] of Object.entries(playerData.personal_records || {}) as [
-        string,
-        any,
-      ][]) {
-        transformed.personal_records[eid] = {}
-        if (records.single?.best > 0) {
-          transformed.personal_records[eid].single = { best: records.single.best }
-        }
-        if (records.average?.best > 0) {
-          transformed.personal_records[eid].average = { best: records.average.best }
-        }
-      }
-
+      const transformed = await fetchWcaPerson(normalized)
       setPlayer(transformed)
       // Prefetch totals once
       fetchRankTotals()
@@ -481,6 +445,13 @@ export default function GoalPage() {
   useEffect(() => {
     if (!hasAverageForEvent && rankType === "average") setRankType("single")
   }, [hasAverageForEvent, rankType])
+
+  // Cancel any pending debounced compute on unmount (avoid setState-after-unmount).
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
+  }, [])
 
   return (
     <div className="editorial-page flex min-h-[100dvh] flex-col">

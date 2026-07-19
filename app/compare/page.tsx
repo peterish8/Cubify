@@ -1,7 +1,8 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import { Badge } from "@/components/ui/badge"
+import { fetchWcaPerson } from "@/lib/wca-person"
 import { CountUp } from "@/components/motion/CountUp"
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome"
 import { EditorialButton, EditorialInput } from "@/components/ui/editorial-field"
@@ -372,72 +373,18 @@ export default function ComparePage() {
   const [player1, setPlayer1] = useState<PlayerInfo | null>(null)
   const [player2, setPlayer2] = useState<PlayerInfo | null>(null)
   const [error, setError] = useState("")
-
-  const fetchPlayerData = async (wcaId: string): Promise<PlayerInfo> => {
-    const normalizedWcaId = wcaId.trim().toUpperCase()
-    const playerResponse = await fetch(
-      `https://www.worldcubeassociation.org/api/v0/persons/${normalizedWcaId}`,
-    )
-
-    if (!playerResponse.ok) {
-      throw new Error(`Player ${normalizedWcaId} not found. Check the WCA ID.`)
-    }
-
-    const playerData = await playerResponse.json()
-    const player = playerData.person
-
-    if (!player || !player.name) {
-      throw new Error(`Invalid player data received for ${normalizedWcaId}`)
-    }
-
-    const countryIso = player.country?.iso2 || player.country_iso2 || "XX"
-    const continent = player.country?.continent_id?.replace(/^_/, "") || ""
-
-    const transformedPlayer: PlayerInfo = {
-      name: player.name,
-      country: {
-        name: player.country?.name || countryIso,
-        iso2: countryIso.toLowerCase(),
-      },
-      continent,
-      wca_id: player.wca_id || player.id || normalizedWcaId,
-      avatar: player.avatar?.url ? { url: player.avatar.url } : undefined,
-      personal_records: {},
-    }
-
-    for (const [eventId, records] of Object.entries(playerData.personal_records || {}) as [
-      string,
-      any,
-    ][]) {
-      transformedPlayer.personal_records[eventId] = {}
-
-      if (records.single) {
-        transformedPlayer.personal_records[eventId].single = {
-          best: records.single.best,
-          world_ranking: records.single.world_rank,
-          continental_ranking: records.single.continent_rank,
-          national_ranking: records.single.country_rank,
-        }
-      }
-
-      if (records.average) {
-        transformedPlayer.personal_records[eventId].average = {
-          best: records.average.best,
-          world_ranking: records.average.world_rank,
-          continental_ranking: records.average.continent_rank,
-          national_ranking: records.average.country_rank,
-        }
-      }
-    }
-
-    return transformedPlayer
-  }
+  const abortRef = useRef<AbortController | null>(null)
 
   const compareStats = async () => {
     if (!wcaId1.trim() || !wcaId2.trim()) {
       setError("Enter both WCA IDs")
       return
     }
+
+    // Cancel any in-flight comparison so a slower earlier pair can't overwrite this one.
+    abortRef.current?.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
 
     setLoading(true)
     setError("")
@@ -446,16 +393,17 @@ export default function ComparePage() {
 
     try {
       const [playerData1, playerData2] = await Promise.all([
-        fetchPlayerData(wcaId1.trim()),
-        fetchPlayerData(wcaId2.trim()),
+        fetchWcaPerson(wcaId1.trim(), controller.signal),
+        fetchWcaPerson(wcaId2.trim(), controller.signal),
       ])
 
       setPlayer1(playerData1)
       setPlayer2(playerData2)
     } catch (err) {
+      if (controller.signal.aborted) return
       setError(err instanceof Error ? err.message : "An error occurred while fetching data")
     } finally {
-      setLoading(false)
+      if (!controller.signal.aborted) setLoading(false)
     }
   }
 
@@ -767,8 +715,10 @@ export default function ComparePage() {
                             </h2>
                             <div className="mt-2.5 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                               <img
-                                src={`https://flagcdn.com/20x15/${player1.country.iso2}.png`}
+                                src={`https://flagcdn.com/20x15/${player1.country.iso2.toLowerCase()}.png`}
                                 alt={player1.country.name}
+                                loading="lazy"
+                                decoding="async"
                                 className="rounded-[2px]"
                               />
                               <span className="font-medium">{player1.country.name}</span>
@@ -813,8 +763,10 @@ export default function ComparePage() {
                             </h2>
                             <div className="mt-2.5 flex flex-wrap items-center gap-2 text-sm text-muted-foreground md:justify-end">
                               <img
-                                src={`https://flagcdn.com/20x15/${player2.country.iso2}.png`}
+                                src={`https://flagcdn.com/20x15/${player2.country.iso2.toLowerCase()}.png`}
                                 alt={player2.country.name}
+                                loading="lazy"
+                                decoding="async"
                                 className="rounded-[2px]"
                               />
                               <span className="font-medium">{player2.country.name}</span>
