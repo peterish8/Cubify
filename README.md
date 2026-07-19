@@ -137,7 +137,7 @@ import { CubeLogo, CubeWordmark } from "@/components/brand/CubeLogo"
 ### Facelets
 
 <p align="center">
-  <img src="docs/brand/cubify-facelets.svg" alt="NR CR WR facelet colors" width="420" />
+  <img src="docs/brand/cubify-facelets.svg" alt="NR CR WR facelet colors" width="540" />
 </p>
 
 | Class | Scope | Fill |

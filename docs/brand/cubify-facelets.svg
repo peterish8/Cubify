@@ -1,12 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="420" height="72" viewBox="0 0 420 72" fill="none" role="img" aria-label="NR, CR, WR facelet color legend">
-  <rect width="420" height="72" rx="16" fill="#020617" stroke="#3b82f6" stroke-opacity="0.35"/>
-  <rect x="16" y="16" width="112" height="40" rx="10" fill="#0f2a1c" stroke="#3DFFA8" stroke-width="1.5"/>
-  <circle cx="40" cy="36" r="8" fill="#3DFFA8"/>
-  <text x="56" y="41" fill="#E8E8EC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="700">NR · #3DFFA8</text>
-  <rect x="144" y="16" width="120" height="40" rx="10" fill="#2a200c" stroke="#FFC14A" stroke-width="1.5"/>
-  <circle cx="168" cy="36" r="8" fill="#FFC14A"/>
-  <text x="184" y="41" fill="#E8E8EC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="700">CR · #FFC14A</text>
-  <rect x="280" y="16" width="124" height="40" rx="10" fill="#1c1c20" stroke="#E8E8EC" stroke-width="1.5"/>
-  <circle cx="304" cy="36" r="8" fill="#E8E8EC"/>
-  <text x="320" y="41" fill="#E8E8EC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="700">WR · #E8E8EC</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="120" viewBox="0 0 540 120" fill="none" role="img" aria-label="NR, CR, WR facelet color legend">
+  <rect width="540" height="120" rx="18" fill="#020617" stroke="#3b82f6" stroke-opacity="0.35"/>
+
+  <!-- NR card -->
+  <rect x="20" y="18" width="156" height="84" rx="14" fill="#0a1a12" stroke="#3DFFA8" stroke-width="1.5"/>
+  <circle cx="48" cy="44" r="10" fill="#3DFFA8"/>
+  <text x="68" y="50" fill="#3DFFA8" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="800">NR</text>
+  <text x="98" y="78" text-anchor="middle" fill="#94a3b8" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="600">National</text>
+  <text x="98" y="96" text-anchor="middle" fill="#64748b" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">#3DFFA8</text>
+
+  <!-- CR card -->
+  <rect x="192" y="18" width="156" height="84" rx="14" fill="#1a1408" stroke="#FFC14A" stroke-width="1.5"/>
+  <circle cx="220" cy="44" r="10" fill="#FFC14A"/>
+  <text x="240" y="50" fill="#FFC14A" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="800">CR</text>
+  <text x="270" y="78" text-anchor="middle" fill="#94a3b8" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="600">Continental</text>
+  <text x="270" y="96" text-anchor="middle" fill="#64748b" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">#FFC14A</text>
+
+  <!-- WR card -->
+  <rect x="364" y="18" width="156" height="84" rx="14" fill="#121214" stroke="#E8E8EC" stroke-width="1.5"/>
+  <circle cx="392" cy="44" r="10" fill="#E8E8EC"/>
+  <text x="412" y="50" fill="#E8E8EC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="800">WR</text>
+  <text x="442" y="78" text-anchor="middle" fill="#94a3b8" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="600">World</text>
+  <text x="442" y="96" text-anchor="middle" fill="#64748b" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">#E8E8EC</text>
 </svg>
