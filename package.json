@@ -8,6 +8,8 @@
     "lint": "next lint",
     "start": "node scripts/run-next.cjs start",
     "test": "tsx --test tests/**/*.test.ts",
+    "test:e2e": "playwright test",
+    "test:website": "npm run test && npm run test:wca-generator && npx tsc --noEmit --pretty false && npm run test:e2e",
     "test:wca-generator": "node scripts/run-wca-generator-tests.cjs"
   },
   "dependencies": {
@@ -66,7 +68,8 @@
     "zod": "3.25.67"
   },
   "devDependencies": {
-    "@next/swc-win32-x64-msvc": "14.2.33",
+    "@next/swc-win32-x64-msvc": "14.2.35",
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/postcss": "^4.1.9",
     "@types/node": "^22",
     "@types/react": "^18",
