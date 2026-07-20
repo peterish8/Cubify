@@ -9,8 +9,10 @@ import { EditorialButton, EditorialInput } from "@/components/ui/editorial-field
 import { EVENT_NAMES, eventDisplayName } from "@/lib/wca-events"
 import { formatResult } from "@/lib/wca-format"
 import {
+  calculateTopPercent,
   fetchRankTotals,
   formatTopPercent,
+  getScopedTotals,
   type RankTotalsDocument,
   type RankType,
 } from "@/lib/wca-rank-totals"
@@ -42,8 +44,18 @@ interface PlayerInfo {
   personal_records: Record<
     string,
     {
-      single?: { best: number }
-      average?: { best: number }
+      single?: {
+        best: number
+        world_ranking: number
+        continental_ranking: number
+        national_ranking: number
+      }
+      average?: {
+        best: number
+        world_ranking: number
+        continental_ranking: number
+        national_ranking: number
+      }
     }
   >
 }
@@ -68,9 +80,9 @@ function ScopeCard({
   scope,
   label,
   face,
+  current,
   ranks,
-  rankDraft,
-  percentDraft,
+  target,
   onRankChange,
   onPercentChange,
   disabled,
@@ -78,15 +90,16 @@ function ScopeCard({
   scope: RankScope
   label: string
   face: string
+  current: ScopeCurrent | null
   ranks: AllScopeRanks | null
-  rankDraft: string
-  percentDraft: string
+  target: TargetGoal
   onRankChange: (value: string) => void
   onPercentChange: (value: string) => void
   disabled?: boolean
 }) {
   const result = ranks?.[scope]
   const pct = result ? formatTopPercent(result.topPercent) : null
+  const currentPct = current ? formatTopPercent(current.topPercent) : null
 
   return (
     <div className="surface-card rounded-xl p-4 sm:p-5">
@@ -97,43 +110,72 @@ function ScopeCard({
             {scope === "nr" ? "National" : scope === "cr" ? "Continental" : "World"}
           </span>
         </div>
-        {result && result.rank > 0 && (
-          <span className="stat-num text-lg text-foreground">#{result.rank.toLocaleString()}</span>
+        {current && current.rank > 0 && (
+          <span className="stat-num text-lg text-foreground">#{current.rank.toLocaleString()}</span>
         )}
       </div>
 
-      {pct && (
-        <p className="mb-3 font-data text-sm text-muted-foreground">{pct}</p>
-      )}
-
       <div className="grid grid-cols-2 gap-2">
-        <label className="space-y-1">
+        <div className="rounded-lg border border-border bg-secondary/45 px-3 py-2.5">
           <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
             Rank
+          </span>
+          <p className="mt-1 font-data text-lg font-bold text-foreground">
+            {current && current.rank > 0 ? `#${current.rank.toLocaleString()}` : "-"}
+          </p>
+        </div>
+        <div className="rounded-lg border border-border bg-secondary/45 px-3 py-2.5">
+          <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+            Current Top %
+          </span>
+          <p className="mt-1 font-data text-lg font-bold text-foreground">{currentPct ?? "-"}</p>
+        </div>
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-2 border-t border-border pt-4">
+        <label className="space-y-1.5">
+          <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+            Desired Rank
           </span>
           <EditorialInput
             inputMode="numeric"
             placeholder="#"
-            value={rankDraft}
+            value={target.rankDraft}
             disabled={disabled}
             onChange={(e) => onRankChange(e.target.value)}
             className="h-10 text-sm"
           />
         </label>
-        <label className="space-y-1">
+        <label className="space-y-1.5">
           <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
-            Top %
+            Desired Top %
           </span>
           <EditorialInput
             inputMode="decimal"
             placeholder="1.5"
-            value={percentDraft}
+            value={target.percentDraft}
             disabled={disabled}
             onChange={(e) => onPercentChange(e.target.value)}
             className="h-10 text-sm"
           />
         </label>
       </div>
+
+      {target.requiredBest !== null && (
+        <div className="mt-3 rounded-lg border border-[rgba(var(--theme-bright-rgb),0.22)] bg-[rgba(var(--theme-rgb),0.08)] px-3 py-2">
+          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+            Needed result
+          </p>
+          <p className="mt-1 font-data text-base font-bold text-foreground">
+            {target.formattedBest}
+          </p>
+          {target.targetRank !== null && (
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Around #{target.targetRank.toLocaleString()} {scope.toUpperCase()}
+            </p>
+          )}
+        </div>
+      )}
       {result && result.tiesWith > 0 && (
         <p className="mt-2 text-[11px] text-muted-foreground">
           Tied with {result.tiesWith.toLocaleString()} other
@@ -142,6 +184,139 @@ function ScopeCard({
       )}
     </div>
   )
+}
+
+type ScopeCurrent = {
+  rank: number
+  topPercent: number | null
+}
+
+type TargetGoal = {
+  rankDraft: string
+  percentDraft: string
+  requiredBest: number | null
+  targetRank: number | null
+  formattedBest: string
+}
+
+const emptyTargets: Record<RankScope, TargetGoal> = {
+  nr: { rankDraft: "", percentDraft: "", requiredBest: null, targetRank: null, formattedBest: "" },
+  cr: { rankDraft: "", percentDraft: "", requiredBest: null, targetRank: null, formattedBest: "" },
+  wr: { rankDraft: "", percentDraft: "", requiredBest: null, targetRank: null, formattedBest: "" },
+}
+
+function scopeName(scope: RankScope): string {
+  if (scope === "nr") return "National"
+  if (scope === "cr") return "Continental"
+  return "World"
+}
+
+function trimNumberDraft(value: string): string {
+  return value.replace(/\.0+$/, "").replace(/(\.\d*?)0+$/, "$1")
+}
+
+function formatTargetPercentDraft(value: number | null): string {
+  if (value === null) return ""
+  return trimNumberDraft(value.toFixed(value < 1 ? 2 : 1))
+}
+
+function getOfficialScopeStats(
+  player: PlayerInfo | null,
+  eventId: string,
+  rankType: RankType,
+  totalsDoc: RankTotalsDocument | null,
+): Record<RankScope, ScopeCurrent | null> {
+  const record = player?.personal_records[eventId]?.[rankType]
+  if (!player || !record) return { nr: null, cr: null, wr: null }
+
+  const scoped = totalsDoc
+    ? getScopedTotals(
+        totalsDoc,
+        eventId,
+        rankType,
+        player.country.continentId,
+        player.country.iso2,
+      )
+    : { world: null, continent: null, country: null }
+
+  return {
+    nr: {
+      rank: record.national_ranking,
+      topPercent: calculateTopPercent(record.national_ranking, scoped.country),
+    },
+    cr: {
+      rank: record.continental_ranking,
+      topPercent: calculateTopPercent(record.continental_ranking, scoped.continent),
+    },
+    wr: {
+      rank: record.world_ranking,
+      topPercent: calculateTopPercent(record.world_ranking, scoped.world),
+    },
+  }
+}
+
+function goalsFromRanks(
+  ranks: AllScopeRanks,
+  eventId: string,
+  rankType: RankType,
+  meta?: { scope: RankScope; requiredBest: number | null; targetRank: number | null },
+): Record<RankScope, TargetGoal> {
+  const makeGoal = (scope: RankScope): TargetGoal => {
+    const result = ranks[scope]
+    const isTarget = meta?.scope === scope
+    return {
+      rankDraft: result.rank > 0 ? String(result.rank) : "",
+      percentDraft: formatTargetPercentDraft(result.topPercent),
+      requiredBest: isTarget ? meta.requiredBest : null,
+      targetRank: isTarget ? meta.targetRank : null,
+      formattedBest:
+        isTarget && meta.requiredBest !== null
+          ? formatResult(eventId, meta.requiredBest, rankType)
+          : "",
+    }
+  }
+
+  return {
+    nr: makeGoal("nr"),
+    cr: makeGoal("cr"),
+    wr: makeGoal("wr"),
+  }
+}
+
+function formatTargetGap(
+  eventId: string,
+  rankType: RankType,
+  currentBest: number | null,
+  requiredBest: number | null,
+): { label: string; tone: "need" | "already" | "even" } | null {
+  if (currentBest === null || requiredBest === null) return null
+
+  const diff = currentBest - requiredBest
+  if (diff === 0) return { label: "This result is exactly on target.", tone: "even" }
+
+  const unit = resultInputKind(eventId, rankType)
+  if (unit === "time") {
+    const seconds = Math.abs(diff) / 100
+    return diff > 0
+      ? { label: `${seconds.toFixed(2)}s faster needed`, tone: "need" }
+      : { label: `${seconds.toFixed(2)}s inside target already`, tone: "already" }
+  }
+
+  if (unit === "fmc-single") {
+    const moves = Math.abs(diff)
+    return diff > 0
+      ? { label: `${moves} move${moves === 1 ? "" : "s"} fewer needed`, tone: "need" }
+      : { label: `${moves} move${moves === 1 ? "" : "s"} inside target already`, tone: "already" }
+  }
+
+  if (unit === "fmc-average") {
+    const moves = Math.abs(diff) / 100
+    return diff > 0
+      ? { label: `${moves.toFixed(2)} moves fewer needed`, tone: "need" }
+      : { label: `${moves.toFixed(2)} moves inside target already`, tone: "already" }
+  }
+
+  return null
 }
 
 export default function GoalPage() {
@@ -165,20 +340,11 @@ export default function GoalPage() {
   const [resultDraft, setResultDraft] = useState("")
   const [hypotheticalBest, setHypotheticalBest] = useState<number | null>(null)
   const [ranks, setRanks] = useState<AllScopeRanks | null>(null)
+  const [targetGoals, setTargetGoals] = useState<Record<RankScope, TargetGoal>>(emptyTargets)
+  const [activeTargetScope, setActiveTargetScope] = useState<RankScope | null>(null)
 
-  const [rankDrafts, setRankDrafts] = useState<Record<RankScope, string>>({
-    nr: "",
-    cr: "",
-    wr: "",
-  })
-  const [percentDrafts, setPercentDrafts] = useState<Record<RankScope, string>>({
-    nr: "",
-    cr: "",
-    wr: "",
-  })
-
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const driverRef = useRef<"result" | RankScope | null>(null)
+  const resultDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const targetDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const inputKind = resultInputKind(eventId, rankType)
   const previousBest =
@@ -193,25 +359,18 @@ export default function GoalPage() {
     return rest.length ? `${head}.${rest.join("")}` : head
   }
 
-  const formatPctDraft = (value: number | null) =>
-    value !== null ? value.toFixed(value < 1 ? 2 : 1) : ""
-
   const applyBest = useCallback(
     (
       best: number | null,
       list: RankListIndex | null,
       totalsDoc: RankTotalsDocument | null,
       p: PlayerInfo | null,
-      /** When set, leave that scope's rank/% drafts alone (user is typing them). */
-      preserveScope: RankScope | null = null,
+      targetMeta?: { scope: RankScope; requiredBest: number | null; targetRank: number | null },
     ) => {
       setHypotheticalBest(best)
       if (best === null || !list || !p) {
         setRanks(null)
-        if (driverRef.current === "result") {
-          setRankDrafts({ nr: "", cr: "", wr: "" })
-          setPercentDrafts({ nr: "", cr: "", wr: "" })
-        }
+        setTargetGoals(emptyTargets)
         return
       }
       const next = resultToAllScopeRanks(
@@ -223,31 +382,7 @@ export default function GoalPage() {
         totalsDoc,
       )
       setRanks(next)
-      setRankDrafts((prev) => ({
-        nr:
-          preserveScope === "nr"
-            ? prev.nr
-            : next.nr.rank > 0
-              ? String(next.nr.rank)
-              : "",
-        cr:
-          preserveScope === "cr"
-            ? prev.cr
-            : next.cr.rank > 0
-              ? String(next.cr.rank)
-              : "",
-        wr:
-          preserveScope === "wr"
-            ? prev.wr
-            : next.wr.rank > 0
-              ? String(next.wr.rank)
-              : "",
-      }))
-      setPercentDrafts((prev) => ({
-        nr: preserveScope === "nr" ? prev.nr : formatPctDraft(next.nr.topPercent),
-        cr: preserveScope === "cr" ? prev.cr : formatPctDraft(next.cr.topPercent),
-        wr: preserveScope === "wr" ? prev.wr : formatPctDraft(next.wr.topPercent),
-      }))
+      setTargetGoals(goalsFromRanks(next, list.eventId, list.rankType, targetMeta))
     },
     [previousBest],
   )
@@ -264,8 +399,12 @@ export default function GoalPage() {
     setPlayer(null)
     setIndex(null)
     setRanks(null)
+    setTargetGoals(emptyTargets)
+    setActiveTargetScope(null)
     setHypotheticalBest(null)
     setResultDraft("")
+    setTargetGoals(emptyTargets)
+    setActiveTargetScope(null)
 
     try {
       const transformed = await fetchWcaPerson(normalized)
@@ -352,8 +491,7 @@ export default function GoalPage() {
         if (seed !== null) {
           const draft = formatResultInputValue(eventId, rankType, seed)
           setResultDraft(draft)
-          driverRef.current = "result"
-          applyBest(seed, list, totalsDoc, player, null)
+          applyBest(seed, list, totalsDoc, player)
         } else {
           setResultDraft("")
           setHypotheticalBest(null)
@@ -389,46 +527,142 @@ export default function GoalPage() {
 
   const onResultDraftChange = (value: string) => {
     setResultDraft(value)
-    driverRef.current = "result"
-    if (debounceRef.current) clearTimeout(debounceRef.current)
-    debounceRef.current = setTimeout(() => {
+    setActiveTargetScope(null)
+    if (resultDebounceRef.current) clearTimeout(resultDebounceRef.current)
+    resultDebounceRef.current = setTimeout(() => {
       const parsed = parseResultInput(eventId, rankType, value)
       applyBest(parsed, index, totals, player)
     }, 80)
   }
 
-  const onTargetChange = (scope: RankScope, mode: "rank" | "percent", raw: string) => {
-    const draft = mode === "percent" ? cleanPercentDraft(raw) : raw.replace(/[^\d]/g, "")
-    if (mode === "rank") {
-      setRankDrafts((prev) => ({ ...prev, [scope]: draft }))
-    } else {
-      setPercentDrafts((prev) => ({ ...prev, [scope]: draft }))
-    }
+  const onTargetPercentChange = (scope: RankScope, raw: string) => {
+    const draft = cleanPercentDraft(raw)
+    setActiveTargetScope(scope)
+    setTargetGoals((prev) => ({
+      ...prev,
+      [scope]: {
+        ...prev[scope],
+        percentDraft: draft,
+        requiredBest: null,
+        targetRank: null,
+        formattedBest: "",
+      },
+    }))
     if (!index || !player) return
-    driverRef.current = scope
-    if (debounceRef.current) clearTimeout(debounceRef.current)
-    debounceRef.current = setTimeout(() => {
+    if (targetDebounceRef.current) clearTimeout(targetDebounceRef.current)
+    targetDebounceRef.current = setTimeout(() => {
       const trimmed = draft.trim()
       if (!trimmed || trimmed === ".") return
       const num = Number(trimmed)
       if (!Number.isFinite(num) || num <= 0) return
-      const { requiredBest } = targetToRequiredBest(
+      const { requiredBest, targetRank } = targetToRequiredBest(
         index,
         scope,
-        mode,
+        "percent",
         num,
         previousBest,
         player.country.iso2,
         player.country.continentId,
         totals,
       )
-      if (requiredBest === null) return
-      setResultDraft(formatResultInputValue(eventId, rankType, requiredBest))
-      // Recompute all scopes; keep the field the user is typing intact.
-      driverRef.current = scope
-      applyBest(requiredBest, index, totals, player, scope)
+      setTargetGoals((prev) => ({
+        ...prev,
+        [scope]: {
+          ...prev[scope],
+          percentDraft: draft,
+          rankDraft: targetRank !== null ? String(targetRank) : "",
+          requiredBest,
+          targetRank,
+          formattedBest:
+            requiredBest !== null ? formatResult(eventId, requiredBest, rankType) : "",
+        },
+      }))
+      if (requiredBest !== null) {
+        setResultDraft(formatResultInputValue(eventId, rankType, requiredBest))
+        applyBest(requiredBest, index, totals, player, { scope, requiredBest, targetRank })
+      }
     }, 80)
   }
+
+  const onTargetRankChange = (scope: RankScope, raw: string) => {
+    const draft = raw.replace(/[^\d]/g, "")
+    setActiveTargetScope(scope)
+    setTargetGoals((prev) => ({
+      ...prev,
+      [scope]: {
+        ...prev[scope],
+        rankDraft: draft,
+        requiredBest: null,
+        targetRank: null,
+        formattedBest: "",
+      },
+    }))
+    if (!index || !player) return
+    if (targetDebounceRef.current) clearTimeout(targetDebounceRef.current)
+    targetDebounceRef.current = setTimeout(() => {
+      const trimmed = draft.trim()
+      if (!trimmed) return
+      const num = Number(trimmed)
+      if (!Number.isInteger(num) || num <= 0) return
+      const { requiredBest, targetRank } = targetToRequiredBest(
+        index,
+        scope,
+        "rank",
+        num,
+        previousBest,
+        player.country.iso2,
+        player.country.continentId,
+        totals,
+      )
+      const afterRanks =
+        requiredBest !== null
+          ? resultToAllScopeRanks(
+              index,
+              requiredBest,
+              previousBest,
+              player.country.iso2,
+              player.country.continentId,
+              totals,
+            )
+          : null
+      if (requiredBest !== null) {
+        setResultDraft(formatResultInputValue(eventId, rankType, requiredBest))
+        setRanks(afterRanks)
+        if (afterRanks) {
+          setTargetGoals(
+            goalsFromRanks(afterRanks, eventId, rankType, { scope, requiredBest, targetRank }),
+          )
+        }
+        setHypotheticalBest(requiredBest)
+      } else {
+        setTargetGoals((prev) => ({
+          ...prev,
+          [scope]: {
+            ...prev[scope],
+            rankDraft: draft,
+            percentDraft: "",
+            requiredBest: null,
+            targetRank: null,
+            formattedBest: "",
+          },
+        }))
+      }
+    }, 80)
+  }
+
+  const activeTarget =
+    activeTargetScope &&
+    (targetGoals[activeTargetScope].rankDraft || targetGoals[activeTargetScope].percentDraft)
+      ? targetGoals[activeTargetScope]
+      : null
+  const activeTargetGap =
+    activeTargetScope && activeTarget
+      ? formatTargetGap(eventId, rankType, previousBest ?? hypotheticalBest, activeTarget.requiredBest)
+      : null
+  const officialScopeStats = useMemo(
+    () => getOfficialScopeStats(player, eventId, rankType, totals),
+    [player, eventId, rankType, totals],
+  )
 
   const availableEvents = useMemo(() => {
     const featured = FEATURED.filter((id) => EVENT_IDS.includes(id))
@@ -449,7 +683,8 @@ export default function GoalPage() {
   // Cancel any pending debounced compute on unmount (avoid setState-after-unmount).
   useEffect(() => {
     return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current)
+      if (resultDebounceRef.current) clearTimeout(resultDebounceRef.current)
+      if (targetDebounceRef.current) clearTimeout(targetDebounceRef.current)
     }
   }, [])
 
@@ -511,12 +746,12 @@ export default function GoalPage() {
                 </p>
               </article>
               <article className="surface-card rounded-xl p-5 sm:p-6">
-                <p className="goal-step-label text-[var(--rank-cr)]">02 · Rank → result</p>
+                <p className="goal-step-label text-[var(--rank-cr)]">02 · Top % → result</p>
                 <h2 className="goal-card-title mt-2.5 text-xl">
                   What time for Top 1%?
                 </h2>
                 <p className="goal-card-body mt-2.5 text-[0.95rem]">
-                  Set a target rank or Top % on NR, CR, or WR. Goal solves for the official result
+                  Set a target Top % on NR, CR, or WR. Goal solves for the official result
                   you need to hit that band on the current export snapshot.
                 </p>
               </article>
@@ -561,7 +796,7 @@ export default function GoalPage() {
               Plan your next official PB
             </h1>
             <p className="goal-lead mt-3 text-base">
-              Hypothetical single or average → NR / CR / WR and Top %. Or set a target rank / % and
+              Hypothetical single or average → NR / CR / WR and Top %. Or set a target Top % and
               see the result you need. Snapshot from the official WCA export — not a live page.
             </p>
           </div>
@@ -710,46 +945,103 @@ export default function GoalPage() {
             {index && !listLoading && inputKind !== "unsupported" && (
               <section className="space-y-6">
                 <div className="bezel">
-                  <div className="bezel-inner p-6 sm:p-8">
-                    <label className="eyebrow mb-2 block">
-                      Step 3 · If my official {rankType} were
-                    </label>
-                    <p className="mb-3 max-w-xl text-xs leading-relaxed text-muted-foreground">
-                      Enter a result as WCA stores it (e.g.{" "}
-                      <span className="font-data text-foreground/80">8.50</span> or{" "}
-                      <span className="font-data text-foreground/80">1:05.32</span>
-                      ). Ranks update live. Or edit rank / Top % on a card below to solve for the
-                      time you need.
-                    </p>
-                    <EditorialInput
-                      placeholder={resultInputPlaceholder(eventId, rankType)}
-                      value={resultDraft}
-                      onChange={(e) => onResultDraftChange(e.target.value)}
-                      className="mb-3 max-w-md text-lg"
-                    />
-                    <p className="text-xs text-muted-foreground">{resultInputHint(eventId, rankType)}</p>
-                    {hypotheticalBest !== null && (
-                      <p className="mt-3 text-sm text-muted-foreground">
-                        Using{" "}
-                        <span className="font-data text-foreground">
-                          {formatResult(eventId, hypotheticalBest, rankType)}
-                        </span>
-                        {previousBest !== null && previousBest !== hypotheticalBest && (
-                          <>
-                            {" "}
-                            · your current {rankType}:{" "}
-                            <span className="font-data">
-                              {formatResult(eventId, previousBest, rankType)}
-                            </span>
-                            {" "}
-                            (we replace that PB so you are not double-counted)
-                          </>
-                        )}
+                  <div className="bezel-inner grid gap-5 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-stretch">
+                    <div>
+                      <label className="eyebrow mb-2 block">
+                        Step 3 · If my official {rankType} were
+                      </label>
+                      <p className="mb-3 max-w-xl text-xs leading-relaxed text-muted-foreground">
+                        Enter a result as WCA stores it (e.g.{" "}
+                        <span className="font-data text-foreground/80">8.50</span> or{" "}
+                        <span className="font-data text-foreground/80">1:05.32</span>
+                        ). Top boxes stay on the cuber's current WCA stats. Bottom inputs translate
+                        this result into rank + Top %, and can also solve back to the time.
                       </p>
-                    )}
-                    {resultDraft && hypotheticalBest === null && (
-                      <p className="mt-2 text-sm text-rose-400">Could not parse that result</p>
-                    )}
+                      <EditorialInput
+                        placeholder={resultInputPlaceholder(eventId, rankType)}
+                        value={resultDraft}
+                        onChange={(e) => onResultDraftChange(e.target.value)}
+                        className="mb-3 max-w-md text-lg"
+                      />
+                      <p className="text-xs text-muted-foreground">{resultInputHint(eventId, rankType)}</p>
+                      {hypotheticalBest !== null && (
+                        <p className="mt-3 text-sm text-muted-foreground">
+                          Using{" "}
+                          <span className="font-data text-foreground">
+                            {formatResult(eventId, hypotheticalBest, rankType)}
+                          </span>
+                          {previousBest !== null && previousBest !== hypotheticalBest && (
+                            <>
+                              {" "}
+                              · your current {rankType}:{" "}
+                              <span className="font-data">
+                                {formatResult(eventId, previousBest, rankType)}
+                              </span>
+                              {" "}
+                              (we replace that PB so you are not double-counted)
+                            </>
+                          )}
+                        </p>
+                      )}
+                      {resultDraft && hypotheticalBest === null && (
+                        <p className="mt-2 text-sm text-rose-400">Could not parse that result</p>
+                      )}
+                    </div>
+
+                    <div className="rounded-xl border border-[rgba(var(--theme-bright-rgb),0.24)] bg-[radial-gradient(circle_at_25%_20%,rgba(var(--theme-bright-rgb),0.14),transparent_32%),rgba(5,9,18,0.72)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                        Desired gap
+                      </p>
+                      {activeTargetScope && activeTarget ? (
+                        <div className="mt-3">
+                          <div className="flex items-center justify-between gap-3">
+                            <span className="text-sm font-bold text-foreground">
+                              {scopeName(activeTargetScope)} target
+                            </span>
+                            <span className="rounded-full border border-border bg-secondary/60 px-2.5 py-1 font-data text-xs text-foreground">
+                              {activeTarget.percentDraft
+                                ? `Top ${activeTarget.percentDraft}%`
+                                : `#${activeTarget.rankDraft}`}
+                            </span>
+                          </div>
+                          {activeTarget.requiredBest !== null ? (
+                            <>
+                              <p className="mt-4 text-xs text-muted-foreground">Required official result</p>
+                              <p className="mt-1 font-data text-3xl font-extrabold text-foreground">
+                                {activeTarget.formattedBest}
+                              </p>
+                              {activeTargetGap && (
+                                <p
+                                  className={cn(
+                                    "mt-3 rounded-lg border px-3 py-2 text-sm font-bold",
+                                    activeTargetGap.tone === "need"
+                                      ? "border-[rgba(var(--theme-bright-rgb),0.34)] bg-[rgba(var(--theme-rgb),0.12)] text-[rgb(var(--theme-bright-rgb))]"
+                                      : "border-emerald-400/25 bg-emerald-400/10 text-emerald-200",
+                                  )}
+                                >
+                                  {activeTargetGap.label}
+                                </p>
+                              )}
+                              {activeTarget.targetRank !== null && (
+                                <p className="mt-3 text-xs text-muted-foreground">
+                                  Target rank: #{activeTarget.targetRank.toLocaleString()}{" "}
+                                  {activeTargetScope.toUpperCase()}
+                                </p>
+                              )}
+                            </>
+                          ) : (
+                            <p className="mt-4 text-sm leading-relaxed text-rose-300">
+                              That target is outside the available ranked list for this scope.
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                          Type a desired Top % in NR, CR, or WR below. This panel will show the
+                          exact result and the seconds you need to close.
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -758,31 +1050,31 @@ export default function GoalPage() {
                     scope="nr"
                     label="NR"
                     face="facelet-nr"
+                    current={officialScopeStats.nr}
                     ranks={ranks}
-                    rankDraft={rankDrafts.nr}
-                    percentDraft={percentDrafts.nr}
-                    onRankChange={(v) => onTargetChange("nr", "rank", v)}
-                    onPercentChange={(v) => onTargetChange("nr", "percent", v)}
+                    target={targetGoals.nr}
+                    onRankChange={(v) => onTargetRankChange("nr", v)}
+                    onPercentChange={(v) => onTargetPercentChange("nr", v)}
                   />
                   <ScopeCard
                     scope="cr"
                     label="CR"
                     face="facelet-cr"
+                    current={officialScopeStats.cr}
                     ranks={ranks}
-                    rankDraft={rankDrafts.cr}
-                    percentDraft={percentDrafts.cr}
-                    onRankChange={(v) => onTargetChange("cr", "rank", v)}
-                    onPercentChange={(v) => onTargetChange("cr", "percent", v)}
+                    target={targetGoals.cr}
+                    onRankChange={(v) => onTargetRankChange("cr", v)}
+                    onPercentChange={(v) => onTargetPercentChange("cr", v)}
                   />
                   <ScopeCard
                     scope="wr"
                     label="WR"
                     face="facelet-wr"
+                    current={officialScopeStats.wr}
                     ranks={ranks}
-                    rankDraft={rankDrafts.wr}
-                    percentDraft={percentDrafts.wr}
-                    onRankChange={(v) => onTargetChange("wr", "rank", v)}
-                    onPercentChange={(v) => onTargetChange("wr", "percent", v)}
+                    target={targetGoals.wr}
+                    onRankChange={(v) => onTargetRankChange("wr", v)}
+                    onPercentChange={(v) => onTargetPercentChange("wr", v)}
                   />
                 </div>
 

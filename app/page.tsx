@@ -694,22 +694,23 @@ function AboutCubifyModal({ open, onClose }: { open: boolean; onClose: () => voi
                       <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
                         {selected.detail}
                       </p>
-                      <p className="mt-5 rounded-lg border border-border bg-secondary/30 px-3 py-2 text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
-                        {selected.proof}
-                      </p>
                     </div>
                     <div className="relative overflow-hidden rounded-xl border border-[rgba(var(--theme-bright-rgb),0.32)] bg-[radial-gradient(circle_at_35%_20%,rgba(var(--theme-bright-rgb),0.24),transparent_32%),linear-gradient(140deg,rgba(var(--theme-deep-rgb),0.7),rgba(var(--theme-rgb),0.2))] p-6">
                       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
                       <div className="grid h-full min-h-56 place-items-center text-center">
-                        <div>
+                        <div className="w-full max-w-sm px-1">
                           <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-2xl bg-white/10 text-white shadow-[0_16px_40px_-18px_rgba(var(--theme-rgb),1)]">
                             <selected.icon className="h-5 w-5" aria-hidden />
                           </div>
-                          <p className="stat-num whitespace-nowrap text-3xl font-extrabold text-white sm:text-4xl">
+                          <p className="stat-num mx-auto max-w-full whitespace-nowrap text-[clamp(1.15rem,2.8vw,1.85rem)] font-extrabold leading-none tracking-tight text-white">
                             {selected.visual}
                           </p>
-                          <p className="mt-2 text-xs font-bold uppercase tracking-[0.14em] text-white/60">
+                          <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">
                             Cubify context
+                          </p>
+                          {/* Rank → Top % as a single small line inside the themed panel */}
+                          <p className="mt-2 whitespace-nowrap text-[10px] font-medium leading-snug tracking-wide text-white/70 sm:text-[11px]">
+                            {selected.proof}
                           </p>
                         </div>
                       </div>

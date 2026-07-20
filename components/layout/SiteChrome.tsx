@@ -17,7 +17,7 @@ export function SiteHeader({
           <Link
             href="/"
             className={cn(
-              "shrink-0 rounded-full px-2.5 py-1.5 text-[12px] font-semibold transition-colors sm:px-3.5 sm:text-[13px]",
+              "pressable shrink-0 rounded-full px-2.5 py-1.5 text-[12px] font-semibold transition-colors sm:px-3.5 sm:text-[13px]",
               active === "home"
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground",
@@ -28,7 +28,7 @@ export function SiteHeader({
           <Link
             href="/goal"
             className={cn(
-              "shrink-0 rounded-full px-2.5 py-1.5 text-[12px] font-semibold transition-colors sm:px-3.5 sm:text-[13px]",
+              "pressable shrink-0 rounded-full px-2.5 py-1.5 text-[12px] font-semibold transition-colors sm:px-3.5 sm:text-[13px]",
               active === "goal"
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground",
@@ -39,7 +39,7 @@ export function SiteHeader({
           <Link
             href="/compare"
             className={cn(
-              "shrink-0 rounded-full px-2.5 py-1.5 text-[12px] font-semibold transition-colors sm:px-3.5 sm:text-[13px]",
+              "pressable shrink-0 rounded-full px-2.5 py-1.5 text-[12px] font-semibold transition-colors sm:px-3.5 sm:text-[13px]",
               active === "compare"
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground",
@@ -50,7 +50,7 @@ export function SiteHeader({
           <Link
             href="/countries"
             className={cn(
-              "shrink-0 rounded-full px-2.5 py-1.5 text-[12px] font-semibold transition-colors sm:px-3.5 sm:text-[13px]",
+              "pressable shrink-0 rounded-full px-2.5 py-1.5 text-[12px] font-semibold transition-colors sm:px-3.5 sm:text-[13px]",
               active === "countries"
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground",
@@ -61,7 +61,7 @@ export function SiteHeader({
           <Link
             href="/settings"
             className={cn(
-              "shrink-0 rounded-full px-2.5 py-1.5 text-[12px] font-semibold transition-colors sm:px-3.5 sm:text-[13px]",
+              "pressable shrink-0 rounded-full px-2.5 py-1.5 text-[12px] font-semibold transition-colors sm:px-3.5 sm:text-[13px]",
               active === "settings"
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground",

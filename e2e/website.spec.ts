@@ -408,17 +408,8 @@ test("countries page loads data, filters, and switches graph modes", async ({ pa
 })
 
 test("goal page loads mocked WCA data and calculates ranks", async ({ page }) => {
-  await page.goto("/goal", { waitUntil: "domcontentloaded" })
+  await page.goto("/goal?wca=2022TEST01", { waitUntil: "domcontentloaded" })
   await page.waitForTimeout(500)
-
-  const wcaIdInput = page.getByPlaceholder("2022RPRA01")
-  await wcaIdInput.click()
-  await wcaIdInput.pressSequentially("2022TEST01")
-  await expect(wcaIdInput).toHaveValue("2022TEST01")
-  const continueButton = page.getByRole("button", { name: /Continue/i })
-  await expect(continueButton).toBeEnabled()
-  await page.waitForTimeout(500)
-  await continueButton.click()
 
   await expect(page.getByText("Test Cuber")).toBeVisible()
   await expect(page.getByText("Plan your next official PB")).toBeVisible()
@@ -427,8 +418,35 @@ test("goal page loads mocked WCA data and calculates ranks", async ({ page }) =>
   await expect(resultInput).toHaveValue("9")
   await expect(page.getByText(/ranked single world/i)).toBeVisible()
 
-  await resultInput.fill("7.50")
+  await resultInput.fill("9.21")
+  await expect(page.getByText("Using 9.21s")).toBeVisible()
 
-  await expect(page.getByText("#1").first()).toBeVisible()
-  await expect(page.getByText(/Top 25%|Top %/i).first()).toBeVisible()
+  const wrCard = page.locator(".surface-card", { hasText: "World" }).filter({ hasText: "Desired Top %" })
+  await expect(wrCard.getByText("#4").first()).toBeVisible()
+  await expect(wrCard.getByText("Top 100%")).toBeVisible()
+  await expect(wrCard.getByRole("textbox")).toHaveCount(2)
+  await expect(wrCard.getByLabel("Desired Rank")).toHaveValue("3")
+  await expect(wrCard.getByLabel("Desired Top %")).toHaveValue("75")
+
+  await wrCard.getByLabel("Desired Top %").fill("25")
+
+  await expect(page.getByText("World target")).toBeVisible()
+  await expect(page.getByText("Required official result")).toBeVisible()
+  await expect(wrCard.getByLabel("Desired Rank")).toHaveValue("1")
+  await expect(page.getByText("8.00s").first()).toBeVisible()
+  await expect(page.getByText("1.00s faster needed")).toBeVisible()
+  await expect(page.getByText("Target rank: #1 WR")).toBeVisible()
+  await expect(resultInput).toHaveValue("8")
+  await expect(wrCard.getByText("#4").first()).toBeVisible()
+  await expect(wrCard.getByText("Top 100%")).toBeVisible()
+
+  await wrCard.getByLabel("Desired Rank").fill("2")
+
+  await expect(wrCard.getByLabel("Desired Top %")).toHaveValue("50")
+  await expect(page.getByText("8.50s").first()).toBeVisible()
+  await expect(page.getByText("0.50s faster needed")).toBeVisible()
+  await expect(page.getByText("Target rank: #2 WR")).toBeVisible()
+  await expect(resultInput).toHaveValue("8.5")
+  await expect(wrCard.getByText("#4").first()).toBeVisible()
+  await expect(wrCard.getByText("Top 100%")).toBeVisible()
 })

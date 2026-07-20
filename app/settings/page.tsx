@@ -75,6 +75,7 @@ function ShadeCard({
   return (
     <motion.button
       type="button"
+      data-no-press
       initial={{
         opacity: 0,
         left: "50%",
@@ -103,6 +104,7 @@ function ShadeCard({
         rotate: 0,
         transition: { ...smoothExit, delay: (2 - index) * 0.04 },
       }}
+      whileTap={{ scale: 0.94 }}
       transition={{
         ...smooth,
         delay: index * 0.055,
@@ -304,6 +306,7 @@ export default function SettingsPage() {
                       {/* Front lid — hinges open downward when active */}
                       <motion.button
                         type="button"
+                        data-no-press
                         data-testid={`theme-family-folder-${family.id}`}
                         aria-label={`${isOpen ? "Close" : "Open"} ${family.name} theme shades`}
                         aria-expanded={isOpen}
