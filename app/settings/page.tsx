@@ -170,7 +170,7 @@ export default function SettingsPage() {
       <div className="editorial-shell flex min-h-[100dvh] flex-col">
         <SiteHeader active="settings" />
 
-        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6 sm:py-14">
+        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6 sm:py-14 xl:max-w-[90rem] xl:px-8">
           <section className="grid gap-8 border-b border-border pb-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
             <motion.div
               initial={{ opacity: 0, y: 18 }}
@@ -185,7 +185,7 @@ export default function SettingsPage() {
               </h1>
               <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
                 Open a folder — the lid lifts and three shades fan out. Pick pastel, classic, or
-                deep. Cursor & smooth scroll default on.
+                deep. Cursor & smooth scroll default off.
               </p>
             </motion.div>
 
@@ -376,20 +376,28 @@ export default function SettingsPage() {
                         }}
                         className="relative z-[6] mt-2.5 w-full rounded-xl border border-white/10 bg-[#0b0e16]/95 px-3 py-2.5 text-left shadow-lg backdrop-blur-sm"
                       >
-                        <div className="flex items-center justify-between gap-2">
+                        {/* Fixed-height plate so Active / open label never shove Motion prefs down */}
+                        <div className="flex min-h-[2.75rem] items-center justify-between gap-2">
                           <div className="min-w-0">
                             <p className="truncate text-[15px] font-bold tracking-tight text-white">
                               {family.name}
                             </p>
-                            <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/55">
-                              {isOpen ? "Open · pick a shade" : `${family.variants.length} shades`}
+                            <p className="mt-0.5 h-3.5 truncate text-[10px] font-semibold uppercase tracking-[0.14em] text-white/55">
+                              {isOpen ? "Pick a shade" : `${family.variants.length} shades`}
                             </p>
                           </div>
-                          {familyActive && (
-                            <span className="shrink-0 rounded-md border border-[rgba(var(--theme-bright-rgb),0.4)] bg-[rgba(var(--theme-rgb),0.2)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--blue-bright)]">
-                              Active
-                            </span>
-                          )}
+                          {/* Always occupy badge slot — invisible when not active (no layout jump) */}
+                          <span
+                            className={cn(
+                              "shrink-0 rounded-md border px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider",
+                              familyActive
+                                ? "border-[rgba(var(--theme-bright-rgb),0.4)] bg-[rgba(var(--theme-rgb),0.2)] text-[var(--blue-bright)]"
+                                : "invisible border-transparent",
+                            )}
+                            aria-hidden={!familyActive}
+                          >
+                            Active
+                          </span>
                         </div>
                       </button>
                     </div>
@@ -404,7 +412,7 @@ export default function SettingsPage() {
               <p className="eyebrow">Experience</p>
               <h2 className="mt-2 text-2xl font-bold text-foreground">Motion & pointer</h2>
               <p className="mt-1.5 max-w-lg text-sm text-muted-foreground">
-                Both default to on. Disable anytime for system cursor or native scroll.
+                Both default to off. Enable only if you want the custom pointer or smoother scroll.
               </p>
             </div>
 

@@ -457,7 +457,7 @@ export default function GoalPage() {
     <div className="editorial-page flex min-h-[100dvh] flex-col">
       <div className="editorial-shell flex min-h-[100dvh] flex-col">
         <SiteHeader active="goal" />
-        <main className="relative mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-10">
+        <main className="relative mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-10 xl:max-w-[90rem] xl:px-8">
         {/* Theme cube — top right of Goal */}
         <FloatingThemeCube
           className={cn(

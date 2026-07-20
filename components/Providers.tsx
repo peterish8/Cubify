@@ -2,16 +2,14 @@
 
 import { SmoothScroll } from "@/components/motion/SmoothScroll"
 import { CustomCursor } from "@/components/motion/CustomCursor"
-import { GlassSheen } from "@/components/motion/GlassSheen"
 import { CubifyThemeProvider } from "@/components/theme/CubifyThemeProvider"
 
-/** Client experience layer: smooth-scroll + custom cursor + reactive glass sheen. */
+/** Client experience layer: optional smooth-scroll + custom cursor. */
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <CubifyThemeProvider>
       <SmoothScroll>
         {children}
-        <GlassSheen />
         <CustomCursor />
       </SmoothScroll>
     </CubifyThemeProvider>

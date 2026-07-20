@@ -493,7 +493,7 @@ export default function ComparePage() {
       <div className="editorial-shell flex min-h-[100dvh] flex-col">
         <SiteHeader active="compare" />
 
-        <main className="mx-auto w-full max-w-6xl flex-1 px-4 sm:px-6">
+        <main className="mx-auto w-full max-w-7xl flex-1 px-4 sm:px-6 xl:max-w-[90rem] xl:px-8">
           {/* Hero + form */}
           {showHero && (
             <section className="grid min-h-[calc(100dvh-8rem)] items-center gap-12 border-b border-border py-14 md:grid-cols-12 md:gap-10 md:py-20">

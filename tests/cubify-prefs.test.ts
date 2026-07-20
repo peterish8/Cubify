@@ -28,7 +28,7 @@ function installStorage(): () => void {
   }
 }
 
-test("prefs default to on when unset", () => {
+test("prefs default to off when unset", () => {
   const cleanup = installStorage()
   try {
     assert.equal(readCustomCursorPref(), DEFAULT_CUSTOM_CURSOR)

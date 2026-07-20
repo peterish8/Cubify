@@ -3,9 +3,9 @@
 export const CURSOR_STORAGE_KEY = "cubify-custom-cursor"
 export const SMOOTH_SCROLL_STORAGE_KEY = "cubify-smooth-scroll"
 
-/** Defaults: both on. */
-export const DEFAULT_CUSTOM_CURSOR = true
-export const DEFAULT_SMOOTH_SCROLL = true
+/** Defaults: both off; users can enable them from Settings. */
+export const DEFAULT_CUSTOM_CURSOR = false
+export const DEFAULT_SMOOTH_SCROLL = false
 
 function readBoolPref(key: string, fallback: boolean): boolean {
   if (typeof window === "undefined") return fallback

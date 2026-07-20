@@ -20,10 +20,10 @@ import {
 type ThemeContextValue = {
   theme: CubifyThemeId
   setTheme: (theme: CubifyThemeId) => void
-  /** Site custom cursor (dot + ring). Off = normal system cursor. Default on. */
+  /** Site custom cursor (dot + ring). Off = normal system cursor. Default off. */
   customCursor: boolean
   setCustomCursor: (enabled: boolean) => void
-  /** Lenis smooth wheel scrolling. Default on. */
+  /** Lenis smooth wheel scrolling. Default off. */
   smoothScroll: boolean
   setSmoothScroll: (enabled: boolean) => void
 }

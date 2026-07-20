@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import Lenis from "lenis"
 import { useCubifyTheme } from "@/components/theme/CubifyThemeProvider"
 
-/** Optional smooth wheel — respects Settings toggle + reduced-motion. Default on. */
+/** Optional smooth wheel — respects Settings toggle + reduced-motion. Default off. */
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
   const { smoothScroll } = useCubifyTheme()
 

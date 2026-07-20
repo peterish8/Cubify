@@ -577,7 +577,7 @@ export default function CountriesPage() {
       <div className="editorial-shell flex min-h-[100dvh] flex-col">
         <SiteHeader active="countries" />
 
-        <main className="mx-auto w-full max-w-6xl flex-1 px-4 sm:px-6">
+        <main className="mx-auto w-full max-w-7xl flex-1 px-4 sm:px-6 xl:max-w-[90rem] xl:px-8">
           <section className="grid min-h-[calc(100dvh-7.5rem)] items-center gap-10 border-b border-border py-12 lg:grid-cols-12 lg:py-16">
             <motion.div
               className="lg:col-span-5"

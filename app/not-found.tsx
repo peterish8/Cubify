@@ -6,7 +6,7 @@ export default function NotFound() {
     <div className="editorial-page flex min-h-[100dvh] flex-col">
       <div className="editorial-shell flex min-h-[100dvh] flex-col">
         <SiteHeader />
-        <main className="mx-auto flex w-full max-w-6xl flex-1 items-center justify-center px-4">
+        <main className="mx-auto flex w-full max-w-7xl flex-1 items-center justify-center px-4 xl:max-w-[90rem]">
           <div className="bezel w-full max-w-md">
             <div className="bezel-inner p-8 text-center">
               <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">

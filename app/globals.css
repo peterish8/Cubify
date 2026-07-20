@@ -404,6 +404,63 @@
   --card: #080401;
 }
 
+/* Gold · Lighter — champagne pastel on black */
+:root[data-cubify-theme="gold-bright"] {
+  --blue: #fbbf24;
+  --blue-bright: #fde68a;
+  --blue-sky: #fef3c7;
+  --blue-deep: #f59e0b;
+  --blue-glow: rgba(253, 230, 138, 0.55);
+  --theme-rgb: 251, 191, 36;
+  --theme-bright-rgb: 253, 230, 138;
+  --theme-sky-rgb: 254, 243, 199;
+  --theme-deep-rgb: 245, 158, 11;
+  --accent: #fbbf24;
+  --ring: #fde68a;
+  --chart-1: #fbbf24;
+  --chart-4: #fef3c7;
+  --sidebar-primary: #fbbf24;
+}
+
+/* Gold · Darker — trophy medal core */
+:root[data-cubify-theme="gold"] {
+  --blue: #eab308;
+  --blue-bright: #fbbf24;
+  --blue-sky: #fde047;
+  --blue-deep: #a16207;
+  --blue-glow: rgba(234, 179, 8, 0.5);
+  --theme-rgb: 234, 179, 8;
+  --theme-bright-rgb: 251, 191, 36;
+  --theme-sky-rgb: 253, 224, 71;
+  --theme-deep-rgb: 161, 98, 7;
+  --accent: #eab308;
+  --ring: #fbbf24;
+  --chart-1: #eab308;
+  --chart-4: #fde047;
+  --sidebar-primary: #eab308;
+}
+
+/* Gold · Deep — antique vault gold */
+:root[data-cubify-theme="gold-dark"] {
+  --blue: #a16207;
+  --blue-bright: #ca8a04;
+  --blue-sky: #eab308;
+  --blue-deep: #422006;
+  --blue-glow: rgba(161, 98, 7, 0.45);
+  --theme-rgb: 161, 98, 7;
+  --theme-bright-rgb: 202, 138, 4;
+  --theme-sky-rgb: 234, 179, 8;
+  --theme-deep-rgb: 66, 32, 6;
+  --accent: #a16207;
+  --ring: #ca8a04;
+  --chart-1: #a16207;
+  --chart-4: #eab308;
+  --sidebar-primary: #a16207;
+  --secondary: #0a0702;
+  --muted: #0a0702;
+  --card: #060401;
+}
+
 :root[data-cubify-theme="purple-dark"] {
   --blue: #7e22ce;
   --blue-bright: #9333ea;
@@ -424,53 +481,53 @@
   --card: #06020c;
 }
 
-/* Night · Lighter — soft pastel Tokyo lift */
+/* Night · Lighter — clearer pastel accents on a darker Tokyo stage */
 :root[data-cubify-theme="tokyo-bright"] {
-  --background: #1a1b28;
-  --card: #22233a;
-  --popover: #22233a;
-  --secondary: #2c2d44;
-  --muted: #2c2d44;
-  --foreground: #e0e4ff;
-  --muted-foreground: #a8b0d4;
-  --blue: #a5c4fc;
-  --blue-bright: #cdd6f4;
-  --blue-sky: #dce4ff;
-  --blue-deep: #89b4fa;
-  --blue-glow: rgba(205, 214, 244, 0.5);
-  --theme-rgb: 165, 196, 252;
-  --theme-bright-rgb: 205, 214, 244;
-  --theme-sky-rgb: 220, 228, 255;
-  --theme-deep-rgb: 137, 180, 250;
-  --glass-bg: rgba(34, 35, 58, 0.58);
-  --glass-bg-strong: rgba(34, 35, 58, 0.74);
-  --accent: #a5c4fc;
-  --ring: #cdd6f4;
-  --chart-1: #a5c4fc;
-  --chart-4: #dce4ff;
-  --sidebar-primary: #a5c4fc;
+  --background: #12131c;
+  --card: #181925;
+  --popover: #181925;
+  --secondary: #222336;
+  --muted: #222336;
+  --foreground: #d4daf8;
+  --muted-foreground: #8b93b8;
+  --blue: #8fb4fc;
+  --blue-bright: #b4c4f0;
+  --blue-sky: #9ec0ff;
+  --blue-deep: #6d9aef;
+  --blue-glow: rgba(143, 180, 252, 0.48);
+  --theme-rgb: 143, 180, 252;
+  --theme-bright-rgb: 180, 196, 240;
+  --theme-sky-rgb: 158, 192, 255;
+  --theme-deep-rgb: 109, 154, 239;
+  --glass-bg: rgba(24, 25, 37, 0.64);
+  --glass-bg-strong: rgba(24, 25, 37, 0.8);
+  --accent: #8fb4fc;
+  --ring: #b4c4f0;
+  --chart-1: #8fb4fc;
+  --chart-4: #9ec0ff;
+  --sidebar-primary: #8fb4fc;
 }
 
-/* Night · Darker (former lighter Tokyo) */
+/* Night · Darker — darker stage than Tokyo Pastel; accents stay classic Tokyo */
 :root[data-cubify-theme="tokyo-night"] {
-  --background: #16161e;
-  --card: #1a1b26;
-  --popover: #1a1b26;
-  --secondary: #24283b;
-  --muted: #24283b;
+  --background: #08090f;
+  --card: #0e0f16;
+  --popover: #0e0f16;
+  --secondary: #151722;
+  --muted: #151722;
   --foreground: #c0caf5;
   --muted-foreground: #7f88b0;
   --blue: #7aa2f7;
   --blue-bright: #bb9af7;
   --blue-sky: #7dcfff;
   --blue-deep: #3d59a1;
-  --blue-glow: rgba(122, 162, 247, 0.5);
+  --blue-glow: rgba(122, 162, 247, 0.48);
   --theme-rgb: 122, 162, 247;
   --theme-bright-rgb: 187, 154, 247;
   --theme-sky-rgb: 125, 207, 255;
   --theme-deep-rgb: 61, 89, 161;
-  --glass-bg: rgba(26, 27, 38, 0.56);
-  --glass-bg-strong: rgba(26, 27, 38, 0.72);
+  --glass-bg: rgba(14, 15, 22, 0.64);
+  --glass-bg-strong: rgba(14, 15, 22, 0.82);
   --accent: #7aa2f7;
   --ring: #bb9af7;
   --chart-1: #7aa2f7;
@@ -479,24 +536,25 @@
 }
 
 :root[data-cubify-theme="tokyo-deeper"] {
-  --background: #0d0e14;
-  --card: #11121a;
-  --popover: #11121a;
-  --secondary: #1a1b26;
-  --muted: #1a1b26;
+  /* Near-pure black stage — blacker than previous #0d0e14 */
+  --background: #000000;
+  --card: #050508;
+  --popover: #050508;
+  --secondary: #0a0a0e;
+  --muted: #0a0a0e;
   --foreground: #a9b1d6;
   --muted-foreground: #565f89;
   --blue: #7aa2f7;
   --blue-bright: #9d7cd8;
   --blue-sky: #7dcfff;
   --blue-deep: #2a3570;
-  --blue-glow: rgba(122, 162, 247, 0.4);
+  --blue-glow: rgba(122, 162, 247, 0.35);
   --theme-rgb: 122, 162, 247;
   --theme-bright-rgb: 157, 124, 216;
   --theme-sky-rgb: 125, 207, 255;
   --theme-deep-rgb: 42, 53, 112;
-  --glass-bg: rgba(17, 18, 26, 0.62);
-  --glass-bg-strong: rgba(17, 18, 26, 0.78);
+  --glass-bg: rgba(5, 5, 8, 0.72);
+  --glass-bg-strong: rgba(5, 5, 8, 0.88);
   --accent: #7aa2f7;
   --ring: #9d7cd8;
   --chart-1: #7aa2f7;
@@ -868,6 +926,20 @@
   color: #06060a;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 2px 8px -2px rgba(0, 0, 0, 0.6);
 }
+/* Percentile ring — neat circular WR badge */
+.percentile-ring {
+  isolation: isolate;
+}
+
+/* Larger facelets for event board ranks */
+.facelet-lg {
+  min-width: 2.35rem;
+  height: 1.75rem;
+  padding: 0 0.55rem;
+  border-radius: 7px;
+  font-size: 0.8125rem;
+  letter-spacing: 0.07em;
+}
 .facelet-nr { background: linear-gradient(180deg, #6bffc0, var(--rank-nr)); }
 .facelet-cr { background: linear-gradient(180deg, #ffd479, var(--rank-cr)); }
 .facelet-wr { background: linear-gradient(180deg, #ffffff, var(--rank-wr)); }
@@ -925,43 +997,80 @@
     0 0 34px -6px rgba(var(--theme-rgb), 0.6);
 }
 
-/* ── Buttons ── */
+/* ── Buttons ──
+   Solid CTA: theme deep → theme core. No white sweep sheen.
+   Hover/loading use the cube tumble mark (see .cube-load). */
 .btn-solid {
   position: relative;
   overflow: hidden;
-  color: #fff;
+  color: #ffffff;
   font-weight: 700;
   letter-spacing: -0.01em;
   border-radius: 0.7rem;
-  border: 1px solid rgba(var(--theme-bright-rgb), 0.28);
+  border: 1px solid rgba(var(--theme-bright-rgb), 0.38);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 46%),
-    linear-gradient(135deg, var(--blue-deep), var(--blue-sky));
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 42%),
+    linear-gradient(135deg, rgb(var(--theme-deep-rgb)) 0%, rgb(var(--theme-rgb)) 72%, rgb(var(--theme-rgb)) 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.4),
-    0 10px 30px -10px rgba(var(--theme-rgb), 0.7),
-    0 6px 24px -12px rgba(var(--theme-sky-rgb), 0.55);
-  transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, filter 0.2s ease;
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 10px 30px -10px rgba(var(--theme-rgb), 0.65),
+    0 6px 22px -12px rgba(0, 0, 0, 0.55);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+  transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.2s ease;
 }
 .btn-solid:hover {
-  filter: brightness(1.1);
+  border-color: rgba(var(--theme-bright-rgb), 0.55);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 14px 40px -10px rgba(var(--theme-rgb), 0.85),
-    0 8px 30px -10px rgba(var(--theme-sky-rgb), 0.7);
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 14px 36px -10px rgba(var(--theme-rgb), 0.75),
+    0 8px 28px -10px rgba(0, 0, 0, 0.5);
 }
 .btn-solid:active { transform: scale(0.985); }
-.btn-solid:disabled { opacity: 0.55; filter: grayscale(0.3); }
-.btn-solid::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
-  transform: translateX(-130%);
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  pointer-events: none;
+.btn-solid:disabled { opacity: 0.7; }
+
+/* Isometric cube “loading / thinking” tumble */
+.cube-load {
+  display: inline-block;
+  transform-origin: 50% 55%;
+  animation: cube-load-tumble 0.85s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  will-change: transform;
+  filter: drop-shadow(0 0 6px rgba(var(--theme-rgb), 0.45));
 }
-.btn-solid:hover::after { transform: translateX(130%); }
+.btn-solid .btn-cube-idle {
+  display: inline-block;
+  transform-origin: 50% 55%;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  filter: drop-shadow(0 0 0 transparent);
+}
+.btn-solid:hover .btn-cube-idle,
+.btn-solid:focus-visible .btn-cube-idle {
+  animation: cube-load-tumble 0.85s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  filter: drop-shadow(0 0 6px rgba(var(--theme-rgb), 0.45));
+}
+@keyframes cube-load-tumble {
+  0% {
+    transform: rotate(0deg) scale(1) translateY(0);
+  }
+  25% {
+    transform: rotate(90deg) scale(0.9) translateY(-1px);
+  }
+  50% {
+    transform: rotate(180deg) scale(1) translateY(0);
+  }
+  75% {
+    transform: rotate(270deg) scale(0.9) translateY(-1px);
+  }
+  100% {
+    transform: rotate(360deg) scale(1) translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cube-load,
+  .btn-solid:hover .btn-cube-idle,
+  .btn-solid:focus-visible .btn-cube-idle {
+    animation: none;
+  }
+}
 
 .btn-ghost {
   border: 1px solid var(--glass-border);
@@ -992,6 +1101,81 @@
   font-weight: 700;
   letter-spacing: -0.04em;
   line-height: 0.95;
+}
+
+/* Landing hero: WCA logo color accent + themed meaning shimmer */
+.wca-logo-gradient {
+  --wca-x: 50%;
+  --wca-y: 50%;
+  position: relative;
+  display: inline-block;
+  padding-inline: 0.03em;
+  color: inherit;
+  -webkit-text-fill-color: currentColor;
+}
+.wca-logo-gradient::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(
+    circle 0.82em at var(--wca-x) var(--wca-y),
+    rgba(243, 246, 251, 0.92) 0%,
+    rgba(71, 116, 185, 0.78) 24%,
+    rgba(76, 167, 99, 0.7) 44%,
+    rgba(216, 208, 90, 0.66) 58%,
+    rgba(217, 130, 54, 0.58) 72%,
+    rgba(217, 74, 66, 0.46) 86%,
+    transparent 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 6px rgba(45, 98, 184, 0.14));
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+.wca-logo-gradient:hover::after {
+  opacity: 1;
+}
+
+.meaning-spark {
+  display: inline-block;
+  /* Room for descenders (g); slight lift so the line doesn’t sit low */
+  padding-bottom: 0.08em;
+  line-height: 1.05;
+  vertical-align: baseline;
+  background-image: linear-gradient(
+    115deg,
+    rgb(var(--theme-bright-rgb)) 0%,
+    rgb(var(--theme-sky-rgb)) 42%,
+    rgb(var(--theme-rgb)) 100%
+  );
+  background-size: 180% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 10px rgba(var(--theme-rgb), 0.28));
+  animation: meaning-shimmer 5.6s ease-in-out infinite;
+}
+@keyframes meaning-shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .meaning-spark {
+    animation: none;
+  }
+  .meaning-spark {
+    background-position: 40% 50%;
+  }
 }
 
 /* Goal intro — same cinematic display face as rest of site */
