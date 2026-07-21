@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-07-20T00:00:12Z",
+    "exportDate": "2026-07-21T00:00:05Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_201_20260720T000012Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_202_20260721T000005Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 292719,
+  "totalCubers": 292836,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 61103
+      "cubers": 61141
     },
     {
       "iso2": "CN",
@@ -26,7 +26,7 @@
       "iso2": "IN",
       "name": "India",
       "continentId": "_Asia",
-      "cubers": 21088
+      "cubers": 21089
     },
     {
       "iso2": "AU",
@@ -38,7 +38,7 @@
       "iso2": "CA",
       "name": "Canada",
       "continentId": "_North America",
-      "cubers": 10719
+      "cubers": 10740
     },
     {
       "iso2": "BR",
@@ -68,7 +68,7 @@
       "iso2": "PH",
       "name": "Philippines",
       "continentId": "_Asia",
-      "cubers": 6216
+      "cubers": 6217
     },
     {
       "iso2": "CO",
@@ -92,13 +92,13 @@
       "iso2": "PE",
       "name": "Peru",
       "continentId": "_South America",
-      "cubers": 4561
+      "cubers": 4577
     },
     {
       "iso2": "KR",
       "name": "Republic of Korea",
       "continentId": "_Asia",
-      "cubers": 4486
+      "cubers": 4520
     },
     {
       "iso2": "MX",
@@ -419,6 +419,12 @@
       "cubers": 385
     },
     {
+      "iso2": "AZ",
+      "name": "Azerbaijan",
+      "continentId": "_Europe",
+      "cubers": 382
+    },
+    {
       "iso2": "KE",
       "name": "Kenya",
       "continentId": "_Africa",
@@ -429,12 +435,6 @@
       "name": "Algeria",
       "continentId": "_Africa",
       "cubers": 378
-    },
-    {
-      "iso2": "AZ",
-      "name": "Azerbaijan",
-      "continentId": "_Europe",
-      "cubers": 376
     },
     {
       "iso2": "SV",
