@@ -43,9 +43,9 @@
   ],
   "schemaVersion": 1,
   "source": {
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_204_20260723T000030Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_205_20260724T000021Z.tsv.zip",
     "attribution": "Based on competition results owned and maintained by the World Cube Association.",
-    "exportDate": "2026-07-23T00:00:30Z",
+    "exportDate": "2026-07-24T00:00:21Z",
     "exportFormatVersion": "2.0.2",
     "name": "World Cube Association Results Export",
     "url": "https://www.worldcubeassociation.org/export/results"
