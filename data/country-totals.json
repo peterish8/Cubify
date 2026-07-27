@@ -2,31 +2,31 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-07-26T00:00:21Z",
+    "exportDate": "2026-07-27T00:00:26Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_207_20260726T000021Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_208_20260727T000026Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 293015,
+  "totalCubers": 293111,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 61201
+      "cubers": 61246
     },
     {
       "iso2": "CN",
       "name": "China",
       "continentId": "_Asia",
-      "cubers": 29025
+      "cubers": 29026
     },
     {
       "iso2": "IN",
       "name": "India",
       "continentId": "_Asia",
-      "cubers": 21101
+      "cubers": 21129
     },
     {
       "iso2": "AU",
@@ -56,7 +56,7 @@
       "iso2": "PL",
       "name": "Poland",
       "continentId": "_Europe",
-      "cubers": 6828
+      "cubers": 6830
     },
     {
       "iso2": "RU",
@@ -68,19 +68,19 @@
       "iso2": "PH",
       "name": "Philippines",
       "continentId": "_Asia",
-      "cubers": 6237
+      "cubers": 6247
     },
     {
       "iso2": "CO",
       "name": "Colombia",
       "continentId": "_South America",
-      "cubers": 6037
+      "cubers": 6044
     },
     {
       "iso2": "ES",
       "name": "Spain",
       "continentId": "_Europe",
-      "cubers": 5380
+      "cubers": 5381
     },
     {
       "iso2": "FR",
@@ -104,7 +104,7 @@
       "iso2": "MX",
       "name": "Mexico",
       "continentId": "_North America",
-      "cubers": 4365
+      "cubers": 4366
     },
     {
       "iso2": "ID",
@@ -260,7 +260,7 @@
       "iso2": "KZ",
       "name": "Kazakhstan",
       "continentId": "_Asia",
-      "cubers": 1359
+      "cubers": 1360
     },
     {
       "iso2": "HU",
