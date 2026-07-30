@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-07-29T00:00:23Z",
+    "exportDate": "2026-07-30T00:00:30Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_210_20260729T000023Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_211_20260730T000030Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 293306,
+  "totalCubers": 293340,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 61272
+      "cubers": 61282
     },
     {
       "iso2": "CN",
@@ -38,7 +38,7 @@
       "iso2": "CA",
       "name": "Canada",
       "continentId": "_North America",
-      "cubers": 10746
+      "cubers": 10755
     },
     {
       "iso2": "BR",
@@ -98,7 +98,7 @@
       "iso2": "KR",
       "name": "Republic of Korea",
       "continentId": "_Asia",
-      "cubers": 4521
+      "cubers": 4523
     },
     {
       "iso2": "MX",
@@ -260,7 +260,7 @@
       "iso2": "KZ",
       "name": "Kazakhstan",
       "continentId": "_Asia",
-      "cubers": 1360
+      "cubers": 1371
     },
     {
       "iso2": "HU",
@@ -386,7 +386,7 @@
       "iso2": "UZ",
       "name": "Uzbekistan",
       "continentId": "_Asia",
-      "cubers": 474
+      "cubers": 475
     },
     {
       "iso2": "SK",
@@ -500,7 +500,7 @@
       "iso2": "KG",
       "name": "Kyrgyzstan",
       "continentId": "_Asia",
-      "cubers": 237
+      "cubers": 238
     },
     {
       "iso2": "HN",
