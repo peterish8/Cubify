@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-08-05T00:00:16Z",
+    "exportDate": "2026-08-06T00:00:10Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_217_20260805T000016Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_218_20260806T000010Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
@@ -86,7 +86,7 @@
       "iso2": "FR",
       "name": "France",
       "continentId": "_Europe",
-      "cubers": 4852
+      "cubers": 4851
     },
     {
       "iso2": "PE",
@@ -275,16 +275,16 @@
       "cubers": 1253
     },
     {
-      "iso2": "DK",
-      "name": "Denmark",
+      "iso2": "CH",
+      "name": "Switzerland",
       "continentId": "_Europe",
       "cubers": 1226
     },
     {
-      "iso2": "CH",
-      "name": "Switzerland",
+      "iso2": "DK",
+      "name": "Denmark",
       "continentId": "_Europe",
-      "cubers": 1225
+      "cubers": 1226
     },
     {
       "iso2": "EC",
