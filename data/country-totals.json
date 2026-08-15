@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-08-14T00:00:16Z",
+    "exportDate": "2026-08-15T00:00:30Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_226_20260814T000016Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_227_20260815T000030Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 294104,
+  "totalCubers": 294292,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 61420
+      "cubers": 61437
     },
     {
       "iso2": "CN",
@@ -26,13 +26,13 @@
       "iso2": "IN",
       "name": "India",
       "continentId": "_Asia",
-      "cubers": 21134
+      "cubers": 21145
     },
     {
       "iso2": "AU",
       "name": "Australia",
       "continentId": "_Oceania",
-      "cubers": 11978
+      "cubers": 11979
     },
     {
       "iso2": "CA",
@@ -50,7 +50,7 @@
       "iso2": "GB",
       "name": "United Kingdom",
       "continentId": "_Europe",
-      "cubers": 6920
+      "cubers": 6921
     },
     {
       "iso2": "PL",
@@ -74,19 +74,19 @@
       "iso2": "CO",
       "name": "Colombia",
       "continentId": "_South America",
-      "cubers": 6054
+      "cubers": 6055
     },
     {
       "iso2": "ES",
       "name": "Spain",
       "continentId": "_Europe",
-      "cubers": 5393
+      "cubers": 5394
     },
     {
       "iso2": "FR",
       "name": "France",
       "continentId": "_Europe",
-      "cubers": 4854
+      "cubers": 4856
     },
     {
       "iso2": "PE",
@@ -104,7 +104,7 @@
       "iso2": "MX",
       "name": "Mexico",
       "continentId": "_North America",
-      "cubers": 4401
+      "cubers": 4402
     },
     {
       "iso2": "ID",
@@ -113,16 +113,16 @@
       "cubers": 4309
     },
     {
+      "iso2": "TW",
+      "name": "Chinese Taipei",
+      "continentId": "_Asia",
+      "cubers": 4252
+    },
+    {
       "iso2": "DE",
       "name": "Germany",
       "continentId": "_Europe",
       "cubers": 4186
-    },
-    {
-      "iso2": "TW",
-      "name": "Chinese Taipei",
-      "continentId": "_Asia",
-      "cubers": 4119
     },
     {
       "iso2": "MY",
@@ -332,7 +332,7 @@
       "iso2": "BD",
       "name": "Bangladesh",
       "continentId": "_Asia",
-      "cubers": 734
+      "cubers": 754
     },
     {
       "iso2": "DO",
