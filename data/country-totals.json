@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-08-27T00:00:07Z",
+    "exportDate": "2026-08-29T00:00:35Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_239_20260827T000007Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_241_20260829T000035Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 295492,
+  "totalCubers": 295783,
   "countries": [
     {
       "iso2": "US",
@@ -44,13 +44,13 @@
       "iso2": "BR",
       "name": "Brazil",
       "continentId": "_South America",
-      "cubers": 10065
+      "cubers": 10067
     },
     {
       "iso2": "GB",
       "name": "United Kingdom",
       "continentId": "_Europe",
-      "cubers": 6948
+      "cubers": 6949
     },
     {
       "iso2": "PL",
@@ -164,7 +164,7 @@
       "iso2": "BO",
       "name": "Bolivia",
       "continentId": "_South America",
-      "cubers": 2720
+      "cubers": 2929
     },
     {
       "iso2": "NL",
@@ -200,13 +200,13 @@
       "iso2": "NZ",
       "name": "New Zealand",
       "continentId": "_Oceania",
-      "cubers": 2144
+      "cubers": 2145
     },
     {
       "iso2": "IL",
       "name": "Israel",
       "continentId": "_Europe",
-      "cubers": 2061
+      "cubers": 2132
     },
     {
       "iso2": "TH",
@@ -218,7 +218,7 @@
       "iso2": "AR",
       "name": "Argentina",
       "continentId": "_South America",
-      "cubers": 1802
+      "cubers": 1803
     },
     {
       "iso2": "NO",
@@ -260,7 +260,7 @@
       "iso2": "KZ",
       "name": "Kazakhstan",
       "continentId": "_Asia",
-      "cubers": 1373
+      "cubers": 1378
     },
     {
       "iso2": "HU",
@@ -524,7 +524,7 @@
       "iso2": "CY",
       "name": "Cyprus",
       "continentId": "_Europe",
-      "cubers": 215
+      "cubers": 216
     },
     {
       "iso2": "MA",
