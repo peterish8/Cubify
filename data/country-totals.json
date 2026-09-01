@@ -2,43 +2,43 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-08-31T06:13:13Z",
+    "exportDate": "2026-09-01T08:48:10Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_243_20260831T061313Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_244_20260901T084810Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 295988,
+  "totalCubers": 296230,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 61662
+      "cubers": 61771
     },
     {
       "iso2": "CN",
       "name": "China",
       "continentId": "_Asia",
-      "cubers": 29411
+      "cubers": 29415
     },
     {
       "iso2": "IN",
       "name": "India",
       "continentId": "_Asia",
-      "cubers": 21194
+      "cubers": 21199
     },
     {
       "iso2": "AU",
       "name": "Australia",
       "continentId": "_Oceania",
-      "cubers": 12007
+      "cubers": 12051
     },
     {
       "iso2": "CA",
       "name": "Canada",
       "continentId": "_North America",
-      "cubers": 10846
+      "cubers": 10877
     },
     {
       "iso2": "BR",
@@ -68,7 +68,7 @@
       "iso2": "PH",
       "name": "Philippines",
       "continentId": "_Asia",
-      "cubers": 6354
+      "cubers": 6356
     },
     {
       "iso2": "CO",
@@ -89,22 +89,22 @@
       "cubers": 4893
     },
     {
-      "iso2": "KR",
-      "name": "Republic of Korea",
-      "continentId": "_Asia",
-      "cubers": 4591
-    },
-    {
       "iso2": "PE",
       "name": "Peru",
       "continentId": "_South America",
-      "cubers": 4589
+      "cubers": 4598
+    },
+    {
+      "iso2": "KR",
+      "name": "Republic of Korea",
+      "continentId": "_Asia",
+      "cubers": 4593
     },
     {
       "iso2": "MX",
       "name": "Mexico",
       "continentId": "_North America",
-      "cubers": 4404
+      "cubers": 4407
     },
     {
       "iso2": "ID",
@@ -122,19 +122,19 @@
       "iso2": "DE",
       "name": "Germany",
       "continentId": "_Europe",
-      "cubers": 4239
+      "cubers": 4238
     },
     {
       "iso2": "MY",
       "name": "Malaysia",
       "continentId": "_Asia",
-      "cubers": 3886
+      "cubers": 3887
     },
     {
       "iso2": "JP",
       "name": "Japan",
       "continentId": "_Asia",
-      "cubers": 3384
+      "cubers": 3386
     },
     {
       "iso2": "SE",
@@ -146,13 +146,13 @@
       "iso2": "VN",
       "name": "Vietnam",
       "continentId": "_Asia",
-      "cubers": 3030
+      "cubers": 3031
     },
     {
       "iso2": "IT",
       "name": "Italy",
       "continentId": "_Europe",
-      "cubers": 2972
+      "cubers": 2973
     },
     {
       "iso2": "UA",
@@ -200,7 +200,7 @@
       "iso2": "NZ",
       "name": "New Zealand",
       "continentId": "_Oceania",
-      "cubers": 2145
+      "cubers": 2147
     },
     {
       "iso2": "IL",
@@ -212,7 +212,7 @@
       "iso2": "TH",
       "name": "Thailand",
       "continentId": "_Asia",
-      "cubers": 1959
+      "cubers": 1972
     },
     {
       "iso2": "AR",
@@ -308,7 +308,7 @@
       "iso2": "VE",
       "name": "Venezuela",
       "continentId": "_South America",
-      "cubers": 1012
+      "cubers": 1023
     },
     {
       "iso2": "FI",
@@ -332,7 +332,7 @@
       "iso2": "BD",
       "name": "Bangladesh",
       "continentId": "_Asia",
-      "cubers": 764
+      "cubers": 765
     },
     {
       "iso2": "DO",
@@ -446,7 +446,7 @@
       "iso2": "HR",
       "name": "Croatia",
       "continentId": "_Europe",
-      "cubers": 370
+      "cubers": 371
     },
     {
       "iso2": "PY",
@@ -737,6 +737,12 @@
       "cubers": 22
     },
     {
+      "iso2": "MM",
+      "name": "Myanmar",
+      "continentId": "_Asia",
+      "cubers": 15
+    },
+    {
       "iso2": "OM",
       "name": "Oman",
       "continentId": "_Asia",
@@ -758,12 +764,6 @@
       "iso2": "LY",
       "name": "Libya",
       "continentId": "_Africa",
-      "cubers": 14
-    },
-    {
-      "iso2": "MM",
-      "name": "Myanmar",
-      "continentId": "_Asia",
       "cubers": 14
     },
     {
