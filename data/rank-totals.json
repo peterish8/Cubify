@@ -2,23 +2,23 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-09-03T00:00:33Z",
+    "exportDate": "2026-09-05T00:00:26Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_246_20260903T000033Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_248_20260905T000026Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
   "events": {
     "222": {
       "single": {
-        "world": 186665,
+        "world": 186689,
         "continents": {
           "_Africa": 2959,
           "_Asia": 53659,
           "_Europe": 50072,
-          "_North America": 53128,
-          "_Oceania": 10197,
-          "_South America": 16650
+          "_North America": 53134,
+          "_Oceania": 10210,
+          "_South America": 16655
         },
         "countries": {
           "AD": 22,
@@ -30,7 +30,7 @@
           "AO": 58,
           "AR": 1203,
           "AT": 396,
-          "AU": 8554,
+          "AU": 8567,
           "AZ": 191,
           "BA": 102,
           "BB": 21,
@@ -39,14 +39,14 @@
           "BG": 407,
           "BH": 68,
           "BN": 6,
-          "BO": 1264,
+          "BO": 1269,
           "BR": 5137,
           "BS": 7,
           "BT": 3,
           "BW": 1,
           "BY": 532,
           "BZ": 10,
-          "CA": 7172,
+          "CA": 7173,
           "CD": 1,
           "CG": 2,
           "CH": 913,
@@ -171,7 +171,7 @@
           "TZ": 4,
           "UA": 1894,
           "UG": 13,
-          "US": 40931,
+          "US": 40936,
           "UY": 276,
           "UZ": 347,
           "VE": 550,
@@ -185,14 +185,14 @@
         }
       },
       "average": {
-        "world": 181706,
+        "world": 181728,
         "continents": {
           "_Africa": 2901,
           "_Asia": 51553,
           "_Europe": 48762,
-          "_North America": 52319,
-          "_Oceania": 10086,
-          "_South America": 16085
+          "_North America": 52324,
+          "_Oceania": 10098,
+          "_South America": 16090
         },
         "countries": {
           "AD": 21,
@@ -204,7 +204,7 @@
           "AO": 57,
           "AR": 1185,
           "AT": 394,
-          "AU": 8452,
+          "AU": 8464,
           "AZ": 187,
           "BA": 100,
           "BB": 21,
@@ -213,14 +213,14 @@
           "BG": 401,
           "BH": 68,
           "BN": 6,
-          "BO": 1244,
+          "BO": 1249,
           "BR": 5088,
           "BS": 7,
           "BT": 3,
           "BW": 1,
           "BY": 515,
           "BZ": 9,
-          "CA": 7091,
+          "CA": 7092,
           "CD": 1,
           "CG": 2,
           "CH": 901,
@@ -345,7 +345,7 @@
           "TZ": 4,
           "UA": 1866,
           "UG": 13,
-          "US": 40341,
+          "US": 40345,
           "UY": 273,
           "UZ": 340,
           "VE": 533,
@@ -361,14 +361,14 @@
     },
     "333": {
       "single": {
-        "world": 284267,
+        "world": 284303,
         "continents": {
           "_Africa": 4763,
           "_Asia": 91080,
-          "_Europe": 67721,
-          "_North America": 77548,
-          "_Oceania": 13841,
-          "_South America": 29314
+          "_Europe": 67723,
+          "_North America": 77557,
+          "_Oceania": 13861,
+          "_South America": 29319
         },
         "countries": {
           "AD": 42,
@@ -380,7 +380,7 @@
           "AO": 94,
           "AR": 1694,
           "AT": 530,
-          "AU": 11689,
+          "AU": 11709,
           "AZ": 367,
           "BA": 144,
           "BB": 29,
@@ -389,14 +389,14 @@
           "BG": 567,
           "BH": 100,
           "BN": 9,
-          "BO": 2771,
+          "BO": 2776,
           "BR": 9644,
           "BS": 11,
           "BT": 4,
           "BW": 1,
           "BY": 748,
           "BZ": 25,
-          "CA": 10391,
+          "CA": 10392,
           "CD": 2,
           "CG": 2,
           "CH": 1197,
@@ -423,7 +423,7 @@
           "FI": 875,
           "FJ": 31,
           "FR": 4746,
-          "GB": 6687,
+          "GB": 6689,
           "GD": 1,
           "GE": 208,
           "GH": 67,
@@ -526,7 +526,7 @@
           "TZ": 4,
           "UA": 2868,
           "UG": 30,
-          "US": 59693,
+          "US": 59701,
           "UY": 515,
           "UZ": 463,
           "VE": 1005,
@@ -540,14 +540,14 @@
         }
       },
       "average": {
-        "world": 278912,
+        "world": 278948,
         "continents": {
           "_Africa": 4676,
           "_Asia": 88074,
-          "_Europe": 66788,
-          "_North America": 76723,
-          "_Oceania": 13695,
-          "_South America": 28956
+          "_Europe": 66790,
+          "_North America": 76732,
+          "_Oceania": 13715,
+          "_South America": 28961
         },
         "countries": {
           "AD": 40,
@@ -559,7 +559,7 @@
           "AO": 93,
           "AR": 1671,
           "AT": 520,
-          "AU": 11572,
+          "AU": 11592,
           "AZ": 358,
           "BA": 142,
           "BB": 29,
@@ -568,14 +568,14 @@
           "BG": 550,
           "BH": 98,
           "BN": 9,
-          "BO": 2742,
+          "BO": 2747,
           "BR": 9554,
           "BS": 10,
           "BT": 4,
           "BW": 1,
           "BY": 741,
           "BZ": 24,
-          "CA": 10297,
+          "CA": 10298,
           "CD": 1,
           "CG": 2,
           "CH": 1188,
@@ -602,7 +602,7 @@
           "FI": 871,
           "FJ": 31,
           "FR": 4693,
-          "GB": 6635,
+          "GB": 6637,
           "GD": 1,
           "GE": 205,
           "GH": 64,
@@ -705,7 +705,7 @@
           "TZ": 4,
           "UA": 2824,
           "UG": 29,
-          "US": 59055,
+          "US": 59063,
           "UY": 514,
           "UZ": 457,
           "VE": 994,
@@ -721,14 +721,14 @@
     },
     "333bf": {
       "single": {
-        "world": 12173,
+        "world": 12174,
         "continents": {
           "_Africa": 111,
           "_Asia": 3780,
           "_Europe": 4127,
           "_North America": 2804,
           "_Oceania": 480,
-          "_South America": 871
+          "_South America": 872
         },
         "countries": {
           "AE": 1,
@@ -744,7 +744,7 @@
           "BE": 66,
           "BG": 16,
           "BH": 4,
-          "BO": 47,
+          "BO": 48,
           "BR": 333,
           "BY": 35,
           "CA": 351,
@@ -1548,13 +1548,13 @@
     },
     "333oh": {
       "single": {
-        "world": 73664,
+        "world": 73669,
         "continents": {
           "_Africa": 1005,
           "_Asia": 22206,
           "_Europe": 20198,
           "_North America": 20841,
-          "_Oceania": 3263,
+          "_Oceania": 3268,
           "_South America": 6151
         },
         "countries": {
@@ -1566,7 +1566,7 @@
           "AO": 30,
           "AR": 598,
           "AT": 184,
-          "AU": 2654,
+          "AU": 2659,
           "AZ": 93,
           "BA": 40,
           "BB": 12,
@@ -1713,13 +1713,13 @@
         }
       },
       "average": {
-        "world": 57456,
+        "world": 57463,
         "continents": {
           "_Africa": 847,
           "_Asia": 18542,
           "_Europe": 15106,
           "_North America": 15664,
-          "_Oceania": 2205,
+          "_Oceania": 2212,
           "_South America": 5092
         },
         "countries": {
@@ -1731,7 +1731,7 @@
           "AO": 30,
           "AR": 498,
           "AT": 150,
-          "AU": 1715,
+          "AU": 1722,
           "AZ": 88,
           "BA": 24,
           "BB": 12,
@@ -1876,14 +1876,14 @@
     },
     "444": {
       "single": {
-        "world": 83891,
+        "world": 83904,
         "continents": {
           "_Africa": 1050,
           "_Asia": 22607,
           "_Europe": 25205,
-          "_North America": 24888,
-          "_Oceania": 3776,
-          "_South America": 6365
+          "_North America": 24892,
+          "_Oceania": 3783,
+          "_South America": 6367
         },
         "countries": {
           "AD": 6,
@@ -1894,7 +1894,7 @@
           "AO": 23,
           "AR": 615,
           "AT": 224,
-          "AU": 3044,
+          "AU": 3051,
           "AZ": 90,
           "BA": 43,
           "BB": 8,
@@ -1903,7 +1903,7 @@
           "BG": 192,
           "BH": 28,
           "BN": 2,
-          "BO": 502,
+          "BO": 504,
           "BR": 1855,
           "BS": 4,
           "BT": 1,
@@ -2027,7 +2027,7 @@
           "TZ": 1,
           "UA": 867,
           "UG": 10,
-          "US": 19067,
+          "US": 19071,
           "UY": 103,
           "UZ": 176,
           "VE": 258,
@@ -2041,13 +2041,13 @@
         }
       },
       "average": {
-        "world": 54533,
+        "world": 54545,
         "continents": {
           "_Africa": 813,
           "_Asia": 16269,
           "_Europe": 15323,
-          "_North America": 15166,
-          "_Oceania": 2244,
+          "_North America": 15167,
+          "_Oceania": 2255,
           "_South America": 4718
         },
         "countries": {
@@ -2059,7 +2059,7 @@
           "AO": 22,
           "AR": 460,
           "AT": 145,
-          "AU": 1667,
+          "AU": 1678,
           "AZ": 68,
           "BA": 26,
           "BB": 8,
@@ -2190,7 +2190,7 @@
           "TZ": 1,
           "UA": 521,
           "UG": 9,
-          "US": 11461,
+          "US": 11462,
           "UY": 81,
           "UZ": 113,
           "VE": 211,
@@ -2379,14 +2379,14 @@
     },
     "555": {
       "single": {
-        "world": 40779,
+        "world": 40786,
         "continents": {
           "_Africa": 415,
           "_Asia": 10452,
           "_Europe": 13125,
-          "_North America": 12342,
+          "_North America": 12345,
           "_Oceania": 1713,
-          "_South America": 2732
+          "_South America": 2736
         },
         "countries": {
           "AD": 2,
@@ -2406,8 +2406,8 @@
           "BG": 94,
           "BH": 10,
           "BN": 2,
-          "BO": 217,
-          "BR": 844,
+          "BO": 220,
+          "BR": 845,
           "BS": 3,
           "BT": 1,
           "BY": 92,
@@ -2521,7 +2521,7 @@
           "TW": 639,
           "UA": 425,
           "UG": 5,
-          "US": 9396,
+          "US": 9399,
           "UY": 56,
           "UZ": 84,
           "VE": 112,
@@ -2533,14 +2533,14 @@
         }
       },
       "average": {
-        "world": 26583,
+        "world": 26587,
         "continents": {
           "_Africa": 327,
           "_Asia": 7690,
           "_Europe": 7971,
-          "_North America": 7468,
+          "_North America": 7471,
           "_Oceania": 1055,
-          "_South America": 2072
+          "_South America": 2073
         },
         "countries": {
           "AD": 2,
@@ -2561,7 +2561,7 @@
           "BH": 7,
           "BN": 1,
           "BO": 134,
-          "BR": 629,
+          "BR": 630,
           "BS": 2,
           "BY": 62,
           "BZ": 5,
@@ -2672,7 +2672,7 @@
           "TW": 425,
           "UA": 270,
           "UG": 4,
-          "US": 5609,
+          "US": 5612,
           "UY": 48,
           "UZ": 53,
           "VE": 92,
@@ -2829,12 +2829,12 @@
     },
     "666": {
       "single": {
-        "world": 17506,
+        "world": 17508,
         "continents": {
           "_Africa": 141,
           "_Asia": 4215,
           "_Europe": 5734,
-          "_North America": 5523,
+          "_North America": 5525,
           "_Oceania": 790,
           "_South America": 1103
         },
@@ -2956,7 +2956,7 @@
           "TT": 1,
           "TW": 292,
           "UA": 169,
-          "US": 4192,
+          "US": 4194,
           "UY": 26,
           "UZ": 26,
           "VE": 44,
@@ -2967,12 +2967,12 @@
         }
       },
       "average": {
-        "world": 12811,
+        "world": 12812,
         "continents": {
           "_Africa": 112,
           "_Asia": 3470,
           "_Europe": 4034,
-          "_North America": 3767,
+          "_North America": 3768,
           "_Oceania": 561,
           "_South America": 867
         },
@@ -3092,7 +3092,7 @@
           "TT": 1,
           "TW": 207,
           "UA": 132,
-          "US": 2867,
+          "US": 2868,
           "UY": 21,
           "UZ": 16,
           "VE": 35,
@@ -3375,12 +3375,12 @@
     },
     "clock": {
       "single": {
-        "world": 32035,
+        "world": 32038,
         "continents": {
           "_Africa": 229,
           "_Asia": 6874,
           "_Europe": 10888,
-          "_North America": 10778,
+          "_North America": 10781,
           "_Oceania": 1399,
           "_South America": 1867
         },
@@ -3508,7 +3508,7 @@
           "TW": 366,
           "UA": 347,
           "UG": 1,
-          "US": 8921,
+          "US": 8924,
           "UY": 44,
           "UZ": 47,
           "VE": 64,
@@ -3520,12 +3520,12 @@
         }
       },
       "average": {
-        "world": 24855,
+        "world": 24856,
         "continents": {
           "_Africa": 197,
           "_Asia": 5609,
           "_Europe": 7948,
-          "_North America": 8472,
+          "_North America": 8473,
           "_Oceania": 1005,
           "_South America": 1624
         },
@@ -3650,7 +3650,7 @@
           "TW": 271,
           "UA": 280,
           "UG": 1,
-          "US": 6990,
+          "US": 6991,
           "UY": 40,
           "UZ": 38,
           "VE": 59,
@@ -3818,14 +3818,14 @@
     },
     "minx": {
       "single": {
-        "world": 34770,
+        "world": 34775,
         "continents": {
           "_Africa": 464,
           "_Asia": 7566,
           "_Europe": 11474,
-          "_North America": 10669,
+          "_North America": 10673,
           "_Oceania": 1562,
-          "_South America": 3035
+          "_South America": 3036
         },
         "countries": {
           "AD": 2,
@@ -3845,7 +3845,7 @@
           "BG": 67,
           "BH": 10,
           "BN": 2,
-          "BO": 239,
+          "BO": 240,
           "BR": 1062,
           "BS": 1,
           "BY": 121,
@@ -3957,7 +3957,7 @@
           "TT": 9,
           "TW": 362,
           "UA": 424,
-          "US": 7835,
+          "US": 7839,
           "UY": 43,
           "UZ": 98,
           "VE": 115,
@@ -3969,12 +3969,12 @@
         }
       },
       "average": {
-        "world": 20886,
+        "world": 20889,
         "continents": {
           "_Africa": 345,
           "_Asia": 5191,
           "_Europe": 6249,
-          "_North America": 6083,
+          "_North America": 6086,
           "_Oceania": 824,
           "_South America": 2194
         },
@@ -4102,7 +4102,7 @@
           "TT": 3,
           "TW": 213,
           "UA": 244,
-          "US": 4373,
+          "US": 4376,
           "UY": 37,
           "UZ": 58,
           "VE": 90,
@@ -4264,14 +4264,14 @@
     },
     "pyram": {
       "single": {
-        "world": 129245,
+        "world": 129266,
         "continents": {
           "_Africa": 1864,
-          "_Asia": 35522,
+          "_Asia": 35523,
           "_Europe": 37165,
-          "_North America": 36885,
-          "_Oceania": 7144,
-          "_South America": 10665
+          "_North America": 36892,
+          "_Oceania": 7153,
+          "_South America": 10669
         },
         "countries": {
           "AD": 20,
@@ -4283,7 +4283,7 @@
           "AO": 36,
           "AR": 830,
           "AT": 261,
-          "AU": 5982,
+          "AU": 5991,
           "AZ": 188,
           "BA": 71,
           "BB": 16,
@@ -4292,7 +4292,7 @@
           "BG": 332,
           "BH": 43,
           "BN": 6,
-          "BO": 934,
+          "BO": 938,
           "BR": 3208,
           "BS": 7,
           "BT": 2,
@@ -4304,7 +4304,7 @@
           "CI": 7,
           "CL": 871,
           "CM": 1,
-          "CN": 10223,
+          "CN": 10224,
           "CO": 2395,
           "CR": 225,
           "CU": 3,
@@ -4420,7 +4420,7 @@
           "TZ": 3,
           "UA": 1471,
           "UG": 8,
-          "US": 28694,
+          "US": 28701,
           "UY": 149,
           "UZ": 289,
           "VE": 410,
@@ -4434,14 +4434,14 @@
         }
       },
       "average": {
-        "world": 124235,
+        "world": 124256,
         "continents": {
           "_Africa": 1829,
-          "_Asia": 33530,
+          "_Asia": 33531,
           "_Europe": 35762,
-          "_North America": 36080,
-          "_Oceania": 7050,
-          "_South America": 9984
+          "_North America": 36087,
+          "_Oceania": 7059,
+          "_South America": 9988
         },
         "countries": {
           "AD": 19,
@@ -4453,7 +4453,7 @@
           "AO": 36,
           "AR": 810,
           "AT": 257,
-          "AU": 5901,
+          "AU": 5910,
           "AZ": 185,
           "BA": 70,
           "BB": 16,
@@ -4462,7 +4462,7 @@
           "BG": 328,
           "BH": 43,
           "BN": 6,
-          "BO": 853,
+          "BO": 857,
           "BR": 3143,
           "BS": 7,
           "BT": 2,
@@ -4474,7 +4474,7 @@
           "CI": 7,
           "CL": 676,
           "CM": 1,
-          "CN": 9348,
+          "CN": 9349,
           "CO": 2203,
           "CR": 219,
           "CU": 3,
@@ -4589,7 +4589,7 @@
           "TZ": 3,
           "UA": 1439,
           "UG": 8,
-          "US": 28048,
+          "US": 28055,
           "UY": 147,
           "UZ": 284,
           "VE": 396,
@@ -4605,13 +4605,13 @@
     },
     "skewb": {
       "single": {
-        "world": 73254,
+        "world": 73263,
         "continents": {
           "_Africa": 698,
           "_Asia": 17187,
           "_Europe": 23108,
-          "_North America": 23599,
-          "_Oceania": 4205,
+          "_North America": 23604,
+          "_Oceania": 4209,
           "_South America": 4457
         },
         "countries": {
@@ -4623,7 +4623,7 @@
           "AO": 10,
           "AR": 405,
           "AT": 161,
-          "AU": 3530,
+          "AU": 3534,
           "AZ": 93,
           "BA": 33,
           "BB": 5,
@@ -4753,7 +4753,7 @@
           "TW": 699,
           "UA": 884,
           "UG": 5,
-          "US": 18902,
+          "US": 18907,
           "UY": 79,
           "UZ": 141,
           "VE": 151,
@@ -4766,13 +4766,13 @@
         }
       },
       "average": {
-        "world": 70203,
+        "world": 70212,
         "continents": {
           "_Africa": 677,
           "_Asia": 16089,
           "_Europe": 22174,
-          "_North America": 23001,
-          "_Oceania": 4135,
+          "_North America": 23006,
+          "_Oceania": 4139,
           "_South America": 4127
         },
         "countries": {
@@ -4784,7 +4784,7 @@
           "AO": 10,
           "AR": 393,
           "AT": 160,
-          "AU": 3476,
+          "AU": 3480,
           "AZ": 91,
           "BA": 33,
           "BB": 5,
@@ -4914,7 +4914,7 @@
           "TW": 689,
           "UA": 862,
           "UG": 5,
-          "US": 18406,
+          "US": 18411,
           "UY": 79,
           "UZ": 137,
           "VE": 138,
@@ -4929,12 +4929,12 @@
     },
     "sq1": {
       "single": {
-        "world": 25268,
+        "world": 25269,
         "continents": {
           "_Africa": 199,
           "_Asia": 5217,
           "_Europe": 8577,
-          "_North America": 8454,
+          "_North America": 8455,
           "_Oceania": 1151,
           "_South America": 1670
         },
@@ -5062,7 +5062,7 @@
           "TT": 3,
           "TW": 323,
           "UA": 302,
-          "US": 6742,
+          "US": 6743,
           "UY": 41,
           "UZ": 42,
           "VE": 52,
@@ -5073,12 +5073,12 @@
         }
       },
       "average": {
-        "world": 19085,
+        "world": 19087,
         "continents": {
           "_Africa": 169,
           "_Asia": 4306,
           "_Europe": 6201,
-          "_North America": 6177,
+          "_North America": 6179,
           "_Oceania": 851,
           "_South America": 1381
         },
@@ -5202,7 +5202,7 @@
           "TT": 1,
           "TW": 258,
           "UA": 239,
-          "US": 4868,
+          "US": 4870,
           "UY": 37,
           "UZ": 38,
           "VE": 46,

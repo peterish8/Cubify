@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-09-03T00:00:33Z",
+    "exportDate": "2026-09-05T00:00:26Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_246_20260903T000033Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_248_20260905T000026Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 296513,
+  "totalCubers": 296552,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 61772
+      "cubers": 61781
     },
     {
       "iso2": "CN",
@@ -32,13 +32,13 @@
       "iso2": "AU",
       "name": "Australia",
       "continentId": "_Oceania",
-      "cubers": 12051
+      "cubers": 12073
     },
     {
       "iso2": "CA",
       "name": "Canada",
       "continentId": "_North America",
-      "cubers": 10879
+      "cubers": 10880
     },
     {
       "iso2": "BR",
@@ -50,7 +50,7 @@
       "iso2": "GB",
       "name": "United Kingdom",
       "continentId": "_Europe",
-      "cubers": 6995
+      "cubers": 6997
     },
     {
       "iso2": "PL",
@@ -164,7 +164,7 @@
       "iso2": "BO",
       "name": "Bolivia",
       "continentId": "_South America",
-      "cubers": 2929
+      "cubers": 2934
     },
     {
       "iso2": "NL",
