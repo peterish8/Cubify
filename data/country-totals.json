@@ -2,31 +2,31 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-09-05T00:00:26Z",
+    "exportDate": "2026-09-06T07:10:56Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_248_20260905T000026Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_249_20260906T071056Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 296552,
+  "totalCubers": 296695,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 61781
+      "cubers": 61804
     },
     {
       "iso2": "CN",
       "name": "China",
       "continentId": "_Asia",
-      "cubers": 29448
+      "cubers": 29451
     },
     {
       "iso2": "IN",
       "name": "India",
       "continentId": "_Asia",
-      "cubers": 21231
+      "cubers": 21237
     },
     {
       "iso2": "AU",
@@ -62,13 +62,13 @@
       "iso2": "RU",
       "name": "Russia",
       "continentId": "_Europe",
-      "cubers": 6802
+      "cubers": 6803
     },
     {
       "iso2": "PH",
       "name": "Philippines",
       "continentId": "_Asia",
-      "cubers": 6374
+      "cubers": 6375
     },
     {
       "iso2": "CO",
@@ -80,7 +80,7 @@
       "iso2": "ES",
       "name": "Spain",
       "continentId": "_Europe",
-      "cubers": 5417
+      "cubers": 5425
     },
     {
       "iso2": "FR",
@@ -98,7 +98,7 @@
       "iso2": "KR",
       "name": "Republic of Korea",
       "continentId": "_Asia",
-      "cubers": 4593
+      "cubers": 4594
     },
     {
       "iso2": "MX",
@@ -116,7 +116,7 @@
       "iso2": "ID",
       "name": "Indonesia",
       "continentId": "_Asia",
-      "cubers": 4320
+      "cubers": 4323
     },
     {
       "iso2": "DE",
@@ -134,7 +134,7 @@
       "iso2": "JP",
       "name": "Japan",
       "continentId": "_Asia",
-      "cubers": 3386
+      "cubers": 3387
     },
     {
       "iso2": "SE",
@@ -227,16 +227,16 @@
       "cubers": 1682
     },
     {
+      "iso2": "SG",
+      "name": "Singapore",
+      "continentId": "_Asia",
+      "cubers": 1682
+    },
+    {
       "iso2": "IR",
       "name": "Iran",
       "continentId": "_Asia",
       "cubers": 1655
-    },
-    {
-      "iso2": "SG",
-      "name": "Singapore",
-      "continentId": "_Asia",
-      "cubers": 1641
     },
     {
       "iso2": "RO",
@@ -266,7 +266,7 @@
       "iso2": "HU",
       "name": "Hungary",
       "continentId": "_Europe",
-      "cubers": 1300
+      "cubers": 1303
     },
     {
       "iso2": "GT",
@@ -290,7 +290,7 @@
       "iso2": "EC",
       "name": "Ecuador",
       "continentId": "_South America",
-      "cubers": 1155
+      "cubers": 1161
     },
     {
       "iso2": "BE",
@@ -323,16 +323,16 @@
       "cubers": 807
     },
     {
+      "iso2": "BD",
+      "name": "Bangladesh",
+      "continentId": "_Asia",
+      "cubers": 805
+    },
+    {
       "iso2": "BY",
       "name": "Belarus",
       "continentId": "_Europe",
       "cubers": 774
-    },
-    {
-      "iso2": "BD",
-      "name": "Bangladesh",
-      "continentId": "_Asia",
-      "cubers": 765
     },
     {
       "iso2": "DO",
@@ -455,16 +455,16 @@
       "cubers": 354
     },
     {
+      "iso2": "LT",
+      "name": "Lithuania",
+      "continentId": "_Europe",
+      "cubers": 333
+    },
+    {
       "iso2": "LV",
       "name": "Latvia",
       "continentId": "_Europe",
       "cubers": 329
-    },
-    {
-      "iso2": "LT",
-      "name": "Lithuania",
-      "continentId": "_Europe",
-      "cubers": 327
     },
     {
       "iso2": "EE",
