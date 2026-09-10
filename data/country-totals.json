@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-09-09T00:00:07Z",
+    "exportDate": "2026-09-10T10:11:59Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_252_20260909T000007Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_253_20260910T101159Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 296900,
+  "totalCubers": 296929,
   "countries": [
     {
       "iso2": "US",
@@ -44,7 +44,7 @@
       "iso2": "BR",
       "name": "Brazil",
       "continentId": "_South America",
-      "cubers": 10083
+      "cubers": 10102
     },
     {
       "iso2": "GB",
@@ -152,7 +152,7 @@
       "iso2": "IT",
       "name": "Italy",
       "continentId": "_Europe",
-      "cubers": 2973
+      "cubers": 2983
     },
     {
       "iso2": "UA",
