@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-09-11T00:00:21Z",
+    "exportDate": "2026-09-12T00:00:29Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_254_20260911T000021Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_255_20260912T000029Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 296968,
+  "totalCubers": 296994,
   "countries": [
     {
       "iso2": "US",
@@ -20,7 +20,7 @@
       "iso2": "CN",
       "name": "China",
       "continentId": "_Asia",
-      "cubers": 29451
+      "cubers": 29450
     },
     {
       "iso2": "IN",
@@ -38,13 +38,13 @@
       "iso2": "CA",
       "name": "Canada",
       "continentId": "_North America",
-      "cubers": 10882
+      "cubers": 10883
     },
     {
       "iso2": "BR",
       "name": "Brazil",
       "continentId": "_South America",
-      "cubers": 10102
+      "cubers": 10112
     },
     {
       "iso2": "GB",
@@ -116,7 +116,7 @@
       "iso2": "ID",
       "name": "Indonesia",
       "continentId": "_Asia",
-      "cubers": 4323
+      "cubers": 4331
     },
     {
       "iso2": "DE",
@@ -140,7 +140,7 @@
       "iso2": "SE",
       "name": "Sweden",
       "continentId": "_Europe",
-      "cubers": 3044
+      "cubers": 3046
     },
     {
       "iso2": "VN",
@@ -221,15 +221,15 @@
       "cubers": 1803
     },
     {
-      "iso2": "NO",
-      "name": "Norway",
-      "continentId": "_Europe",
-      "cubers": 1682
-    },
-    {
       "iso2": "SG",
       "name": "Singapore",
       "continentId": "_Asia",
+      "cubers": 1683
+    },
+    {
+      "iso2": "NO",
+      "name": "Norway",
+      "continentId": "_Europe",
       "cubers": 1682
     },
     {
@@ -272,7 +272,7 @@
       "iso2": "GT",
       "name": "Guatemala",
       "continentId": "_North America",
-      "cubers": 1266
+      "cubers": 1271
     },
     {
       "iso2": "CH",
