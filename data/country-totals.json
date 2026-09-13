@@ -2,25 +2,25 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-09-12T00:00:29Z",
+    "exportDate": "2026-09-13T07:06:43Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_255_20260912T000029Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_256_20260913T070643Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 296994,
+  "totalCubers": 297106,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 61912
+      "cubers": 61997
     },
     {
       "iso2": "CN",
       "name": "China",
       "continentId": "_Asia",
-      "cubers": 29450
+      "cubers": 29456
     },
     {
       "iso2": "IN",
@@ -44,13 +44,13 @@
       "iso2": "BR",
       "name": "Brazil",
       "continentId": "_South America",
-      "cubers": 10112
+      "cubers": 10113
     },
     {
       "iso2": "GB",
       "name": "United Kingdom",
       "continentId": "_Europe",
-      "cubers": 6997
+      "cubers": 6998
     },
     {
       "iso2": "PL",
@@ -68,7 +68,7 @@
       "iso2": "PH",
       "name": "Philippines",
       "continentId": "_Asia",
-      "cubers": 6376
+      "cubers": 6377
     },
     {
       "iso2": "CO",
@@ -152,7 +152,7 @@
       "iso2": "IT",
       "name": "Italy",
       "continentId": "_Europe",
-      "cubers": 2983
+      "cubers": 2984
     },
     {
       "iso2": "UA",
@@ -194,7 +194,7 @@
       "iso2": "CL",
       "name": "Chile",
       "continentId": "_South America",
-      "cubers": 2184
+      "cubers": 2185
     },
     {
       "iso2": "NZ",
@@ -365,16 +365,16 @@
       "cubers": 570
     },
     {
+      "iso2": "AT",
+      "name": "Austria",
+      "continentId": "_Europe",
+      "cubers": 550
+    },
+    {
       "iso2": "EG",
       "name": "Egypt",
       "continentId": "_Africa",
       "cubers": 543
-    },
-    {
-      "iso2": "AT",
-      "name": "Austria",
-      "continentId": "_Europe",
-      "cubers": 542
     },
     {
       "iso2": "UY",
@@ -392,7 +392,7 @@
       "iso2": "SK",
       "name": "Slovakia",
       "continentId": "_Europe",
-      "cubers": 460
+      "cubers": 467
     },
     {
       "iso2": "RS",
@@ -626,7 +626,7 @@
       "iso2": "SY",
       "name": "Syria",
       "continentId": "_Asia",
-      "cubers": 68
+      "cubers": 69
     },
     {
       "iso2": "ME",
