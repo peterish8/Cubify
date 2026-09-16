@@ -18,9 +18,13 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://cubify.in"),
   title: "Cubify - WCA Stats Analyzer",
   description:
     "Analyze your speedcubing statistics and see where you rank nationally, continentally, and worldwide.",
+  alternates: {
+    canonical: "/",
+  },
   icons: {
     icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
     shortcut: "/favicon.svg",
