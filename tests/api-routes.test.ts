@@ -7,6 +7,11 @@ import { POST as comparePost, OPTIONS as compareOptions } from "../app/api/v1/co
 import { POST as goalPost } from "../app/api/v1/goals/projection/route"
 import { POST as reportPost } from "../app/api/v1/reports/route"
 import { GET as agentReportGet } from "../app/api/v1/agent/competition-report/route"
+import { GET as llmsGet } from "../app/llms.txt/route"
+import { GET as docsTxtGet } from "../app/docs.txt/route"
+import { GET as docsMdGet } from "../app/docs.md/route"
+import { GET as agentDocsGet } from "../app/docs/agent.md/route"
+import { GET as openApiAliasGet } from "../app/api/openapi.json/route"
 import { competitionId } from "../lib/report-utils"
 
 const originalFetch = globalThis.fetch
@@ -206,6 +211,18 @@ test("agent competition rank estimate never falls back to a best single", async 
   assert.equal(payload.events["333"].user.pbAveragePosition, null)
   assert.equal(payload.events["333"].user.possibleOverallRange, null)
   assert.equal(payload.events["333"].field.rankingBasis, "best-average")
+})
+
+test("agent documentation has public no-JavaScript text and OpenAPI entry points", async () => {
+  for (const get of [llmsGet, docsTxtGet, docsMdGet, agentDocsGet]) {
+    const response = get()
+    assert.equal(response.status, 200)
+    assert.match(response.headers.get("Content-Type") ?? "", /^text\/(plain|markdown); charset=utf-8$/)
+    assert.match(await response.text(), /api\/v1\/agent\/competition-report/)
+  }
+  const openApi = openApiAliasGet()
+  assert.equal(openApi.status, 200)
+  assert.match(openApi.headers.get("Content-Type") ?? "", /^application\/json/)
 })
 
 test("CORS preflight is explicit for public API clients", () => {
