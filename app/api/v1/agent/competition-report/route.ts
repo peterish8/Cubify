@@ -1,6 +1,7 @@
 import { OPTIONS as reportOptions, POST as createReport } from "@/app/api/v1/reports/route"
 import { apiFailure, apiJson, ApiError, wcaId } from "@/lib/api-utils"
 import { canonicalCompetitionId } from "@/lib/report-utils"
+import { eventDisplayName } from "@/lib/wca-events"
 
 function requestedEvents(value: string | null) {
   if (!value) return undefined
@@ -8,7 +9,7 @@ function requestedEvents(value: string | null) {
   if (!events.length || events.length > 25 || events.some((event) => !/^[a-z0-9]{1,12}$/.test(event))) {
     throw new ApiError("events must be a comma-separated list of at most 25 valid event IDs", 400, "invalid_request")
   }
-  return events
+  return [...new Set(events)]
 }
 
 /**
@@ -22,6 +23,7 @@ export async function GET(request: Request) {
     const competitionId = canonicalCompetitionId(url.searchParams.get("competitionId"))
     const competitorWcaId = wcaId(url.searchParams.get("wcaId"))
     const eventIds = requestedEvents(url.searchParams.get("events"))
+    const includeAll = url.searchParams.get("include") === "all"
     const reportResponse = await createReport(new Request("http://cubify.internal/api/v1/reports", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -35,12 +37,29 @@ export async function GET(request: Request) {
     if (!reportResponse.ok) return apiJson(report, { status: reportResponse.status })
 
     const personalized = report.data.personalized
+    const analyzedEventIds = new Set(report.data.byEvent.map((event: any) => event.eventId))
+    const eventStates = (eventIds ?? report.data.requestedEvents).map((eventId: string) => ({
+      eventId,
+      eventName: eventDisplayName(eventId),
+      status: analyzedEventIds.has(eventId) ? "ANALYZED" : report.data.competition.eventIds.includes(eventId) ? "NOT_REGISTERED" : "EVENT_NOT_AT_COMPETITION",
+    }))
     const events = Object.fromEntries(report.data.byEvent.map((event: any) => {
       const firstTimers = event.competitors.filter((entry: any) => entry.firstTime)
       const unknownStrength = event.competitors.filter((entry: any) => entry.personalBests.single === null && entry.personalBests.average === null)
       const knownRank = event.myStanding.average.position ?? event.myStanding.single.position
       const knownSize = event.myStanding.average.knownCompetitors || event.myStanding.single.knownCompetitors
+      const opponents = event.competitors.filter((entry: any) => entry.wcaId !== competitorWcaId)
+      const toOpponent = (entry: any) => ({
+        wcaId: entry.wcaId,
+        name: entry.name,
+        pb: entry.personalBests,
+        firstTimer: entry.firstTime,
+        strength: entry.personalBests.single === null && entry.personalBests.average === null ? "unknown" : "known",
+        rankingRelativeToUser: entry.comparisonToYou?.average.result === "opponent" ? "ahead" : entry.comparisonToYou?.average.result === "you" ? "behind" : "unknown",
+      })
+      const compactOpponents = opponents.filter((entry: any) => entry.comparisonToYou?.average.result !== "unknown").sort((a: any, b: any) => Math.abs(a.comparisonToYou.average.difference) - Math.abs(b.comparisonToYou.average.difference)).slice(0, 8).map(toOpponent)
       return [event.eventId, {
+        eventName: eventDisplayName(event.eventId),
         field: { registered: event.registeredCount, ranked: knownSize, firstTimers: firstTimers.length, unknownStrength: unknownStrength.length },
         user: {
           pbSingle: event.myPersonalBests?.single ?? null,
@@ -49,14 +68,13 @@ export async function GET(request: Request) {
           pbAveragePosition: event.myStanding.average.position,
           possibleOverallRange: knownRank === null ? null : { best: knownRank, worst: knownRank + unknownStrength.length },
         },
-        opponents: event.competitors.filter((entry: any) => entry.wcaId !== competitorWcaId).map((entry: any) => ({
-          wcaId: entry.wcaId,
-          name: entry.name,
-          pb: entry.personalBests,
-          firstTimer: entry.firstTime,
-          strength: entry.personalBests.single === null && entry.personalBests.average === null ? "unknown" : "known",
-          rankingRelativeToUser: entry.comparisonToYou?.average.result === "opponent" ? "ahead" : entry.comparisonToYou?.average.result === "you" ? "behind" : "unknown",
-        })),
+        opponentCounts: {
+          ahead: opponents.filter((entry: any) => entry.comparisonToYou?.average.result === "opponent").length,
+          behind: opponents.filter((entry: any) => entry.comparisonToYou?.average.result === "you").length,
+          unknown: opponents.filter((entry: any) => entry.comparisonToYou?.average.result === "unknown").length,
+        },
+        keyOpponents: compactOpponents,
+        ...(includeAll ? { opponents: opponents.map(toOpponent) } : {}),
         firstTimers: firstTimers.filter((entry: any) => entry.wcaId !== competitorWcaId).map((entry: any) => ({ wcaId: null, name: entry.name, firstTimer: true, strength: "unknown" })),
       }]
     }))
@@ -66,6 +84,7 @@ export async function GET(request: Request) {
       warnings: [{ code: "PREDICTION_NOT_AVAILABLE", message: "Placement and podium predictions require a validated historical model and are not inferred from PB rank." }],
       competition: report.data.competition,
       subject: { wcaId: competitorWcaId },
+      request: { eventStates, opponentDetail: includeAll ? "all" : "key-only (use include=all for every opponent)" },
       events,
       methodology: personalized.methodology,
       source: report.source,

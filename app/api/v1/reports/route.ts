@@ -98,7 +98,7 @@ export async function POST(request: Request) {
       methodology: "Positions use official PBs only. Lower WCA result values are better. Unknown or first-time strength is never ranked.",
     } : null
 
-    return apiJson({ data: { competition: { id: competition.id, name: competition.name, dates: [competition.start_date, competition.end_date], city: competition.city, url: competition.url }, requestedEvents: events, personalized, byEvent }, source: { registrations: `${competition.url}/registrations`, provider: "World Cube Association" }, generatedAt: new Date().toISOString() })
+    return apiJson({ data: { competition: { id: competition.id, name: competition.name, dates: [competition.start_date, competition.end_date], city: competition.city, eventIds: competition.event_ids, url: competition.url }, requestedEvents: events, personalized, byEvent }, source: { registrations: `${competition.url}/registrations`, provider: "World Cube Association" }, generatedAt: new Date().toISOString() })
   } catch (error) {
     return apiFailure(error, "Competition report failed")
   }
