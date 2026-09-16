@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent } from "react"
 import { Badge } from "@/components/ui/badge"
 import {
   calculateTopPercent,
@@ -648,7 +648,7 @@ function AboutCubifyModal({ open, onClose }: { open: boolean; onClose: () => voi
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12, scale: 0.98 }}
             transition={{ duration: 0.22, ease }}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e: ReactMouseEvent<HTMLDivElement>) => e.stopPropagation()}
           >
             <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(var(--theme-bright-rgb),0.75)] to-transparent" />
             <button

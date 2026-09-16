@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, type KeyboardEvent, type PointerEvent } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Check, MousePointer2, Palette, ScrollText } from "lucide-react"
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome"
@@ -117,7 +117,7 @@ function ShadeCard({
         transformOrigin: "center center",
       }}
       data-testid={`theme-${variant.id}`}
-      onClick={(e) => {
+      onClick={(e: PointerEvent<HTMLButtonElement>) => {
         e.stopPropagation()
         onPick()
       }}
@@ -311,7 +311,7 @@ export default function SettingsPage() {
                         aria-label={`${isOpen ? "Close" : "Open"} ${family.name} theme shades`}
                         aria-expanded={isOpen}
                         onPointerUp={toggleFamily}
-                        onKeyDown={(event) => {
+                        onKeyDown={(event: KeyboardEvent<HTMLButtonElement>) => {
                           if (event.key === "Enter" || event.key === " ") {
                             event.preventDefault()
                             toggleFamily()

@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 export function SiteHeader({
   active,
 }: {
-  active?: "home" | "compare" | "goal" | "countries" | "settings"
+  active?: "home" | "compare" | "goal" | "countries" | "settings" | "docs"
 }) {
   return (
     <header className="sticky top-0 z-40 px-3 pt-3 sm:px-4 sm:pt-4">
@@ -68,6 +68,17 @@ export function SiteHeader({
             )}
           >
             Settings
+          </Link>
+          <Link
+            href="/docs"
+            className={cn(
+              "pressable shrink-0 rounded-full px-2.5 py-1.5 text-[12px] font-semibold transition-colors sm:px-3.5 sm:text-[13px]",
+              active === "docs"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            Docs
           </Link>
         </nav>
       </div>

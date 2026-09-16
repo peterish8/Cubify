@@ -41,3 +41,6 @@ tools/wca-rank-totals/data/rank-totals.json
 /playwright-report/
 /blob-report/
 /test-results
+
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+/graft/
