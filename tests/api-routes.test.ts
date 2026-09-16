@@ -175,7 +175,7 @@ test("agent competition report makes one Cubify request sufficient and keeps unc
   assert.equal(payload.events["333"].field.firstTimers, 1)
   assert.equal(payload.events["333"].user.pbAveragePosition, 2)
   assert.equal(payload.events["333"].keyOpponents[0].rankingRelativeToUser, "ahead")
-  assert.equal(payload.events["333"].user.pbAverageDisplay, "11.00")
+  assert.equal(payload.events["333"].user.pbAverageDisplay, "11.00s")
   assert.equal(payload.events["333"].firstTimers[0].strength, "unknown")
   assert.equal(payload.request.eventStates[1].status, "EVENT_NOT_AT_COMPETITION")
   assert.equal(payload.events["333"].opponents, undefined)
