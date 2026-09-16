@@ -19,29 +19,59 @@ import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome"
 const chatGptPrompt = `Read and follow Cubify8’s competition-analysis instructions:
 https://cubify.in/docs
 
+If the rendered docs page is unavailable, read one of these machine-readable
+fallbacks using the exact plain URL (do not wrap it in Markdown like
+[label](https://...)):
+https://cubify.in/llms.txt
+https://cubify.in/docs.txt
+https://cubify.in/docs.md
+https://cubify.in/docs/agent.md
+https://cubify.in/api/openapi.json
+
+If every plain URL fails with a DNS or name-resolution error, that is a network
+restriction in the current runtime. Report that limitation clearly; it does not
+mean the Cubify routes are missing. Do not retry by passing Markdown link text
+to an HTTP client.
+
+You are a Cubify8 API client. Do not web-search the WCA or any other site for
+competition details. Cubify calls the official WCA data server-side and returns
+the report; your job is to collect inputs, call Cubify, and explain its response.
+
 Start a guided Cubify8 competition-analysis intake. Do not analyze a field yet.
 
 1. First ask me for either:
-   - the WCA competition registration link, OR
-   - the competition name, city/country, and year.
+   - the official WCA competition registration link, OR
+   - the canonical WCA competition ID (the final path segment, for example
+     CubeathonBengaluru2026).
+   If I give only a name, city, or year, ask me for the official registration
+   link or canonical ID. Do not search for it yourself.
 
-2. If I give only a name, search the official WCA website for the most likely competition.
-   Show me the competition name, location, dates, and WCA registration link.
-   Ask: “Is this the correct competition?” Wait for my confirmation.
-
-3. After I confirm it, ask for:
+2. After I confirm the competition, ask for:
    - my WCA ID (or let me say I am a first-time competitor), and
    - the events I am participating in.
 
-4. Then analyze only the confirmed competition and my selected events. Give me:
+3. Then call Cubify’s one-request report endpoint. If I gave a registration
+   link, extract only the ID from /competitions/<ID> or /competitions/<ID>/registrations.
+   Use a plain URL, never Markdown link text. Call:
+   https://cubify.in/api/v1/agent/competition-report?competitionId=<ID>&wcaId=<WCA_ID>&events=<comma-separated-event-ids>
+   Add &include=all only when every opponent is needed. If I am a first-time
+   competitor and have no WCA ID, explain that the current report endpoint
+   requires a WCA ID before calling it.
+
+4. Render the JSON response faithfully. Give me:
    - opponents in each event
    - my PB position in the field
-   - estimated placement range
-   - estimated top-3 chance with confidence and uncertainty
+   - the best-average-based possible overall range
    - first-time competitors separately
-   - simple competition strategy
+   - source, generatedAt, event states, and all warnings
+   - a simple competition strategy only as clearly labelled advice
 
-If web search is unavailable, ask me to paste the official WCA registration link instead.`
+Use pbSingleDisplay and pbAverageDisplay in prose. Never turn an absent average
+into a single-based rank. Never invent placement or podium probabilities when
+the response says they are unavailable.
+
+If Cubify itself cannot be reached, show the exact endpoint and the network error
+instead of web-searching around it.`
 
 function PromptDialog({ onClose }: { onClose: () => void }) {
   const [copied, setCopied] = useState(false)
@@ -113,7 +143,7 @@ export default function DocsPage() {
           </div>
           <h1 className="font-display text-4xl font-bold tracking-[-0.055em] sm:text-6xl">Start with the right competition.</h1>
           <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-            Cubify guides the conversation: identify the competition, confirm it, then collect the competitor and event details needed for an explainable field report.
+            Cubify guides the conversation: confirm the competition, collect the competitor and event details, then return an explainable field report from its API.
           </p>
         </div>
       </section>
@@ -121,15 +151,15 @@ export default function DocsPage() {
       <section className="mx-auto max-w-7xl px-4 pb-14 sm:px-6 xl:max-w-[90rem] xl:px-8">
         <button type="button" onClick={() => setPromptOpen(true)} className="group pressable relative flex min-h-56 w-full overflow-hidden rounded-[1.5rem] border border-[rgba(var(--theme-bright-rgb),0.3)] bg-[linear-gradient(118deg,rgba(var(--theme-rgb),0.24),rgba(5,7,13,0.86)_48%,rgba(5,7,13,0.95))] p-6 text-left shadow-[0_0_0_1px_rgba(0,0,0,0.4),0_24px_80px_rgba(0,0,0,0.32)] transition hover:border-[rgba(var(--theme-bright-rgb),0.62)] sm:min-h-64 sm:p-9">
           <span className="pointer-events-none absolute -right-24 -top-28 h-80 w-80 rounded-full bg-[rgba(var(--theme-rgb),0.22)] blur-3xl transition group-hover:bg-[rgba(var(--theme-rgb),0.35)]" />
-          <span className="relative flex max-w-xl flex-col items-start"><span className="font-data text-[10px] font-bold tracking-[0.16em] text-[var(--blue-bright)]">Start here · Guided intake</span><span className="mt-5 font-display text-3xl font-bold tracking-[-0.05em] sm:text-5xl">Copy the ChatGPT<br />competition prompt.</span><span className="mt-4 max-w-md text-sm leading-6 text-muted-foreground">It asks for the competition first, confirms it, then collects your WCA ID and events.</span><span className="mt-7 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-extrabold text-primary-foreground shadow-[0_0_28px_rgba(var(--theme-rgb),0.25)]"><Copy className="h-4 w-4" /> Open &amp; copy prompt <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></span></span>
+           <span className="relative flex max-w-xl flex-col items-start"><span className="font-data text-[10px] font-bold tracking-[0.16em] text-[var(--blue-bright)]">Start here · Guided intake</span><span className="mt-5 font-display text-3xl font-bold tracking-[-0.05em] sm:text-5xl">Copy the ChatGPT<br />competition prompt.</span><span className="mt-4 max-w-md text-sm leading-6 text-muted-foreground">It calls Cubify’s report API directly, confirms the competition, then collects your WCA ID and events.</span><span className="mt-7 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-extrabold text-primary-foreground shadow-[0_0_28px_rgba(var(--theme-rgb),0.25)]"><Copy className="h-4 w-4" /> Open &amp; copy prompt <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></span></span>
         </button>
       </section>
 
       <section className="mx-auto grid max-w-7xl gap-4 px-4 pb-14 sm:grid-cols-3 sm:px-6 xl:max-w-[90rem] xl:px-8">
         {[
-          [Globe2, "1 · Name or link", "Give ChatGPT a WCA registration link, or simply the competition name, place, and year."],
-          [FileCode2, "2 · Confirm first", "ChatGPT finds the official WCA page, shows the exact competition, and waits for your confirmation."],
-          [MessageSquareText, "3 · Then analyze", "It asks for your WCA ID and events, then explains opponents, PB position, and careful estimates."],
+           [Globe2, "1 · Give the ID or link", "Give ChatGPT the official WCA registration link or canonical competition ID."],
+           [FileCode2, "2 · Confirm first", "ChatGPT confirms the competition, then calls Cubify’s report endpoint for the official data."],
+           [MessageSquareText, "3 · Then analyze", "It asks for your WCA ID and events, then explains the API response and its uncertainty."],
         ].map(([Icon, title, body]) => {
           const CardIcon = Icon as typeof Globe2
           return <article key={title as string} className="rounded-2xl border border-border bg-[rgba(5,7,13,0.72)] p-6"><CardIcon className="h-5 w-5 text-[var(--blue-bright)]" /><h2 className="mt-5 font-display text-xl font-bold tracking-[-0.035em]">{title as string}</h2><p className="mt-3 text-sm leading-6 text-muted-foreground">{body as string}</p></article>

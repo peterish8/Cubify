@@ -218,7 +218,9 @@ test("agent documentation has public no-JavaScript text and OpenAPI entry points
     const response = get()
     assert.equal(response.status, 200)
     assert.match(response.headers.get("Content-Type") ?? "", /^text\/(plain|markdown); charset=utf-8$/)
-    assert.match(await response.text(), /api\/v1\/agent\/competition-report/)
+    const text = await response.text()
+    assert.match(text, /api\/v1\/agent\/competition-report/)
+    assert.match(text, /Do not web-search the WCA/)
   }
   const openApi = openApiAliasGet()
   assert.equal(openApi.status, 200)
