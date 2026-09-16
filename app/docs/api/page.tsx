@@ -29,7 +29,7 @@ function JsonWindow() {
 
 export default function ApiDocsPage() {
   return <DocsThemeFrame><main className="docs-workspace min-h-screen bg-background text-foreground">
-    <header className="docs-workspace-topbar"><div className="flex items-center gap-3"><Link href="/" aria-label="Cubify home"><CubeWordmark /></Link></div><div className="hidden items-center gap-2 text-sm text-muted-foreground lg:flex"><span>Workspace</span><ChevronRight className="h-3.5 w-3.5" /><span className="font-semibold text-foreground">Developer docs</span></div><Link href="/docs" className="docs-back-link"><ArrowLeft /><span>Back to AI instructions</span></Link></header>
+    <header className="docs-workspace-topbar"><div className="flex items-center gap-3"><Link href="/" aria-label="Cubify home"><CubeWordmark /></Link></div><div className="hidden items-center gap-2 text-sm text-muted-foreground lg:flex"><Link href="/docs" className="docs-parent-link">AI instructions</Link><ChevronRight className="h-3.5 w-3.5" /><span className="font-semibold text-foreground">Developer docs</span></div><Link href="/docs" className="docs-back-link"><ArrowLeft /><span>Back to AI instructions</span></Link></header>
     <DocsMobileMenu active="overview" />
     <div className="mx-auto grid max-w-[1280px] lg:grid-cols-[238px_minmax(0,1fr)]">
       <aside className="docs-side-nav">
