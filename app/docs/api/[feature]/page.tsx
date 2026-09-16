@@ -85,19 +85,20 @@ Content-Type: application/json
   "competitorWcaId": "2022RPRA01",
   "eventIds": ["333", "222"]
 }`,
-    response: `{
+     response: `{
   "data": {
-    "competition": { "name": "Cube-a-thon Bengaluru 2026" },
+    "competition": { "name": "Cube-a-thon Bengaluru 2026", "roundPlans": { "333": { "rounds": [] } } },
     "personalized": {
       "sharedEventIds": ["333", "222"],
-      "theoreticalBestEvent": { "bySingle": { "eventId": "333", "position": 17 }, "byAverage": { "eventId": "333", "position": 15 } }
+      "theoreticalBestEvent": { "bySingle": { "eventId": "333", "position": 17 }, "byAverage": { "eventId": "333", "position": 15 } },
+      "recentForm": [{ "eventId": "333", "latestAverage": 1140, "trend": "improving", "standardDeviation": 68 }]
     },
     "byEvent": [{ "eventId": "333", "myStanding": { "single": { "position": 17 }, "average": { "position": 15 } } }]
   },
   "source": { "provider": "World Cube Association" }
 }`,
     useCases: ["Prepare for a competition by seeing every shared opponent’s single and average PB beside yours.", "Find your field position separately for singles and averages in each shared event.", "Identify the event where your PB has the strongest theoretical standing, while keeping first-time competitors explicitly unknown."],
-    notes: ["competitionUrl must be an official World Cube Association competition or registrations URL.", "When competitorWcaId is provided, only events shared with your accepted registration are included.", "Theoretical standing is PB-only: it does not predict competition-day results or rank unknown-strength competitors."],
+     notes: ["competitionUrl must be an official World Cube Association competition or registrations URL.", "When competitorWcaId is provided, only events shared with your accepted registration are included.", "Recent form is a descriptive tail of official WCA averages, not a competition-day prediction.", "Round plans expose WCA advancement conditions and PB thresholds when available; they do not guarantee advancement.", "Theoretical standing is PB-only: it does not predict competition-day results or rank unknown-strength competitors."],
   },
 } as const
 

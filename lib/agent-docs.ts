@@ -31,7 +31,7 @@ For one-request competition analysis use:
 
 GET https://cubify.in/api/v1/agent/competition-report?competitionId={canonicalWcaCompetitionId}&wcaId={wcaId}&events=333,222
 
-The response returns only requested events, event-specific fields, explicit first-timer/unknown-strength records, PB positions, position ranges, source metadata, and generatedAt. Check request.eventStates: requested events can be ANALYZED, NOT_REGISTERED, or EVENT_NOT_AT_COMPETITION; never silently omit an event. The default returns counts and eight closest known rivals; add include=all only when every opponent is needed.
+The response returns only requested events, event-specific fields, explicit first-timer/unknown-strength records, PB positions, best-average position ranges, recent official-average form (when available), WCA round/cutoff metadata, source metadata, and generatedAt. Check request.eventStates: requested events can be ANALYZED, NOT_REGISTERED, or EVENT_NOT_AT_COMPETITION; never silently omit an event. The default returns counts and eight closest known rivals. Add include=all for every opponent and use offset/limit (maximum 100) to paginate large fields.
 
 Use pbSingleDisplay and pbAverageDisplay in explanations; raw PB values are official WCA integers. possibleOverallRange and field.rankingBasis are always best-average based. Never substitute best single when an official average is absent. A partial response does not provide placement or podium probabilities; present its warning instead of inventing a forecast. If Cubify cannot be reached because of DNS/name resolution, show the exact endpoint and error; do not silently fall back to web search.
 

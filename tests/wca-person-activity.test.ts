@@ -2,10 +2,34 @@ import assert from "node:assert/strict"
 import { describe, it } from "node:test"
 import {
   aggregateSolveActivity,
+  aggregateRecentForm,
   countTakenAttempts,
   fetchWcaPerson,
   fetchWcaPersonSolveActivity,
 } from "../lib/wca-person"
+
+describe("aggregateRecentForm", () => {
+  it("summarises the recent official averages and trend", () => {
+    const form = aggregateRecentForm([
+      { competition_id: "A", event_id: "333", average: 1200 },
+      { competition_id: "B", event_id: "333", average: 1100 },
+      { competition_id: "C", event_id: "333", average: 1000 },
+      { competition_id: "D", event_id: "333", average: -1 },
+    ], ["333"], 2)
+    assert.deepEqual(form[0], {
+      eventId: "333",
+      resultCount: 2,
+      competitionCount: 2,
+      windowCompetitions: 2,
+      latestAverage: 1000,
+      meanAverage: 1050,
+      medianAverage: 1050,
+      standardDeviation: 50,
+      trend: "improving",
+      trendDelta: -100,
+    })
+  })
+})
 
 describe("countTakenAttempts", () => {
   it("counts valid times and DNF, skips DNS and empty slots", () => {

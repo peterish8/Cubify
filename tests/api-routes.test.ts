@@ -171,6 +171,8 @@ test("agent competition report makes one Cubify request sufficient and keeps unc
     if (path === "/api/v0/users/1") return jsonResponse({ user: { wca_id: "2022TEST01", name: "You", gender: "m", country_iso2: "IN" } })
     if (path === "/api/v0/users/2") return jsonResponse({ user: { wca_id: "2021RIVAL01", name: "Rival", gender: "f", country_iso2: "IN" } })
     if (path === "/api/v0/users/3") return jsonResponse({ user: { wca_id: null, name: "First Timer", gender: "o", country_iso2: "IN" } })
+    if (path === "/api/v0/competitions/Test2026/events") return jsonResponse([{ id: "333", rounds: [{ id: "333-r1", format: "a", cutoff: null, advancementCondition: { type: "ranking", level: 1 } }] }])
+    if (path === "/api/v0/persons/2022TEST01/results") return jsonResponse([{ competition_id: "Old", event_id: "333", average: 1200 }, { competition_id: "New", event_id: "333", average: 1050 }])
     if (path.startsWith("/api/v0/persons/")) return jsonResponse(people[path.split("/").pop() ?? ""] ?? {})
     throw new Error(`Unexpected WCA request: ${path}`)
   }
@@ -183,11 +185,19 @@ test("agent competition report makes one Cubify request sufficient and keeps unc
   assert.deepEqual(payload.events["333"].user.possibleOverallRange, { best: 2, worst: 3, basis: "best-average" })
   assert.equal(payload.events["333"].keyOpponents[0].rankingRelativeToUser, "ahead")
   assert.equal(payload.events["333"].user.pbAverageDisplay, "11.00s")
+  assert.equal(payload.events["333"].recentForm.trend, "improving")
+  assert.equal(payload.events["333"].roundPlan.rounds[0].pbAverageThreshold, 1000)
   assert.equal(payload.events["333"].firstTimers[0].strength, "unknown")
   assert.equal(payload.request.eventStates[1].status, "EVENT_NOT_AT_COMPETITION")
   assert.equal(payload.events["333"].opponents, undefined)
   assert.equal(payload.status, "partial")
   assert.ok(payload.generatedAt)
+
+  const paged = await agentReportGet(new Request("http://localhost/api/v1/agent/competition-report?competitionId=Test2026&wcaId=2022TEST01&events=333&include=all&limit=1"))
+  const pagedPayload = await bodyOf(paged)
+  assert.equal(paged.status, 200)
+  assert.equal(pagedPayload.events["333"].opponents.length, 1)
+  assert.deepEqual(pagedPayload.events["333"].opponentPagination, { offset: 0, limit: 1, total: 2, returned: 1, hasMore: true })
 })
 
 test("agent competition rank estimate never falls back to a best single", async () => {

@@ -41,9 +41,29 @@ export interface WcaEventSolveActivity {
 }
 
 export type WcaPersonResultRow = {
+  id?: number
   event_id?: string
   competition_id?: string
+  /** Official single result in WCA centiseconds (or moves for FMC). */
+  best?: number
+  /** Official average result in WCA centiseconds; negative means no average. */
+  average?: number
+  round_type_id?: string
   attempts?: number[]
+}
+
+export interface WcaEventRecentForm {
+  eventId: string
+  /** Number of official average results in the sampled competition window. */
+  resultCount: number
+  competitionCount: number
+  windowCompetitions: number
+  latestAverage: number | null
+  meanAverage: number | null
+  medianAverage: number | null
+  standardDeviation: number | null
+  trend: "improving" | "slower" | "stable" | "insufficient_data"
+  trendDelta: number | null
 }
 
 function mapRecord(raw: any): WcaPersonRecord {
@@ -179,6 +199,63 @@ export function aggregateSolveActivity(rows: WcaPersonResultRow[]): {
 }
 
 /**
+ * Summarise a competitor's recent official averages without pretending they
+ * are a competition-day prediction. WCA returns results in chronological API
+ * order; the tail of that order is treated as the recent window.
+ */
+export function aggregateRecentForm(
+  rows: WcaPersonResultRow[],
+  eventIds?: string[],
+  windowCompetitions = 8,
+): WcaEventRecentForm[] {
+  const requested = eventIds?.length ? new Set(eventIds.map((id) => id.trim().toLowerCase())) : null
+  const byEvent = new Map<string, WcaPersonResultRow[]>()
+  for (const row of Array.isArray(rows) ? rows : []) {
+    const eventId = typeof row.event_id === "string" ? row.event_id.trim().toLowerCase() : ""
+    if (!eventId || (requested && !requested.has(eventId))) continue
+    if (!Number.isFinite(row.average) || (row.average as number) <= 0) continue
+    const list = byEvent.get(eventId) ?? []
+    list.push(row)
+    byEvent.set(eventId, list)
+  }
+
+  return [...byEvent.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([eventId, eventRows]) => {
+    const competitions = [...new Set(eventRows.map((row) => typeof row.competition_id === "string" ? row.competition_id : "" ).filter(Boolean))]
+    const windowSize = Math.max(1, Math.floor(windowCompetitions))
+    const recentCompetitions = competitions.slice(-windowSize)
+    const recentSet = new Set(recentCompetitions)
+    const sampled = (recentCompetitions.length ? eventRows.filter((row) => recentSet.has(row.competition_id ?? "")) : eventRows.slice(-windowSize))
+      .map((row) => row.average as number)
+    const ordered = sampled.length ? sampled : []
+    const sorted = [...ordered].sort((a, b) => a - b)
+    const mean = ordered.length ? ordered.reduce((sum, value) => sum + value, 0) / ordered.length : null
+    const median = sorted.length
+      ? sorted.length % 2 === 1
+        ? sorted[Math.floor(sorted.length / 2)]
+        : (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
+      : null
+    const standardDeviation = mean === null ? null : Math.sqrt(ordered.reduce((sum, value) => sum + (value - mean) ** 2, 0) / ordered.length)
+    const first = ordered[0] ?? null
+    const latest = ordered.at(-1) ?? null
+    const delta = first === null || latest === null || ordered.length < 2 ? null : latest - first
+    const tolerance = first === null ? 0 : Math.max(10, first * 0.02)
+    const trend = delta === null ? "insufficient_data" : Math.abs(delta) <= tolerance ? "stable" : delta < 0 ? "improving" : "slower"
+    return {
+      eventId,
+      resultCount: ordered.length,
+      competitionCount: recentCompetitions.length || new Set(eventRows.map((row) => row.competition_id).filter(Boolean)).size,
+      windowCompetitions: recentCompetitions.length || Math.min(windowSize, ordered.length),
+      latestAverage: latest,
+      meanAverage: mean === null ? null : Math.round(mean),
+      medianAverage: median === null ? null : Math.round(median),
+      standardDeviation: standardDeviation === null ? null : Math.round(standardDeviation),
+      trend,
+      trendDelta: delta === null ? null : Math.round(delta),
+    }
+  })
+}
+
+/**
  * Aggregate solve volume per event from /persons/:id/results.
  * One request; pure aggregation in-memory.
  */
@@ -201,4 +278,19 @@ export async function fetchWcaPersonSolveActivity(
 
   const rows = (await response.json()) as WcaPersonResultRow[]
   return aggregateSolveActivity(rows)
+}
+
+/** Fetch the recent official-average window used by competition reports. */
+export async function fetchWcaPersonRecentForm(
+  wcaId: string,
+  eventIds?: string[],
+  windowCompetitions = 8,
+  signal?: AbortSignal,
+): Promise<WcaEventRecentForm[]> {
+  const normalized = wcaId.trim().toUpperCase()
+  if (!normalized) throw new Error("Please enter a WCA ID")
+  const response = await fetch(`${WCA_PERSON_API}/${normalized}/results`, { signal })
+  if (!response.ok) throw new Error(`Could not load results for ${normalized}`)
+  const rows = (await response.json()) as WcaPersonResultRow[]
+  return aggregateRecentForm(rows, eventIds, windowCompetitions)
 }

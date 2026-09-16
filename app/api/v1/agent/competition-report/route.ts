@@ -13,6 +13,15 @@ function requestedEvents(value: string | null) {
   return [...new Set(events)]
 }
 
+function boundedInteger(value: string | null, fallback: number, max: number) {
+  if (!value) return fallback
+  const parsed = Number(value)
+  if (!Number.isSafeInteger(parsed) || parsed < 0 || parsed > max) {
+    throw new ApiError(`value must be an integer from 0 to ${max}`, 400, "invalid_request")
+  }
+  return parsed
+}
+
 /**
  * A compact, machine-readable view of the full competition report.  This is
  * intentionally a thin adapter over /reports so both routes share identical
@@ -25,6 +34,8 @@ export async function GET(request: Request) {
     const competitorWcaId = wcaId(url.searchParams.get("wcaId"))
     const eventIds = requestedEvents(url.searchParams.get("events"))
     const includeAll = url.searchParams.get("include") === "all"
+    const offset = boundedInteger(url.searchParams.get("offset"), 0, 5000)
+    const limit = boundedInteger(url.searchParams.get("limit"), includeAll ? 100 : 8, 100)
     const reportResponse = await createReport(new Request("http://cubify.internal/api/v1/reports", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -65,6 +76,8 @@ export async function GET(request: Request) {
         rankingRelativeToUser: entry.comparisonToYou?.average.result === "opponent" ? "ahead" : entry.comparisonToYou?.average.result === "you" ? "behind" : "unknown",
       })
       const compactOpponents = opponents.filter((entry: any) => entry.comparisonToYou?.average.result !== "unknown").sort((a: any, b: any) => Math.abs(a.comparisonToYou.average.difference) - Math.abs(b.comparisonToYou.average.difference)).slice(0, 8).map(toOpponent)
+      const returnedOpponents = includeAll ? opponents.slice(offset, offset + limit).map(toOpponent) : compactOpponents
+      const recentForm = personalized?.recentForm?.find((entry: any) => entry.eventId === event.eventId) ?? null
       return [event.eventId, {
         eventName: eventDisplayName(event.eventId),
         field: { registered: event.registeredCount, ranked: knownSize, firstTimers: firstTimers.length, unknownStrength: unknownAverageStrength.length, rankingBasis: "best-average" },
@@ -83,19 +96,21 @@ export async function GET(request: Request) {
           unknown: opponents.filter((entry: any) => entry.comparisonToYou?.average.result === "unknown").length,
         },
         keyOpponents: compactOpponents,
-        ...(includeAll ? { opponents: opponents.map(toOpponent) } : {}),
+        ...(includeAll ? { opponents: returnedOpponents, opponentPagination: { offset, limit, total: opponents.length, returned: returnedOpponents.length, hasMore: offset + returnedOpponents.length < opponents.length } } : {}),
+        recentForm,
+        roundPlan: report.data.competition.roundPlans?.[event.eventId] ?? null,
         firstTimers: firstTimers.filter((entry: any) => entry.wcaId !== competitorWcaId).map((entry: any) => ({ wcaId: null, name: entry.name, firstTimer: true, strength: "unknown" })),
       }]
     }))
 
     return apiJson({
       status: "partial",
-      warnings: [{ code: "PREDICTION_NOT_AVAILABLE", message: "Placement and podium predictions require a validated historical model and are not inferred from PB rank." }],
+       warnings: [{ code: "PREDICTION_NOT_AVAILABLE", message: "Placement and podium predictions require a validated historical model and are not inferred from PB rank." }, ...(report.data.warnings ?? [])],
       competition: report.data.competition,
       subject: { wcaId: competitorWcaId },
-      request: { eventStates, opponentDetail: includeAll ? "all" : "key-only (use include=all for every opponent)" },
+       request: { eventStates, opponentDetail: includeAll ? "paginated-all" : "key-only (use include=all for every opponent)", opponentPagination: includeAll ? { offset, limit } : null },
       events,
-      methodology: personalized.methodology,
+       methodology: personalized?.methodology ?? "No personalized WCA-ID comparison was requested.",
       resultEncoding: "pbSingle and pbAverage are official WCA integers; pbSingleDisplay and pbAverageDisplay are the human-readable values for this event.",
       source: report.source,
       generatedAt: report.generatedAt,
