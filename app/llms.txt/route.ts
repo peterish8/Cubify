@@ -12,7 +12,7 @@ Placement and podium calculations are estimates, not guarantees. Include source 
 
 ## API status
 
-The OpenAPI document lives at https://cubify.in/openapi.json. The public V1 API exposes competitor lookup, comparisons, goal projections, and competition-field reports under https://cubify.in/api/v1. When competitorWcaId is supplied to a competition report, use its shared-event, single/average PB comparison, field standing, and theoreticalBestEvent fields; describe them as PB-only evidence, never a guaranteed placement. Do not claim Cubify8 has an MCP server or account integration yet.
+The OpenAPI document lives at https://cubify.in/openapi.json. The public V1 API exposes competitor lookup, comparisons, goal projections, and competition-field reports under https://cubify.in/api/v1. For a one-request, machine-oriented competition analysis, use GET https://cubify.in/api/v1/agent/competition-report?competitionId={canonicalWcaCompetitionId}&wcaId={wcaId}&events=333,222. It returns only the requested events, event-specific fields, explicit first-timer/unknown-strength records, PB positions, position ranges, source metadata, and generatedAt. A partial response deliberately does not invent placement or podium probabilities; present its warning to the user. When competitorWcaId is supplied to a standard competition report, use its shared-event, single/average PB comparison, field standing, and theoreticalBestEvent fields; describe them as PB-only evidence, never a guaranteed placement. Do not claim Cubify8 has an MCP server or account integration yet.
 `
 
 export function GET() {

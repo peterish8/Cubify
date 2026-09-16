@@ -2,6 +2,14 @@ import { ApiError } from "@/lib/api-utils"
 
 export type PersonalBests = { single: number | null; average: number | null }
 
+/** Validates the canonical WCA competition identifier used by agent-facing routes. */
+export function canonicalCompetitionId(value: unknown) {
+  if (typeof value !== "string" || !/^[A-Za-z0-9]{1,100}$/.test(value)) {
+    throw new ApiError("competitionId must be a canonical WCA competition ID", 400, "invalid_request")
+  }
+  return value
+}
+
 export function competitionId(value: unknown) {
   if (typeof value !== "string" || value.trim().length === 0) throw new ApiError("competitionUrl is required", 400, "invalid_request")
   if (value.length > 500) throw new ApiError("competitionUrl is too long", 400, "invalid_request")

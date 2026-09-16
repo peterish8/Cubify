@@ -6,6 +6,7 @@ import { OPTIONS as competitorOptions } from "../app/api/v1/competitors/[wcaId]/
 import { POST as comparePost, OPTIONS as compareOptions } from "../app/api/v1/comparisons/route"
 import { POST as goalPost } from "../app/api/v1/goals/projection/route"
 import { POST as reportPost } from "../app/api/v1/reports/route"
+import { GET as agentReportGet } from "../app/api/v1/agent/competition-report/route"
 import { competitionId } from "../lib/report-utils"
 
 const originalFetch = globalThis.fetch
@@ -151,6 +152,32 @@ test("competition reports return shared PB standings and theoretical best event"
   assert.equal(payload.data.byEvent[0].myStanding.single.position, 2)
   assert.equal(payload.data.personalized.theoreticalBestEvent.bySingle.eventId, "222")
   assert.equal(payload.data.personalized.sharedCompetitors.find((entry: any) => entry.firstTime)?.name, "First Timer")
+})
+
+test("agent competition report makes one Cubify request sufficient and keeps uncertainty explicit", async () => {
+  const people: Record<string, unknown> = {
+    "2022TEST01": personPayload("2022TEST01", "You", { "333": record(1000, 1100) }),
+    "2021RIVAL01": personPayload("2021RIVAL01", "Rival", { "333": record(900, 1000) }),
+  }
+  globalThis.fetch = async (input) => {
+    const path = new URL(String(input)).pathname
+    if (path === "/api/v0/competitions/Test2026") return jsonResponse({ id: "Test2026", name: "Test Open", start_date: "2026-10-01", end_date: "2026-10-02", city: "Bengaluru", event_ids: ["333"], url: "https://www.worldcubeassociation.org/competitions/Test2026" })
+    if (path === "/api/v0/competitions/Test2026/registrations") return jsonResponse([{ user_id: 1, event_ids: ["333"] }, { user_id: 2, event_ids: ["333"] }, { user_id: 3, event_ids: ["333"] }])
+    if (path === "/api/v0/users/1") return jsonResponse({ user: { wca_id: "2022TEST01", name: "You", gender: "m", country_iso2: "IN" } })
+    if (path === "/api/v0/users/2") return jsonResponse({ user: { wca_id: "2021RIVAL01", name: "Rival", gender: "f", country_iso2: "IN" } })
+    if (path === "/api/v0/users/3") return jsonResponse({ user: { wca_id: null, name: "First Timer", gender: "o", country_iso2: "IN" } })
+    if (path.startsWith("/api/v0/persons/")) return jsonResponse(people[path.split("/").pop() ?? ""] ?? {})
+    throw new Error(`Unexpected WCA request: ${path}`)
+  }
+  const response = await agentReportGet(new Request("http://localhost/api/v1/agent/competition-report?competitionId=Test2026&wcaId=2022TEST01&events=333"))
+  const payload = await bodyOf(response)
+  assert.equal(response.status, 200)
+  assert.equal(payload.events["333"].field.firstTimers, 1)
+  assert.equal(payload.events["333"].user.pbAveragePosition, 2)
+  assert.equal(payload.events["333"].opponents[0].rankingRelativeToUser, "ahead")
+  assert.equal(payload.events["333"].firstTimers[0].strength, "unknown")
+  assert.equal(payload.status, "partial")
+  assert.ok(payload.generatedAt)
 })
 
 test("CORS preflight is explicit for public API clients", () => {
