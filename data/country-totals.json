@@ -2,31 +2,31 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-09-15T00:00:24Z",
+    "exportDate": "2026-09-16T05:48:08Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_258_20260915T000024Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_259_20260916T054808Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 297499,
+  "totalCubers": 297575,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 62076
+      "cubers": 62090
     },
     {
       "iso2": "CN",
       "name": "China",
       "continentId": "_Asia",
-      "cubers": 29496
+      "cubers": 29497
     },
     {
       "iso2": "IN",
       "name": "India",
       "continentId": "_Asia",
-      "cubers": 21266
+      "cubers": 21290
     },
     {
       "iso2": "AU",
@@ -68,13 +68,13 @@
       "iso2": "PH",
       "name": "Philippines",
       "continentId": "_Asia",
-      "cubers": 6378
+      "cubers": 6387
     },
     {
       "iso2": "CO",
       "name": "Colombia",
       "continentId": "_South America",
-      "cubers": 6094
+      "cubers": 6099
     },
     {
       "iso2": "ES",
@@ -104,7 +104,7 @@
       "iso2": "MX",
       "name": "Mexico",
       "continentId": "_North America",
-      "cubers": 4410
+      "cubers": 4415
     },
     {
       "iso2": "TW",
@@ -272,7 +272,7 @@
       "iso2": "GT",
       "name": "Guatemala",
       "continentId": "_North America",
-      "cubers": 1271
+      "cubers": 1288
     },
     {
       "iso2": "CH",
@@ -410,7 +410,7 @@
       "iso2": "CR",
       "name": "Costa Rica",
       "continentId": "_North America",
-      "cubers": 391
+      "cubers": 392
     },
     {
       "iso2": "JO",
