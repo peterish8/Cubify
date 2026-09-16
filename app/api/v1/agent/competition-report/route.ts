@@ -46,9 +46,11 @@ export async function GET(request: Request) {
     }))
     const events = Object.fromEntries(report.data.byEvent.map((event: any) => {
       const firstTimers = event.competitors.filter((entry: any) => entry.firstTime)
-      const unknownStrength = event.competitors.filter((entry: any) => entry.personalBests.single === null && entry.personalBests.average === null)
-      const knownRank = event.myStanding.average.position ?? event.myStanding.single.position
-      const knownSize = event.myStanding.average.knownCompetitors || event.myStanding.single.knownCompetitors
+      // This endpoint's field estimate is intentionally average-only. A single
+      // can be useful context, but must never become a silent ranking fallback.
+      const unknownAverageStrength = event.competitors.filter((entry: any) => entry.personalBests.average === null)
+      const knownRank = event.myStanding.average.position
+      const knownSize = event.myStanding.average.knownCompetitors
       const opponents = event.competitors.filter((entry: any) => entry.wcaId !== competitorWcaId)
       const toOpponent = (entry: any) => ({
         wcaId: entry.wcaId,
@@ -65,7 +67,7 @@ export async function GET(request: Request) {
       const compactOpponents = opponents.filter((entry: any) => entry.comparisonToYou?.average.result !== "unknown").sort((a: any, b: any) => Math.abs(a.comparisonToYou.average.difference) - Math.abs(b.comparisonToYou.average.difference)).slice(0, 8).map(toOpponent)
       return [event.eventId, {
         eventName: eventDisplayName(event.eventId),
-        field: { registered: event.registeredCount, ranked: knownSize, firstTimers: firstTimers.length, unknownStrength: unknownStrength.length },
+        field: { registered: event.registeredCount, ranked: knownSize, firstTimers: firstTimers.length, unknownStrength: unknownAverageStrength.length, rankingBasis: "best-average" },
         user: {
           pbSingle: event.myPersonalBests?.single ?? null,
           pbAverage: event.myPersonalBests?.average ?? null,
@@ -73,7 +75,7 @@ export async function GET(request: Request) {
           pbAverageDisplay: event.myPersonalBests?.average === null || event.myPersonalBests?.average === undefined ? null : formatResult(event.eventId, event.myPersonalBests.average, "average"),
           pbSinglePosition: event.myStanding.single.position,
           pbAveragePosition: event.myStanding.average.position,
-          possibleOverallRange: knownRank === null ? null : { best: knownRank, worst: knownRank + unknownStrength.length },
+          possibleOverallRange: knownRank === null ? null : { best: knownRank, worst: knownRank + unknownAverageStrength.length, basis: "best-average" },
         },
         opponentCounts: {
           ahead: opponents.filter((entry: any) => entry.comparisonToYou?.average.result === "opponent").length,
