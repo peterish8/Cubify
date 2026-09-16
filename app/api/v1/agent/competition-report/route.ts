@@ -2,6 +2,7 @@ import { OPTIONS as reportOptions, POST as createReport } from "@/app/api/v1/rep
 import { apiFailure, apiJson, ApiError, wcaId } from "@/lib/api-utils"
 import { canonicalCompetitionId } from "@/lib/report-utils"
 import { eventDisplayName } from "@/lib/wca-events"
+import { formatResult } from "@/lib/wca-format"
 
 function requestedEvents(value: string | null) {
   if (!value) return undefined
@@ -53,6 +54,10 @@ export async function GET(request: Request) {
         wcaId: entry.wcaId,
         name: entry.name,
         pb: entry.personalBests,
+        pbDisplay: {
+          single: entry.personalBests.single === null ? null : formatResult(event.eventId, entry.personalBests.single, "single"),
+          average: entry.personalBests.average === null ? null : formatResult(event.eventId, entry.personalBests.average, "average"),
+        },
         firstTimer: entry.firstTime,
         strength: entry.personalBests.single === null && entry.personalBests.average === null ? "unknown" : "known",
         rankingRelativeToUser: entry.comparisonToYou?.average.result === "opponent" ? "ahead" : entry.comparisonToYou?.average.result === "you" ? "behind" : "unknown",
@@ -64,6 +69,8 @@ export async function GET(request: Request) {
         user: {
           pbSingle: event.myPersonalBests?.single ?? null,
           pbAverage: event.myPersonalBests?.average ?? null,
+          pbSingleDisplay: event.myPersonalBests?.single === null || event.myPersonalBests?.single === undefined ? null : formatResult(event.eventId, event.myPersonalBests.single, "single"),
+          pbAverageDisplay: event.myPersonalBests?.average === null || event.myPersonalBests?.average === undefined ? null : formatResult(event.eventId, event.myPersonalBests.average, "average"),
           pbSinglePosition: event.myStanding.single.position,
           pbAveragePosition: event.myStanding.average.position,
           possibleOverallRange: knownRank === null ? null : { best: knownRank, worst: knownRank + unknownStrength.length },
@@ -87,6 +94,7 @@ export async function GET(request: Request) {
       request: { eventStates, opponentDetail: includeAll ? "all" : "key-only (use include=all for every opponent)" },
       events,
       methodology: personalized.methodology,
+      resultEncoding: "pbSingle and pbAverage are official WCA integers; pbSingleDisplay and pbAverageDisplay are the human-readable values for this event.",
       source: report.source,
       generatedAt: report.generatedAt,
     })
