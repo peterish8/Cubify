@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-09-16T05:48:08Z",
+    "exportDate": "2026-09-17T00:00:25Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_259_20260916T054808Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_260_20260917T000025Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 297575,
+  "totalCubers": 297596,
   "countries": [
     {
       "iso2": "US",
@@ -20,7 +20,7 @@
       "iso2": "CN",
       "name": "China",
       "continentId": "_Asia",
-      "cubers": 29497
+      "cubers": 29511
     },
     {
       "iso2": "IN",
@@ -38,7 +38,7 @@
       "iso2": "CA",
       "name": "Canada",
       "continentId": "_North America",
-      "cubers": 10883
+      "cubers": 10884
     },
     {
       "iso2": "BR",
@@ -140,7 +140,7 @@
       "iso2": "SE",
       "name": "Sweden",
       "continentId": "_Europe",
-      "cubers": 3046
+      "cubers": 3047
     },
     {
       "iso2": "VN",
@@ -308,7 +308,7 @@
       "iso2": "VE",
       "name": "Venezuela",
       "continentId": "_South America",
-      "cubers": 1025
+      "cubers": 1030
     },
     {
       "iso2": "FI",
