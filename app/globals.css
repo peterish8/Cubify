@@ -912,6 +912,706 @@
   z-index: 1;
 }
 
+/* ── Lookup landing shader stage ── */
+/*
+   This layer deliberately lives inside the initial lookup hero instead of
+   changing .editorial-page, so the reference-inspired light stage stays
+   local to the landing state and does not redesign the other routes.
+*/
+.lookup-hero-shader {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+  /* Static fluted-glass fallback, covered by the canvas once WebGL is ready. */
+  background:
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.5) 0 2px, transparent 2px 34px),
+    radial-gradient(60% 80% at 82% 60%, rgba(var(--theme-bright-rgb), 0.55), transparent 70%),
+    radial-gradient(70% 55% at 50% 110%, rgba(var(--theme-rgb), 0.5), transparent 70%),
+    #020610;
+}
+
+/* Bottom-centre cutout: the stage is masked so the page shows through the notch. */
+.lookup-stage {
+  --nw: 17.5rem;
+  --nh: 4.75rem;
+  --nr: 1.4rem;
+}
+
+@media (min-width: 640px) {
+  .lookup-stage {
+    --nw: 31rem;
+  }
+}
+
+.lookup-screen {
+  --lookup-glass-grain: url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%27180%27 height=%27180%27><filter id=%27n%27><feTurbulence type=%27fractalNoise%27 baseFrequency=%27.85%27 numOctaves=%272%27 stitchTiles=%27stitch%27/><feColorMatrix values=%270 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0%27/></filter><rect width=%27100%25%27 height=%27100%25%27 filter=%27url(%2523n)%27/></svg>");
+  background: #020610;
+  /* Soft bottom corners. */
+  border-radius:
+    0 0 clamp(0.75rem, 1.6vw, 1.8rem) clamp(0.75rem, 1.6vw, 1.8rem) /
+    0 0 clamp(1rem, 2.4vw, 2.7rem) clamp(1rem, 2.4vw, 2.7rem);
+  --nx-l: calc(50% - var(--nw) / 2 - var(--nr) / 2);
+  --nx-r: calc(50% + var(--nw) / 2 + var(--nr) / 2);
+  --nx-fl: calc(50% - var(--nw) / 2 + var(--nr) / 2);
+  --nx-fr: calc(50% + var(--nw) / 2 - var(--nr) / 2);
+  --ny-f: calc(100% + var(--nr) - var(--nh));
+  --solid: linear-gradient(#000, #000);
+  -webkit-mask-image:
+    var(--solid), var(--solid), var(--solid),
+    radial-gradient(circle at 0 0, #000 calc(var(--nr) - 0.5px), transparent var(--nr)),
+    var(--solid), var(--solid),
+    radial-gradient(circle at 100% 0, #000 calc(var(--nr) - 0.5px), transparent var(--nr)),
+    radial-gradient(circle at 100% 100%, transparent calc(var(--nr) - 0.5px), #000 var(--nr)),
+    radial-gradient(circle at 0 100%, transparent calc(var(--nr) - 0.5px), #000 var(--nr));
+  mask-image:
+    var(--solid), var(--solid), var(--solid),
+    radial-gradient(circle at 0 0, #000 calc(var(--nr) - 0.5px), transparent var(--nr)),
+    var(--solid), var(--solid),
+    radial-gradient(circle at 100% 0, #000 calc(var(--nr) - 0.5px), transparent var(--nr)),
+    radial-gradient(circle at 100% 100%, transparent calc(var(--nr) - 0.5px), #000 var(--nr)),
+    radial-gradient(circle at 0 100%, transparent calc(var(--nr) - 0.5px), #000 var(--nr));
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size:
+    100% calc(100% - var(--nh) + 1px),
+    calc(50% - var(--nw) / 2 - var(--nr) + 1px) 100%,
+    var(--nr) calc(100% - var(--nr) + 1px),
+    var(--nr) var(--nr),
+    calc(50% - var(--nw) / 2 - var(--nr) + 1px) 100%,
+    var(--nr) calc(100% - var(--nr) + 1px),
+    var(--nr) var(--nr),
+    var(--nr) var(--nr),
+    var(--nr) var(--nr);
+  mask-size:
+    100% calc(100% - var(--nh) + 1px),
+    calc(50% - var(--nw) / 2 - var(--nr) + 1px) 100%,
+    var(--nr) calc(100% - var(--nr) + 1px),
+    var(--nr) var(--nr),
+    calc(50% - var(--nw) / 2 - var(--nr) + 1px) 100%,
+    var(--nr) calc(100% - var(--nr) + 1px),
+    var(--nr) var(--nr),
+    var(--nr) var(--nr),
+    var(--nr) var(--nr);
+  -webkit-mask-position:
+    0 0, 0 0, var(--nx-l) 0, var(--nx-l) 100%,
+    100% 0, var(--nx-r) 0, var(--nx-r) 100%,
+    var(--nx-fl) var(--ny-f), var(--nx-fr) var(--ny-f);
+  mask-position:
+    0 0, 0 0, var(--nx-l) 0, var(--nx-l) 100%,
+    100% 0, var(--nx-r) 0, var(--nx-r) 100%,
+    var(--nx-fl) var(--ny-f), var(--nx-fr) var(--ny-f);
+}
+
+/* The card that sits inside the notch. */
+.lookup-cutout-card {
+  position: absolute;
+  bottom: 0.3rem;
+  left: 50%;
+  z-index: 5;
+  display: flex;
+  width: calc(var(--nw) - 0.8rem);
+  height: calc(var(--nh) - 0.75rem);
+  transform: translateX(-50%);
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0 1rem;
+  border: 1px solid rgba(var(--theme-bright-rgb), 0.3);
+  border-radius: calc(var(--nr) - 0.3rem);
+  background:
+    repeating-linear-gradient(90deg, rgba(var(--theme-bright-rgb), 0.07) 0 1px, transparent 1px 8px),
+    linear-gradient(160deg, rgba(var(--theme-rgb), 0.26), rgba(var(--theme-deep-rgb), 0.18));
+  box-shadow:
+    inset 0 1px 0 rgba(var(--theme-sky-rgb), 0.3),
+    0 14px 34px -14px rgba(var(--theme-rgb), 0.6);
+}
+
+.lookup-cutout-card__text {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.15rem;
+  line-height: 1.1;
+}
+
+.lookup-cutout-card__text strong {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+}
+
+.lookup-cutout-card__text span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.6875rem;
+  color: var(--muted-foreground);
+}
+
+/* Landing nav: no capsule. Logo and links sit straight on the hero above a hairline. */
+.nav-bar {
+  position: relative;
+}
+
+.nav-bar::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(var(--theme-bright-rgb), 0.22) 18%, rgba(var(--theme-bright-rgb), 0.22) 82%, transparent);
+  pointer-events: none;
+}
+
+.nav-underline {
+  position: absolute;
+  inset: auto 0.75rem 0.15rem;
+  height: 1.5px;
+  border-radius: 999px;
+  background: rgb(var(--theme-bright-rgb));
+  pointer-events: none;
+}
+
+/* ── Site footer ── */
+.site-footer {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  border-radius: clamp(1.5rem, 3vw, 2.25rem);
+  background:
+    radial-gradient(80% 60% at 50% 108%, rgba(var(--theme-rgb), 0.22), transparent 72%),
+    linear-gradient(180deg, rgba(var(--theme-deep-rgb), 0.16), rgba(var(--theme-rgb), 0.04) 60%, transparent),
+    var(--glass-bg);
+  box-shadow: inset 0 1px 0 rgba(var(--theme-sky-rgb), 0.18);
+}
+
+.site-footer__label {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--blue-bright);
+}
+
+.site-footer__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--foreground);
+  transition: color 0.2s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.site-footer__link::after {
+  content: "→";
+  font-size: 1.1rem;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.site-footer__link:hover {
+  color: var(--blue-bright);
+  transform: translateX(4px);
+}
+
+.site-footer__link:hover::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Glass 3x3 cube: full footer width, peak at the centre, cropped by the bottom edge.
+   --c is one cubie edge. The cube is 5.196c wide, so it exactly spans the footer. */
+.site-footer__cube {
+  container-type: inline-size;
+  position: relative;
+  width: 100%;
+  margin-top: 2rem;
+  aspect-ratio: 5.196 / 2.05;
+}
+
+.cube-stage {
+  --c: calc(100cqw / 5.196);
+  position: absolute;
+  inset: 0;
+}
+
+/* Soft halo outside the cube; the drifting light itself is clipped to the cube outline. */
+.site-footer__cube::before {
+  content: "";
+  position: absolute;
+  inset: -35% -4% 0;
+  pointer-events: none;
+  background: radial-gradient(60% 75% at 50% 70%, rgba(var(--theme-rgb), 0.16), transparent 72%);
+}
+
+.cube-lights {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(50% 0, 100% 73%, 100% 100%, 0 100%, 0 73%);
+}
+
+/* Light drifting inside the cube; the frosted faces blur it. */
+.cube-blob {
+  position: absolute;
+  width: calc(var(--c) * 2);
+  height: calc(var(--c) * 2);
+  translate: calc(var(--px, 0) * 46px) calc(var(--py, 0) * 22px);
+  transition: translate 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.cube-blob span {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(var(--theme-bright-rgb), 0.5), rgba(var(--theme-deep-rgb), 0.3) 38%, transparent 68%);
+  animation: cube-blob-drift 11s ease-in-out infinite alternate;
+}
+
+.cube-wordmark {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 2;
+  padding: 0 1rem;
+  translate: calc(var(--px, 0) * -8px) calc(var(--py, 0) * -4px);
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 24vw, 24rem);
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  text-align: center;
+  user-select: none;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(var(--theme-bright-rgb), 0.95) 0%, rgba(var(--theme-rgb), 0.55) 55%, rgba(var(--theme-deep-rgb), 0.12) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 8px 30px rgba(var(--theme-deep-rgb), 0.5));
+  transition: translate 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cube-blob--a { left: 18%; top: -14%; }
+.cube-blob--b { right: 12%; top: 6%; }
+.cube-blob--b span { animation-duration: 14s; animation-direction: alternate-reverse; background: radial-gradient(circle, rgba(var(--theme-rgb), 0.45), rgba(var(--theme-deep-rgb), 0.3) 42%, transparent 70%); }
+.cube-blob--c { left: 38%; top: 30%; }
+.cube-blob--c span { animation-duration: 17s; }
+
+.site-footer__cube[data-paused="true"] .cube-blob span,
+.site-footer__cube[data-paused="true"] .cube-sticker,
+.site-footer__cube[data-paused="true"] .cube-face::after {
+  animation-play-state: paused;
+}
+
+@keyframes cube-blob-drift {
+  0% { transform: translate3d(-14%, -6%, 0) scale(0.9); }
+  100% { transform: translate3d(16%, 10%, 0) scale(1.12); }
+}
+
+/* Each face is a 3x3 sheet of glass, sheared into isometric with a 2D matrix,
+   so backdrop-filter still works (it does not under preserve-3d). */
+.cube-face {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  width: calc(var(--c) * 3);
+  height: calc(var(--c) * 3);
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  gap: calc(var(--c) * 0.055);
+  padding: calc(var(--c) * 0.055);
+  transform-origin: 0 0;
+  border-radius: calc(var(--c) * 0.05);
+  background:
+    linear-gradient(140deg, rgba(var(--theme-bright-rgb), 0.07), rgba(var(--theme-deep-rgb), 0.06)),
+    rgba(2, 6, 16, 0.72);
+  -webkit-backdrop-filter: blur(12px) saturate(170%);
+  backdrop-filter: blur(12px) saturate(170%);
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--theme-bright-rgb), 0.34),
+    inset 0 0 calc(var(--c) * 0.16) rgba(var(--theme-rgb), 0.16);
+}
+
+.cube-face--top {
+  transform: translate(50cqw, calc(var(--c) * 3)) matrix(0.866, -0.5, -0.866, -0.5, 0, 0);
+}
+
+.cube-face--left {
+  transform: translate(calc(50cqw - var(--c) * 2.598), calc(var(--c) * 1.5)) matrix(0.866, 0.5, 0, 1, 0, 0);
+  background:
+    linear-gradient(140deg, rgba(var(--theme-bright-rgb), 0.05), rgba(2, 6, 16, 0.3)),
+    rgba(2, 6, 16, 0.8);
+}
+
+.cube-face--right {
+  transform: translate(50cqw, calc(var(--c) * 3)) matrix(0.866, -0.5, 0, 1, 0, 0);
+  background:
+    linear-gradient(140deg, rgba(var(--theme-deep-rgb), 0.08), rgba(1, 3, 10, 0.5)),
+    rgba(1, 4, 12, 0.88);
+}
+
+/* Moving reflection across the glass. */
+.cube-face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 32%, rgba(var(--theme-bright-rgb), 0.12) 46%, transparent 60%);
+  background-size: 260% 100%;
+  animation: cube-sheen 8s ease-in-out infinite alternate;
+}
+
+@keyframes cube-sheen {
+  from { background-position: 100% 0; }
+  to { background-position: 0 0; }
+}
+
+.cube-sticker {
+  --cube-hl: linear-gradient(155deg, rgba(var(--theme-sky-rgb), 0.2), transparent 40%);
+  border: 1px solid rgba(var(--theme-bright-rgb), 0.4);
+  border-radius: calc(var(--c) * 0.07);
+  animation: cube-tile-glow 5.5s ease-in-out infinite;
+  box-shadow:
+    inset 0 1px 0 rgba(var(--theme-sky-rgb), 0.3),
+    inset 0 0 calc(var(--c) * 0.12) rgba(var(--theme-rgb), 0.12);
+}
+
+.cube-sticker[data-v="0"] { background: var(--cube-hl), linear-gradient(135deg, rgba(var(--theme-bright-rgb), 0.2), rgba(var(--theme-deep-rgb), 0.08)); }
+.cube-sticker[data-v="1"] { background: var(--cube-hl), linear-gradient(135deg, rgba(var(--theme-rgb), 0.16), rgba(var(--theme-deep-rgb), 0.1)); }
+.cube-sticker[data-v="2"] { background: var(--cube-hl), linear-gradient(135deg, rgba(var(--theme-deep-rgb), 0.24), rgba(var(--theme-deep-rgb), 0.08)); }
+.cube-sticker[data-v="3"] { background: var(--cube-hl), linear-gradient(135deg, rgba(var(--theme-bright-rgb), 0.14), rgba(var(--theme-rgb), 0.06)); }
+
+@keyframes cube-tile-glow {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-footer__link,
+  .site-footer__link::after,
+  .cube-blob,
+  .cube-wordmark {
+    transition: none;
+  }
+
+  .cube-blob span,
+  .cube-face::after,
+  .cube-sticker {
+    animation: none;
+  }
+}
+
+/* Surface layer: theme-tinted reflection plus fine frosted grain. */
+.lookup-screen__glass {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.lookup-screen__glass::before,
+.lookup-screen__glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.lookup-screen__glass::before {
+  background: linear-gradient(118deg, rgba(var(--theme-bright-rgb), 0.1) 0%, rgba(var(--theme-bright-rgb), 0.03) 22%, transparent 40%);
+}
+
+.lookup-screen__glass::after {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%27180%27 height=%27180%27><filter id=%27n%27><feTurbulence type=%27fractalNoise%27 baseFrequency=%27.85%27 numOctaves=%272%27 stitchTiles=%27stitch%27/><feColorMatrix values=%270 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0%27/></filter><rect width=%27100%25%27 height=%27100%25%27 filter=%27url(%2523n)%27/></svg>");
+  background-size: 180px 180px;
+  mix-blend-mode: overlay;
+  opacity: 0.12;
+}
+
+/* Tinted morphism panels: dark theme glass, frosted grain, coloured rim. */
+.glass-chip,
+.lookup-artwork-form {
+  background-color: rgba(var(--theme-deep-rgb), 0.22);
+  border: 1px solid rgba(var(--theme-bright-rgb), 0.26);
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%27180%27 height=%27180%27><filter id=%27n%27><feTurbulence type=%27fractalNoise%27 baseFrequency=%27.85%27 numOctaves=%272%27 stitchTiles=%27stitch%27/><feColorMatrix values=%270 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0%27/></filter><rect width=%27100%25%27 height=%27100%25%27 filter=%27url(%2523n)%27/></svg>") 0 0 / 180px 180px,
+    linear-gradient(160deg, rgba(var(--theme-rgb), 0.2), rgba(var(--theme-deep-rgb), 0.16) 60%, rgba(var(--theme-rgb), 0.1));
+  background-blend-mode: soft-light, normal;
+  -webkit-backdrop-filter: blur(26px) saturate(180%);
+  backdrop-filter: blur(26px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--theme-sky-rgb), 0.32),
+    inset 0 -1px 0 rgba(var(--theme-bright-rgb), 0.08),
+    inset 0 0 36px rgba(var(--theme-rgb), 0.08),
+    0 20px 50px -22px rgba(0, 0, 0, 0.75);
+}
+
+.glass-chip {
+  -webkit-backdrop-filter: blur(14px) saturate(170%);
+  backdrop-filter: blur(14px) saturate(170%);
+}
+
+.lookup-artwork-form {
+  position: relative;
+  border-radius: 1.35rem;
+  padding: 0.45rem;
+  /* Cursor-lit frosted surface layered over the shared tinted glass. */
+  background:
+    radial-gradient(240px circle at var(--mx, -30%) var(--my, 50%), rgba(var(--theme-sky-rgb), 0.2), transparent 70%),
+    var(--lookup-glass-grain) 0 0 / 180px 180px,
+    linear-gradient(160deg, rgba(var(--theme-rgb), 0.2), rgba(var(--theme-deep-rgb), 0.16) 60%, rgba(var(--theme-rgb), 0.1));
+  background-blend-mode: normal, soft-light, normal;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.lookup-artwork-form:focus-within {
+  border-color: rgba(var(--theme-sky-rgb), 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--theme-sky-rgb), 0.4),
+    inset 0 0 40px rgba(var(--theme-rgb), 0.14),
+    0 0 0 4px rgba(var(--theme-rgb), 0.14),
+    0 24px 70px -22px rgba(var(--theme-rgb), 0.65);
+}
+
+@property --rim-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+/* A slow band of light travelling around the glass rim. */
+.lookup-artwork-form::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: conic-gradient(from var(--rim-angle), transparent 0 58%, rgba(var(--theme-sky-rgb), 0.95) 80%, transparent 96%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: lookup-rim-spin 7s linear infinite;
+}
+
+/* Fine reeded ribs echo the shader behind the panel. */
+.lookup-artwork-form::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: repeating-linear-gradient(90deg, rgba(var(--theme-bright-rgb), 0.08) 0 1px, transparent 1px 9px);
+  -webkit-mask-image: linear-gradient(180deg, #000, transparent 85%);
+  mask-image: linear-gradient(180deg, #000, transparent 85%);
+}
+
+@keyframes lookup-rim-spin {
+  to { --rim-angle: 360deg; }
+}
+
+.lookup-dock {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.lookup-dock__tag {
+  display: none;
+  align-items: center;
+  align-self: stretch;
+  padding: 0 0.15rem 0 0.95rem;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: rgba(var(--theme-sky-rgb), 0.78);
+  white-space: nowrap;
+}
+
+.lookup-dock__tag::after {
+  content: "";
+  height: 1.25rem;
+  width: 1px;
+  margin-left: 0.85rem;
+  background: rgba(var(--theme-bright-rgb), 0.3);
+}
+
+.lookup-dock__input {
+  min-width: 0;
+  flex: 1;
+  height: 3rem;
+  padding: 0 0.35rem 0 0.95rem;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--foreground);
+  caret-color: rgb(var(--theme-sky-rgb));
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.lookup-dock__input::placeholder {
+  color: rgba(var(--theme-sky-rgb), 0.34);
+  font-weight: 500;
+}
+
+.lookup-dock__input:disabled {
+  opacity: 0.6;
+}
+
+.lookup-reveal {
+  position: relative;
+  display: inline-flex;
+  height: 3rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  overflow: hidden;
+  padding: 0 1.25rem 0 1.4rem;
+  border: 1px solid rgba(var(--theme-sky-rgb), 0.55);
+  border-radius: 1rem;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  background: linear-gradient(180deg, rgba(var(--theme-bright-rgb), 0.95), rgba(var(--theme-rgb), 0.95) 52%, rgba(var(--theme-deep-rgb), 1));
+  box-shadow:
+    inset 0 1px 0 rgba(var(--theme-sky-rgb), 0.55),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 10px 28px -10px rgba(var(--theme-rgb), 0.85);
+  transition: box-shadow 0.25s ease, filter 0.25s ease;
+}
+
+.lookup-reveal::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(100deg, transparent 30%, rgba(var(--theme-sky-rgb), 0.55) 50%, transparent 70%);
+  transform: translateX(-120%);
+}
+
+.lookup-reveal:hover:not(:disabled) {
+  filter: brightness(1.08);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--theme-sky-rgb), 0.7),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 14px 36px -8px rgba(var(--theme-rgb), 1);
+}
+
+.lookup-reveal:hover:not(:disabled)::after {
+  transform: translateX(120%);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lookup-reveal__arrow {
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lookup-reveal:hover:not(:disabled) .lookup-reveal__arrow {
+  transform: translateX(3px);
+}
+
+.lookup-reveal:disabled {
+  cursor: progress;
+  opacity: 0.75;
+}
+
+.lookup-reveal:focus-visible {
+  outline: 2px solid rgba(var(--theme-sky-rgb), 0.9);
+  outline-offset: 3px;
+}
+
+.lookup-reveal__spinner {
+  height: 0.95rem;
+  width: 0.95rem;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 999px;
+  animation: lookup-spin 0.7s linear infinite;
+}
+
+@keyframes lookup-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (min-width: 640px) {
+  .lookup-dock__tag {
+    display: flex;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lookup-artwork-form::before,
+  .lookup-reveal__spinner {
+    animation: none;
+  }
+}
+
+/* Reeded-glass overlay: a theme-tinted strip, one flute wide, tiled across the stage.
+   The dark bevel sits on the left of each flute and the catch-light on the right, matching the shader.
+   It fades out toward the bright base so the light down there stays smooth. */
+.lookup-flutes {
+  --flute-width: clamp(30px, 3.2%, 64px);
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: rgba(var(--theme-deep-rgb), 0.05);
+  -webkit-mask-image: linear-gradient(#000 60%, rgba(0, 0, 0, 0.8) 70%, rgba(0, 0, 0, 0.42) 80%, rgba(0, 0, 0, 0.12) 90%, transparent 97%);
+  mask-image: linear-gradient(#000 60%, rgba(0, 0, 0, 0.8) 70%, rgba(0, 0, 0, 0.42) 80%, rgba(0, 0, 0, 0.12) 90%, transparent 97%);
+}
+
+.lookup-flutes::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(90deg, rgba(2, 6, 16, 0.5) 0%, rgba(2, 6, 16, 0.12) 7%, rgba(var(--theme-deep-rgb), 0) 22%, rgba(var(--theme-bright-rgb), 0.06) 78%, rgba(var(--theme-sky-rgb), 0.16) 95%, rgba(var(--theme-deep-rgb), 0.3) 100%);
+  background-size: var(--flute-width) 100%;
+  background-repeat: repeat-x;
+  opacity: 0.6;
+}
+
+.lookup-webgl-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: opacity 800ms ease;
+}
+
+.lookup-webgl-canvas.is-ready {
+  opacity: 1;
+}
+
+.lookup-hero-shader__vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: radial-gradient(ellipse 80% 80% at 50% 50%, transparent 55%, rgba(1, 3, 9, 0.45) 100%);
+}
+
+
 /* Optional grain hook (kept off by default for pure-black cleanliness) */
 
 /* ══ Glass material ══ */
