@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-09-18T00:00:16Z",
+    "exportDate": "2026-09-20T00:00:25Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_261_20260918T000016Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_263_20260920T000025Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 297812,
+  "totalCubers": 297893,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 62096
+      "cubers": 62122
     },
     {
       "iso2": "CN",
@@ -50,7 +50,7 @@
       "iso2": "GB",
       "name": "United Kingdom",
       "continentId": "_Europe",
-      "cubers": 7039
+      "cubers": 7044
     },
     {
       "iso2": "PL",
@@ -92,7 +92,7 @@
       "iso2": "KR",
       "name": "Republic of Korea",
       "continentId": "_Asia",
-      "cubers": 4600
+      "cubers": 4611
     },
     {
       "iso2": "PE",
@@ -116,7 +116,7 @@
       "iso2": "ID",
       "name": "Indonesia",
       "continentId": "_Asia",
-      "cubers": 4331
+      "cubers": 4353
     },
     {
       "iso2": "DE",
@@ -128,7 +128,7 @@
       "iso2": "MY",
       "name": "Malaysia",
       "continentId": "_Asia",
-      "cubers": 3921
+      "cubers": 3920
     },
     {
       "iso2": "JP",
@@ -170,7 +170,7 @@
       "iso2": "NL",
       "name": "Netherlands",
       "continentId": "_Europe",
-      "cubers": 2382
+      "cubers": 2384
     },
     {
       "iso2": "MN",
@@ -224,7 +224,7 @@
       "iso2": "SG",
       "name": "Singapore",
       "continentId": "_Asia",
-      "cubers": 1683
+      "cubers": 1689
     },
     {
       "iso2": "NO",
@@ -260,7 +260,7 @@
       "iso2": "KZ",
       "name": "Kazakhstan",
       "continentId": "_Asia",
-      "cubers": 1378
+      "cubers": 1381
     },
     {
       "iso2": "HU",
@@ -296,7 +296,7 @@
       "iso2": "BE",
       "name": "Belgium",
       "continentId": "_Europe",
-      "cubers": 1120
+      "cubers": 1124
     },
     {
       "iso2": "GR",
@@ -362,7 +362,7 @@
       "iso2": "PT",
       "name": "Portugal",
       "continentId": "_Europe",
-      "cubers": 570
+      "cubers": 571
     },
     {
       "iso2": "AT",
@@ -374,7 +374,7 @@
       "iso2": "EG",
       "name": "Egypt",
       "continentId": "_Africa",
-      "cubers": 543
+      "cubers": 544
     },
     {
       "iso2": "UY",
@@ -416,7 +416,7 @@
       "iso2": "JO",
       "name": "Jordan",
       "continentId": "_Asia",
-      "cubers": 391
+      "cubers": 392
     },
     {
       "iso2": "KE",
