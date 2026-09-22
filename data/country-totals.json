@@ -2,43 +2,43 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-09-21T00:00:30Z",
+    "exportDate": "2026-09-22T00:42:25Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_264_20260921T000030Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_265_20260922T004225Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 298083,
+  "totalCubers": 298224,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 62168
+      "cubers": 62247
     },
     {
       "iso2": "CN",
       "name": "China",
       "continentId": "_Asia",
-      "cubers": 29516
+      "cubers": 29517
     },
     {
       "iso2": "IN",
       "name": "India",
       "continentId": "_Asia",
-      "cubers": 21292
+      "cubers": 21307
     },
     {
       "iso2": "AU",
       "name": "Australia",
       "continentId": "_Oceania",
-      "cubers": 12132
+      "cubers": 12149
     },
     {
       "iso2": "CA",
       "name": "Canada",
       "continentId": "_North America",
-      "cubers": 10884
+      "cubers": 10890
     },
     {
       "iso2": "BR",
@@ -74,7 +74,7 @@
       "iso2": "CO",
       "name": "Colombia",
       "continentId": "_South America",
-      "cubers": 6099
+      "cubers": 6105
     },
     {
       "iso2": "ES",
@@ -86,7 +86,7 @@
       "iso2": "FR",
       "name": "France",
       "continentId": "_Europe",
-      "cubers": 4943
+      "cubers": 4954
     },
     {
       "iso2": "KR",
@@ -122,7 +122,7 @@
       "iso2": "DE",
       "name": "Germany",
       "continentId": "_Europe",
-      "cubers": 4242
+      "cubers": 4243
     },
     {
       "iso2": "MY",
@@ -134,7 +134,7 @@
       "iso2": "JP",
       "name": "Japan",
       "continentId": "_Asia",
-      "cubers": 3393
+      "cubers": 3396
     },
     {
       "iso2": "SE",
@@ -440,7 +440,7 @@
       "iso2": "SV",
       "name": "El Salvador",
       "continentId": "_North America",
-      "cubers": 374
+      "cubers": 375
     },
     {
       "iso2": "HR",
@@ -482,7 +482,7 @@
       "iso2": "PK",
       "name": "Pakistan",
       "continentId": "_Asia",
-      "cubers": 303
+      "cubers": 304
     },
     {
       "iso2": "TN",
