@@ -2,25 +2,25 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-09-22T00:42:25Z",
+    "exportDate": "2026-09-23T00:00:16Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_265_20260922T004225Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_266_20260923T000016Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 298224,
+  "totalCubers": 298279,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 62247
+      "cubers": 62253
     },
     {
       "iso2": "CN",
       "name": "China",
       "continentId": "_Asia",
-      "cubers": 29517
+      "cubers": 29519
     },
     {
       "iso2": "IN",
@@ -38,7 +38,7 @@
       "iso2": "CA",
       "name": "Canada",
       "continentId": "_North America",
-      "cubers": 10890
+      "cubers": 10911
     },
     {
       "iso2": "BR",
@@ -68,7 +68,7 @@
       "iso2": "PH",
       "name": "Philippines",
       "continentId": "_Asia",
-      "cubers": 6415
+      "cubers": 6416
     },
     {
       "iso2": "CO",
@@ -80,7 +80,7 @@
       "iso2": "ES",
       "name": "Spain",
       "continentId": "_Europe",
-      "cubers": 5462
+      "cubers": 5470
     },
     {
       "iso2": "FR",
@@ -92,7 +92,7 @@
       "iso2": "KR",
       "name": "Republic of Korea",
       "continentId": "_Asia",
-      "cubers": 4611
+      "cubers": 4612
     },
     {
       "iso2": "PE",
@@ -158,13 +158,13 @@
       "iso2": "UA",
       "name": "Ukraine",
       "continentId": "_Europe",
-      "cubers": 2973
+      "cubers": 2982
     },
     {
       "iso2": "BO",
       "name": "Bolivia",
       "continentId": "_South America",
-      "cubers": 2959
+      "cubers": 2966
     },
     {
       "iso2": "NL",
