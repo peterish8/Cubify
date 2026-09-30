@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-09-29T00:00:22Z",
+    "exportDate": "2026-09-30T00:00:36Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_272_20260929T000022Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_273_20260930T000036Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 298767,
+  "totalCubers": 298819,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 62384
+      "cubers": 62393
     },
     {
       "iso2": "CN",
@@ -32,7 +32,7 @@
       "iso2": "AU",
       "name": "Australia",
       "continentId": "_Oceania",
-      "cubers": 12182
+      "cubers": 12204
     },
     {
       "iso2": "CA",
@@ -116,7 +116,7 @@
       "iso2": "ID",
       "name": "Indonesia",
       "continentId": "_Asia",
-      "cubers": 4353
+      "cubers": 4354
     },
     {
       "iso2": "DE",
@@ -188,7 +188,7 @@
       "iso2": "ZA",
       "name": "South Africa",
       "continentId": "_Africa",
-      "cubers": 2268
+      "cubers": 2277
     },
     {
       "iso2": "CL",
@@ -200,7 +200,7 @@
       "iso2": "NZ",
       "name": "New Zealand",
       "continentId": "_Oceania",
-      "cubers": 2186
+      "cubers": 2187
     },
     {
       "iso2": "IL",
@@ -266,7 +266,7 @@
       "iso2": "HU",
       "name": "Hungary",
       "continentId": "_Europe",
-      "cubers": 1303
+      "cubers": 1309
     },
     {
       "iso2": "GT",
@@ -407,6 +407,12 @@
       "cubers": 397
     },
     {
+      "iso2": "KE",
+      "name": "Kenya",
+      "continentId": "_Africa",
+      "cubers": 395
+    },
+    {
       "iso2": "CR",
       "name": "Costa Rica",
       "continentId": "_North America",
@@ -417,12 +423,6 @@
       "name": "Jordan",
       "continentId": "_Asia",
       "cubers": 392
-    },
-    {
-      "iso2": "KE",
-      "name": "Kenya",
-      "continentId": "_Africa",
-      "cubers": 391
     },
     {
       "iso2": "AZ",
