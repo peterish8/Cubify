@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-09-30T00:00:36Z",
+    "exportDate": "2026-10-02T00:00:43Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_273_20260930T000036Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_275_20261002T000043Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 298819,
+  "totalCubers": 298865,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 62393
+      "cubers": 62395
     },
     {
       "iso2": "CN",
@@ -38,25 +38,25 @@
       "iso2": "CA",
       "name": "Canada",
       "continentId": "_North America",
-      "cubers": 10913
+      "cubers": 10918
     },
     {
       "iso2": "BR",
       "name": "Brazil",
       "continentId": "_South America",
-      "cubers": 10223
+      "cubers": 10235
     },
     {
       "iso2": "GB",
       "name": "United Kingdom",
       "continentId": "_Europe",
-      "cubers": 7054
+      "cubers": 7053
     },
     {
       "iso2": "PL",
       "name": "Poland",
       "continentId": "_Europe",
-      "cubers": 6928
+      "cubers": 6929
     },
     {
       "iso2": "RU",
@@ -74,7 +74,7 @@
       "iso2": "CO",
       "name": "Colombia",
       "continentId": "_South America",
-      "cubers": 6105
+      "cubers": 6108
     },
     {
       "iso2": "ES",
@@ -110,7 +110,7 @@
       "iso2": "MX",
       "name": "Mexico",
       "continentId": "_North America",
-      "cubers": 4426
+      "cubers": 4428
     },
     {
       "iso2": "ID",
@@ -140,7 +140,7 @@
       "iso2": "SE",
       "name": "Sweden",
       "continentId": "_Europe",
-      "cubers": 3054
+      "cubers": 3055
     },
     {
       "iso2": "VN",
@@ -206,7 +206,7 @@
       "iso2": "IL",
       "name": "Israel",
       "continentId": "_Europe",
-      "cubers": 2134
+      "cubers": 2155
     },
     {
       "iso2": "TH",
