@@ -2,25 +2,25 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-10-03T00:00:28Z",
+    "exportDate": "2026-10-04T07:48:11Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_276_20261003T000028Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_277_20261004T074811Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 298992,
+  "totalCubers": 299041,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 62395
+      "cubers": 62409
     },
     {
       "iso2": "CN",
       "name": "China",
       "continentId": "_Asia",
-      "cubers": 29521
+      "cubers": 29522
     },
     {
       "iso2": "IN",
@@ -32,7 +32,7 @@
       "iso2": "AU",
       "name": "Australia",
       "continentId": "_Oceania",
-      "cubers": 12204
+      "cubers": 12214
     },
     {
       "iso2": "CA",
@@ -50,7 +50,7 @@
       "iso2": "GB",
       "name": "United Kingdom",
       "continentId": "_Europe",
-      "cubers": 7053
+      "cubers": 7066
     },
     {
       "iso2": "PL",
@@ -236,7 +236,7 @@
       "iso2": "IR",
       "name": "Iran",
       "continentId": "_Asia",
-      "cubers": 1655
+      "cubers": 1656
     },
     {
       "iso2": "RO",
@@ -248,7 +248,7 @@
       "iso2": "IE",
       "name": "Ireland",
       "continentId": "_Europe",
-      "cubers": 1501
+      "cubers": 1503
     },
     {
       "iso2": "HK",
@@ -260,7 +260,7 @@
       "iso2": "KZ",
       "name": "Kazakhstan",
       "continentId": "_Asia",
-      "cubers": 1381
+      "cubers": 1388
     },
     {
       "iso2": "HU",
@@ -302,7 +302,7 @@
       "iso2": "GR",
       "name": "Greece",
       "continentId": "_Europe",
-      "cubers": 1061
+      "cubers": 1062
     },
     {
       "iso2": "VE",
