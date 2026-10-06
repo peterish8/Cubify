@@ -42,7 +42,7 @@ export function SiteFooter() {
               href="https://www.worldcubeassociation.org/"
               target="_blank"
               rel="noreferrer"
-              className="font-semibold text-foreground underline underline-offset-4 hover:text-[var(--blue-bright)]"
+              className="inline-block whitespace-nowrap font-semibold text-foreground underline underline-offset-4 hover:text-[var(--blue-bright)]"
             >
               World Cube Association
             </a>

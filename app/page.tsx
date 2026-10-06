@@ -1181,19 +1181,21 @@ export default function CubifyAnalyzer() {
           <div className="lookup-screen relative isolate flex flex-1 flex-col overflow-hidden">
               <div className="lookup-hero-shader" aria-hidden="true">
                 <LookupWebGLShader />
-                <div className="lookup-flutes" />
               <div className="lookup-hero-shader__vignette" />
               </div>
-              <div className="lookup-screen__glass" aria-hidden="true" />
               <SiteHeader active="home" embedded />
-              <div className="relative z-10 flex flex-1 flex-col items-center justify-start px-6 pb-[9rem] pt-[7.5rem] sm:px-10 md:px-14">
+              <div className="relative z-10 flex flex-1 items-center px-6 pb-[9rem] pt-[6rem] sm:px-10 md:px-14">
+              <div className="mx-auto grid w-full max-w-[86rem] items-center gap-6 lg:grid-cols-2 lg:gap-12">
+              {/* Empty half: the shader draws the cube here. */}
+              <div aria-hidden="true" className="h-[34dvh] lg:h-auto" />
+              <div className="flex flex-col items-center lg:items-start">
               <motion.div
-                className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center text-center"
+                className="relative z-10 flex w-full max-w-2xl flex-col items-center text-center lg:items-start lg:text-left"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease }}
               >
-                <div className="mb-8 flex w-full items-center justify-center gap-3">
+                <div className="mb-8 flex w-full items-center justify-center gap-3 lg:justify-start">
                   <div className="glass-chip inline-flex items-center gap-2 rounded-full px-3 py-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-[var(--rank-nr)]" />
                     <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
@@ -1201,16 +1203,11 @@ export default function CubifyAnalyzer() {
                     </span>
                   </div>
                 </div>
-                <h1 className="display-title max-w-3xl pb-1 text-[2.75rem] leading-[0.98] text-foreground sm:text-6xl md:text-7xl">
+                <h1 className="display-title max-w-3xl pb-1 [text-shadow:0_2px_30px_rgba(2,6,16,0.8)] text-[2.75rem] leading-[0.98] text-foreground sm:text-6xl xl:text-7xl">
                 Your{" "}
                 <span
-                  className="wca-logo-gradient"
+                  className="wca-rank-hover"
                   data-text="WCA"
-                  onPointerMove={(event) => {
-                    const rect = event.currentTarget.getBoundingClientRect()
-                    event.currentTarget.style.setProperty("--wca-x", `${event.clientX - rect.left}px`)
-                    event.currentTarget.style.setProperty("--wca-y", `${event.clientY - rect.top}px`)
-                  }}
                 >
                   WCA
                 </span>{" "}
@@ -1230,7 +1227,7 @@ export default function CubifyAnalyzer() {
               </motion.div>
 
               <motion.div
-                className="relative z-10 mx-auto mt-10 w-full max-w-xl"
+                className="relative z-10 mt-10 w-full max-w-xl"
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.08, ease }}
@@ -1244,6 +1241,8 @@ export default function CubifyAnalyzer() {
                   hero
                 />
               </motion.div>
+              </div>
+              </div>
               </div>
             </div>
             <div className="lookup-cutout-card">

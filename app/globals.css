@@ -928,8 +928,8 @@
   /* Static fluted-glass fallback, covered by the canvas once WebGL is ready. */
   background:
     repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.5) 0 2px, transparent 2px 34px),
-    radial-gradient(60% 80% at 82% 60%, rgba(var(--theme-bright-rgb), 0.55), transparent 70%),
-    radial-gradient(70% 55% at 50% 110%, rgba(var(--theme-rgb), 0.5), transparent 70%),
+    radial-gradient(60% 80% at 82% 60%, rgba(var(--theme-bright-rgb), 0.4), transparent 70%),
+    radial-gradient(70% 55% at 50% 110%, rgba(var(--theme-rgb), 0.35), transparent 70%),
     #020610;
 }
 
@@ -1311,32 +1311,6 @@
   }
 }
 
-/* Surface layer: theme-tinted reflection plus fine frosted grain. */
-.lookup-screen__glass {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-}
-
-.lookup-screen__glass::before,
-.lookup-screen__glass::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-}
-
-.lookup-screen__glass::before {
-  background: linear-gradient(118deg, rgba(var(--theme-bright-rgb), 0.1) 0%, rgba(var(--theme-bright-rgb), 0.03) 22%, transparent 40%);
-}
-
-.lookup-screen__glass::after {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%27180%27 height=%27180%27><filter id=%27n%27><feTurbulence type=%27fractalNoise%27 baseFrequency=%27.85%27 numOctaves=%272%27 stitchTiles=%27stitch%27/><feColorMatrix values=%270 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0%27/></filter><rect width=%27100%25%27 height=%27100%25%27 filter=%27url(%2523n)%27/></svg>");
-  background-size: 180px 180px;
-  mix-blend-mode: overlay;
-  opacity: 0.12;
-}
-
 /* Tinted morphism panels: dark theme glass, frosted grain, coloured rim. */
 .glass-chip,
 .lookup-artwork-form {
@@ -1565,30 +1539,6 @@
   }
 }
 
-/* Reeded-glass overlay: a theme-tinted strip, one flute wide, tiled across the stage.
-   The dark bevel sits on the left of each flute and the catch-light on the right, matching the shader.
-   It fades out toward the bright base so the light down there stays smooth. */
-.lookup-flutes {
-  --flute-width: clamp(30px, 3.2%, 64px);
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  background: rgba(var(--theme-deep-rgb), 0.05);
-  -webkit-mask-image: linear-gradient(#000 60%, rgba(0, 0, 0, 0.8) 70%, rgba(0, 0, 0, 0.42) 80%, rgba(0, 0, 0, 0.12) 90%, transparent 97%);
-  mask-image: linear-gradient(#000 60%, rgba(0, 0, 0, 0.8) 70%, rgba(0, 0, 0, 0.42) 80%, rgba(0, 0, 0, 0.12) 90%, transparent 97%);
-}
-
-.lookup-flutes::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: linear-gradient(90deg, rgba(2, 6, 16, 0.5) 0%, rgba(2, 6, 16, 0.12) 7%, rgba(var(--theme-deep-rgb), 0) 22%, rgba(var(--theme-bright-rgb), 0.06) 78%, rgba(var(--theme-sky-rgb), 0.16) 95%, rgba(var(--theme-deep-rgb), 0.3) 100%);
-  background-size: var(--flute-width) 100%;
-  background-repeat: repeat-x;
-  opacity: 0.6;
-}
-
 .lookup-webgl-canvas {
   position: absolute;
   inset: 0;
@@ -1610,7 +1560,6 @@
   z-index: 3;
   background: radial-gradient(ellipse 80% 80% at 50% 50%, transparent 55%, rgba(1, 3, 9, 0.45) 100%);
 }
-
 
 /* Optional grain hook (kept off by default for pure-black cleanliness) */
 
@@ -2029,41 +1978,55 @@
   line-height: 0.95;
 }
 
-/* Landing hero: WCA logo color accent + themed meaning shimmer */
-.wca-logo-gradient {
-  --wca-x: 50%;
-  --wca-y: 50%;
+/* Landing hero: restrained NR / CR / WR color pass on the WCA wordmark. */
+.wca-rank-hover {
   position: relative;
   display: inline-block;
   padding-inline: 0.03em;
   color: inherit;
   -webkit-text-fill-color: currentColor;
+  transform: translateY(0);
+  transition: transform 260ms cubic-bezier(0.2, 0.75, 0.25, 1);
 }
-.wca-logo-gradient::after {
+.wca-rank-hover::after {
   content: attr(data-text);
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image: radial-gradient(
-    circle 0.82em at var(--wca-x) var(--wca-y),
-    rgba(243, 246, 251, 0.92) 0%,
-    rgba(71, 116, 185, 0.78) 24%,
-    rgba(76, 167, 99, 0.7) 44%,
-    rgba(216, 208, 90, 0.66) 58%,
-    rgba(217, 130, 54, 0.58) 72%,
-    rgba(217, 74, 66, 0.46) 86%,
-    transparent 100%
-  );
+  background-image: linear-gradient(108deg, #e8e8ec 8%, #3dffa8 42%, #ffc14a 68%, #e8e8ec 92%);
+  background-size: 210% 100%;
+  background-position: 100% 50%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 6px rgba(45, 98, 184, 0.14));
   opacity: 0;
-  transition: opacity 140ms ease;
+  transition: opacity 220ms ease;
 }
-.wca-logo-gradient:hover::after {
-  opacity: 1;
+@media (hover: hover) and (pointer: fine) {
+  .wca-rank-hover:hover {
+    transform: translateY(-0.045em);
+  }
+  .wca-rank-hover:hover::after {
+    opacity: 0.96;
+    animation: wca-rank-color-pass 880ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+  }
+}
+@keyframes wca-rank-color-pass {
+  from { background-position: 100% 50%; }
+  to { background-position: 0% 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wca-rank-hover,
+  .wca-rank-hover::after {
+    animation: none !important;
+    transition: none;
+  }
+  .wca-rank-hover:hover { transform: none; }
+  .wca-rank-hover:hover::after {
+    opacity: 0.9;
+    background-position: 0% 50%;
+  }
 }
 
 .meaning-spark {
