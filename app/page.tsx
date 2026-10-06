@@ -20,6 +20,7 @@ import { flagWashGradient, getFlagColors } from "@/lib/flag-colors"
 import { continentLabel } from "@/lib/wca-country-totals"
 import { PercentileRing } from "@/components/PercentileRing"
 import { CountUp } from "@/components/motion/CountUp"
+import { LookupWebGLShader } from "@/components/motion/LookupWebGLShader"
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome"
 import { EditorialButton, EditorialInput } from "@/components/ui/editorial-field"
 import { CubeLogo } from "@/components/brand/CubeLogo"
@@ -780,6 +781,7 @@ function LookupForm({
   error,
   onSubmit,
   compact,
+  hero,
 }: {
   wcaId: string
   setWcaId: (v: string) => void
@@ -787,8 +789,68 @@ function LookupForm({
   error: string
   onSubmit: () => void
   compact?: boolean
+  hero?: boolean
 }) {
   const [aboutOpen, setAboutOpen] = useState(false)
+
+  if (hero) {
+    return (
+      <div
+        className="lookup-artwork-form"
+        onPointerMove={(event) => {
+          const rect = event.currentTarget.getBoundingClientRect()
+          event.currentTarget.style.setProperty("--mx", `${event.clientX - rect.left}px`)
+          event.currentTarget.style.setProperty("--my", `${event.clientY - rect.top}px`)
+        }}
+      >
+        <form
+          className="lookup-dock"
+          onSubmit={(event) => {
+            event.preventDefault()
+            onSubmit()
+          }}
+        >
+          <label htmlFor="lookup-wca-id" className="lookup-dock__tag">
+            WCA ID
+          </label>
+          <input
+            id="lookup-wca-id"
+            className="lookup-dock__input"
+            placeholder="2022RPRA01"
+            value={wcaId}
+            onChange={(e) => setWcaId(e.target.value.toUpperCase())}
+            disabled={loading}
+            autoComplete="off"
+            autoCapitalize="characters"
+            spellCheck={false}
+            autoFocus
+          />
+          <button type="submit" className="lookup-reveal" disabled={loading}>
+            <span>{loading ? "Looking up" : "Reveal"}</span>
+            {loading ? (
+              <span className="lookup-reveal__spinner" aria-hidden="true" />
+            ) : (
+              <svg className="lookup-reveal__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
+          </button>
+        </form>
+        <AnimatePresence>
+          {error && (
+            <motion.p
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="relative z-10 px-3 pb-2 pt-3 text-sm font-medium text-rose-400"
+            >
+              {error}
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
+    )
+  }
 
   if (compact) {
     return (
@@ -1109,59 +1171,63 @@ export default function CubifyAnalyzer() {
       .map((id) => [id, eventsData[id]] as [string, EventStats])
   }, [eventsData, eventRanking])
 
+  const isLanding = !hasResults && !loading
+
   return (
     <div className="editorial-page flex min-h-[100dvh] flex-col">
       <div className="editorial-shell flex min-h-[100dvh] flex-col">
-        <SiteHeader active="home" />
-
-        <main className="mx-auto w-full max-w-7xl flex-1 px-4 sm:px-6 xl:max-w-[90rem] xl:px-8">
-          {!hasResults && !loading && (
-            <section className="grid min-h-[calc(100dvh-15rem)] items-center gap-10 border-b border-border py-10 md:grid-cols-12 md:gap-10 md:py-12">
+{isLanding ? (
+            <div className="lookup-stage relative flex min-h-[100dvh] flex-1 flex-col">
+          <div className="lookup-screen relative isolate flex flex-1 flex-col overflow-hidden">
+              <div className="lookup-hero-shader" aria-hidden="true">
+                <LookupWebGLShader />
+              <div className="lookup-hero-shader__vignette" />
+              </div>
+              <SiteHeader active="home" embedded />
+              <div className="relative z-10 flex flex-1 items-center px-6 pb-[9rem] pt-[6rem] sm:px-10 md:px-14">
+              <div className="mx-auto grid w-full max-w-[86rem] items-center gap-6 lg:grid-cols-2 lg:gap-12">
+              {/* Empty half: the shader draws the cube here. */}
+              <div aria-hidden="true" className="h-[34dvh] lg:h-auto" />
+              <div className="flex flex-col items-center lg:items-start">
               <motion.div
-                className="md:col-span-7"
+                className="relative z-10 flex w-full max-w-2xl flex-col items-center text-center lg:items-start lg:text-left"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease }}
               >
-                <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-3 py-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--rank-nr)]" />
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                    WCA rank translator
-                  </span>
+                <div className="mb-8 flex w-full items-center justify-center gap-3 lg:justify-start">
+                  <div className="glass-chip inline-flex items-center gap-2 rounded-full px-3 py-1">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--rank-nr)]" />
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                      WCA rank translator
+                    </span>
+                  </div>
                 </div>
-                <h1 className="display-title max-w-2xl pb-1 text-[2.75rem] text-foreground sm:text-6xl md:text-7xl">
-                  Your{" "}
-                  <span
-                    className="wca-logo-gradient"
-                    data-text="WCA"
-                    onPointerMove={(event) => {
-                      const rect = event.currentTarget.getBoundingClientRect()
-                      event.currentTarget.style.setProperty("--wca-x", `${event.clientX - rect.left}px`)
-                      event.currentTarget.style.setProperty("--wca-y", `${event.clientY - rect.top}px`)
-                    }}
-                  >
-                    WCA
-                  </span>{" "}
-                  rank
-                  <br />
-                  finally has
-                  <br />
-                  <span className="meaning-spark" aria-label="meaning">
-                    meaning
-                  </span>
-                  .
-                </h1>
-                <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+                <h1 className="display-title max-w-3xl pb-1 [text-shadow:0_2px_30px_rgba(2,6,16,0.8)] text-[2.75rem] leading-[0.98] text-foreground sm:text-6xl xl:text-7xl">
+                Your{" "}
+                <span
+                  className="wca-rank-hover"
+                  data-text="WCA"
+                >
+                  WCA
+                </span>{" "}
+                rank
+                <br />
+                finally has
+                <br />
+                <span className="meaning-spark" aria-label="meaning">
+                  meaning
+                </span>
+                .
+              </h1>
+                <p className="mt-5 max-w-xl text-sm leading-relaxed text-foreground/90 [text-shadow:0_1px_20px_rgba(2,6,16,0.85)] sm:text-base">
                   WCA shows your rank. Cubify reveals your exact Top % across the world,
                   continent, and country.
-                </p>
-                <p className="mt-6 text-sm font-semibold text-muted-foreground">
-                  Official WCA data · All events · WR / CR / NR
                 </p>
               </motion.div>
 
               <motion.div
-                className="md:col-span-5"
+                className="relative z-10 mt-10 w-full max-w-xl"
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.08, ease }}
@@ -1172,11 +1238,32 @@ export default function CubifyAnalyzer() {
                   loading={loading}
                   error={error}
                   onSubmit={fetchStats}
+                  hero
                 />
               </motion.div>
-            </section>
-          )}
+              </div>
+              </div>
+              </div>
+            </div>
+            <div className="lookup-cutout-card">
+              <CubeLogo size={22} className="shrink-0" />
+              <p className="lookup-cutout-card__text">
+                <strong>Official WCA data</strong>
+                <span>Every event · every rank</span>
+              </p>
+              <div className="flex shrink-0 items-center gap-1">
+                <span className="facelet facelet-nr">NR</span>
+                <span className="facelet facelet-cr">CR</span>
+                <span className="facelet facelet-wr">WR</span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <SiteHeader active="home" />
+        )}
 
+        <main className="mx-auto w-full max-w-7xl flex-1 px-4 sm:px-6 xl:max-w-[90rem] xl:px-8">
+          
           {(hasResults || loading) && (
             <section className="border-b border-border py-8">
               <LookupForm
