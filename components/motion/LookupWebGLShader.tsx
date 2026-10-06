@@ -143,7 +143,7 @@ vec4 speedCube(vec2 uv) {
   vec3 p = vec3(0.0);
   bool hit = false;
   bool coreHit = false;
-  for (int i = 0; i < 64; i++) {
+  for (int i = 0; i < 48; i++) {
     p = ro + rd * t;
     vec3 cp;
     float dPieces = cubeDist(p, vec3(0.0, 1.0, 0.0), 2.0, 0.0, cp);
@@ -182,11 +182,11 @@ vec4 speedCube(vec2 uv) {
   }
 
   // Monochrome stickerless speedcube palette: ice, cyan, and deep cobalt.
-  vec3 faceColor = face < 0.5 ? vec3(0.10, 0.45, 0.84)
-    : (face < 1.5 ? vec3(0.045, 0.20, 0.46)
-    : (face < 2.5 ? vec3(0.52, 0.76, 0.94)
-    : (face < 3.5 ? vec3(0.06, 0.15, 0.34)
-    : (face < 4.5 ? vec3(0.16, 0.60, 0.90) : vec3(0.07, 0.31, 0.70)))));
+  vec3 faceColor = face < 0.5 ? vec3(0.30, 0.58, 0.82)
+    : (face < 1.5 ? vec3(0.16, 0.34, 0.58)
+    : (face < 2.5 ? vec3(0.56, 0.73, 0.87)
+    : (face < 3.5 ? vec3(0.20, 0.32, 0.48)
+    : (face < 4.5 ? vec3(0.38, 0.64, 0.84) : vec3(0.24, 0.46, 0.70)))));
   vec3 lightDir = normalize(vec3(-0.45, 0.78, -0.75));
   float diffuse = 0.74 + 0.26 * max(dot(n, lightDir), 0.0);
   float sheen = pow(max(dot(reflect(rd, n), lightDir), 0.0), 24.0) * 0.12;
@@ -226,21 +226,21 @@ vec3 lightField(vec2 uv) {
 
   float drift = bell(x, 0.5 + 0.3 * sin(t * 0.55), 0.42);
   float sweep = bell(x, 0.5 + 0.42 * sin(t * 0.38 + 1.7), 0.16);
-  float exposure = 0.36 + 0.42 * drift + 0.24 * sweep;
+  float exposure = 0.30 + 0.34 * drift + 0.18 * sweep;
   float heightFade = pow(1.0 - smoothstep(0.04, 1.0, y), 1.12);
-  float light = clamp((0.14 + columns * 0.36) * heightFade * exposure, 0.0, 0.72);
+  float light = clamp((0.10 + columns * 0.30) * heightFade * exposure, 0.0, 0.58);
 
-  // Colours come only from the theme.
-  vec3 dark = uDeep * 0.05 + vec3(0.003, 0.006, 0.016);
-  vec3 color = mix(dark, uAccent, smoothstep(0.06, 0.66, light));
-  color = mix(color, uBright, smoothstep(0.40, 0.96, light));
+  // Keep the aurora tied to the selected blue theme, but lift it toward ice blue.
+  vec3 dark = uDeep * 0.035 + vec3(0.003, 0.006, 0.016);
+  vec3 iceBlue = mix(uSky, vec3(0.66, 0.80, 0.96), 0.52);
+  vec3 color = mix(dark, uAccent, smoothstep(0.08, 0.56, light) * 0.48);
+  color = mix(color, iceBlue, smoothstep(0.36, 0.78, light) * 0.22);
 
   float poolHeight = 0.10 + 0.14 * dome + 0.05 * drift + 0.035 * sin(t * 1.1 + x * 5.0);
   float pool = 1.0 - smoothstep(poolHeight - 0.08, poolHeight + 0.20, y);
-  color = mix(color, mix(uBright, uSky, 0.55), pool * 0.42);
+  color = mix(color, iceBlue, pool * 0.30);
   float core = 1.0 - smoothstep(-0.08, poolHeight * 0.6, y);
-  color = mix(color, mix(uSky, vec3(1.0), 0.08), core * 0.70);
-
+  color = mix(color, mix(iceBlue, vec3(0.90, 0.95, 1.0), 0.32), core * 0.48);
 
   float halo = bell(uv.x, 0.5, 0.3) * bell(y, 0.5, 0.3);
   color += uDeep * 0.05 * halo;
@@ -347,7 +347,7 @@ export function LookupWebGLShader() {
 
     const gl = canvas.getContext("webgl", {
       alpha: true,
-      antialias: true,
+      antialias: false,
       powerPreference: "high-performance",
     })
     if (!gl) return
@@ -404,10 +404,10 @@ export function LookupWebGLShader() {
     const resize = () => {
       const rect = canvas.getBoundingClientRect()
       const mobileQuality = window.innerWidth < 640
-      pixelRatio = Math.min(window.devicePixelRatio || 1, mobileQuality ? 1 : 1.25) * quality
+      pixelRatio = Math.min(window.devicePixelRatio || 1, mobileQuality ? 0.9 : 1.1) * quality
       // The scene is soft light, so a modest pixel budget looks the same and stays smooth.
       const pixels = rect.width * rect.height * pixelRatio * pixelRatio
-      if (pixels > 1100000) pixelRatio *= Math.sqrt(1100000 / pixels)
+      if (pixels > 760000) pixelRatio *= Math.sqrt(760000 / pixels)
       const width = Math.max(1, Math.round(rect.width * pixelRatio))
       const height = Math.max(1, Math.round(rect.height * pixelRatio))
 
@@ -429,7 +429,7 @@ export function LookupWebGLShader() {
         framesSinceAdjust += 1
         if (framesSinceAdjust >= 20) {
           framesSinceAdjust = 0
-          if (averageFrame > 26 && quality > 0.4) quality = Math.max(0.4, quality * 0.82)
+          if (averageFrame > 22 && quality > 0.5) quality = Math.max(0.5, quality * 0.82)
           else if (averageFrame < 15 && quality < 1) quality = Math.min(1, quality * 1.08)
         }
       }

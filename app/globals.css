@@ -1458,18 +1458,18 @@
   gap: 0.55rem;
   overflow: hidden;
   padding: 0 1.25rem 0 1.4rem;
-  border: 1px solid rgba(var(--theme-sky-rgb), 0.55);
+  border: 1px solid rgba(164, 211, 250, 0.62);
   border-radius: 1rem;
   color: #fff;
   font-size: 0.9rem;
   font-weight: 600;
   letter-spacing: -0.01em;
   cursor: pointer;
-  background: linear-gradient(180deg, rgba(var(--theme-bright-rgb), 0.95), rgba(var(--theme-rgb), 0.95) 52%, rgba(var(--theme-deep-rgb), 1));
+  background: linear-gradient(180deg, #3479b8 0%, #2d70ad 54%, #245d98 100%);
   box-shadow:
-    inset 0 1px 0 rgba(var(--theme-sky-rgb), 0.55),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
-    0 10px 28px -10px rgba(var(--theme-rgb), 0.85);
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(7, 24, 45, 0.22),
+    0 8px 22px -12px rgba(68, 139, 205, 0.58);
   transition: box-shadow 0.25s ease, filter 0.25s ease;
 }
 
@@ -1478,16 +1478,16 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(100deg, transparent 30%, rgba(var(--theme-sky-rgb), 0.55) 50%, transparent 70%);
+  background: linear-gradient(100deg, transparent 30%, rgba(205, 232, 255, 0.32) 50%, transparent 70%);
   transform: translateX(-120%);
 }
 
 .lookup-reveal:hover:not(:disabled) {
-  filter: brightness(1.08);
+  filter: brightness(1.035);
   box-shadow:
-    inset 0 1px 0 rgba(var(--theme-sky-rgb), 0.7),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
-    0 14px 36px -8px rgba(var(--theme-rgb), 1);
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -1px 0 rgba(7, 24, 45, 0.2),
+    0 10px 26px -10px rgba(68, 139, 205, 0.7);
 }
 
 .lookup-reveal:hover:not(:disabled)::after {

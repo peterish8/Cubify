@@ -1184,8 +1184,8 @@ export default function CubifyAnalyzer() {
               <div className="lookup-hero-shader__vignette" />
               </div>
               <SiteHeader active="home" embedded />
-              <div className="relative z-10 flex flex-1 items-center px-6 pb-[9rem] pt-[6rem] sm:px-10 md:px-14">
-              <div className="mx-auto grid w-full max-w-[86rem] items-center gap-6 lg:grid-cols-2 lg:gap-12">
+              <div className="relative z-10 flex flex-1 items-center px-6 pb-[9rem] pt-[6rem] sm:px-10 md:px-16">
+              <div className="mx-auto grid w-full max-w-[80rem] items-center gap-6 lg:grid-cols-2 lg:gap-12">
               {/* Empty half: the shader draws the cube here. */}
               <div aria-hidden="true" className="h-[34dvh] lg:h-auto" />
               <div className="flex flex-col items-center lg:items-start">
