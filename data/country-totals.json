@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-10-07T11:13:15Z",
+    "exportDate": "2026-10-08T00:00:26Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_280_20261007T111315Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_281_20261008T000026Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 299644,
+  "totalCubers": 299674,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 62515
+      "cubers": 62536
     },
     {
       "iso2": "CN",
@@ -155,14 +155,14 @@
       "cubers": 3037
     },
     {
-      "iso2": "IT",
-      "name": "Italy",
-      "continentId": "_Europe",
-      "cubers": 2984
-    },
-    {
       "iso2": "UA",
       "name": "Ukraine",
+      "continentId": "_Europe",
+      "cubers": 2989
+    },
+    {
+      "iso2": "IT",
+      "name": "Italy",
       "continentId": "_Europe",
       "cubers": 2984
     },
@@ -212,7 +212,7 @@
       "iso2": "TH",
       "name": "Thailand",
       "continentId": "_Asia",
-      "cubers": 1977
+      "cubers": 1978
     },
     {
       "iso2": "AR",
@@ -368,7 +368,7 @@
       "iso2": "AT",
       "name": "Austria",
       "continentId": "_Europe",
-      "cubers": 550
+      "cubers": 551
     },
     {
       "iso2": "EG",
@@ -392,7 +392,7 @@
       "iso2": "SK",
       "name": "Slovakia",
       "continentId": "_Europe",
-      "cubers": 471
+      "cubers": 473
     },
     {
       "iso2": "RS",
