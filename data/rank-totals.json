@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-10-08T00:00:26Z",
+    "exportDate": "2026-10-09T00:00:33Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_281_20261008T000026Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_282_20261009T000033Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
@@ -361,11 +361,11 @@
     },
     "333": {
       "single": {
-        "world": 287313,
+        "world": 287316,
         "continents": {
           "_Africa": 4796,
           "_Asia": 92055,
-          "_Europe": 68268,
+          "_Europe": 68271,
           "_North America": 78414,
           "_Oceania": 14072,
           "_South America": 29708
@@ -399,7 +399,7 @@
           "CA": 10443,
           "CD": 2,
           "CG": 2,
-          "CH": 1210,
+          "CH": 1212,
           "CI": 21,
           "CL": 2092,
           "CM": 4,
@@ -442,7 +442,7 @@
           "IQ": 24,
           "IR": 1570,
           "IS": 196,
-          "IT": 2892,
+          "IT": 2893,
           "JM": 6,
           "JO": 379,
           "JP": 3338,
@@ -540,11 +540,11 @@
         }
       },
       "average": {
-        "world": 281949,
+        "world": 281952,
         "continents": {
           "_Africa": 4709,
           "_Asia": 89041,
-          "_Europe": 67332,
+          "_Europe": 67335,
           "_North America": 77584,
           "_Oceania": 13929,
           "_South America": 29354
@@ -578,7 +578,7 @@
           "CA": 10350,
           "CD": 1,
           "CG": 2,
-          "CH": 1201,
+          "CH": 1203,
           "CI": 21,
           "CL": 2060,
           "CM": 4,
@@ -621,7 +621,7 @@
           "IQ": 23,
           "IR": 1526,
           "IS": 193,
-          "IT": 2872,
+          "IT": 2873,
           "JM": 6,
           "JO": 371,
           "JP": 3182,
@@ -1549,11 +1549,11 @@
     },
     "333oh": {
       "single": {
-        "world": 74339,
+        "world": 74342,
         "continents": {
           "_Africa": 1014,
           "_Asia": 22424,
-          "_Europe": 20343,
+          "_Europe": 20346,
           "_North America": 21019,
           "_Oceania": 3294,
           "_South America": 6245
@@ -1583,7 +1583,7 @@
           "BY": 193,
           "BZ": 6,
           "CA": 2629,
-          "CH": 368,
+          "CH": 371,
           "CI": 8,
           "CL": 459,
           "CN": 5986,
@@ -1714,11 +1714,11 @@
         }
       },
       "average": {
-        "world": 58016,
+        "world": 58017,
         "continents": {
           "_Africa": 854,
           "_Asia": 18726,
-          "_Europe": 15216,
+          "_Europe": 15217,
           "_North America": 15803,
           "_Oceania": 2238,
           "_South America": 5179
@@ -1748,7 +1748,7 @@
           "BY": 153,
           "BZ": 6,
           "CA": 1957,
-          "CH": 287,
+          "CH": 288,
           "CI": 8,
           "CL": 373,
           "CN": 5012,
@@ -2535,11 +2535,11 @@
         }
       },
       "average": {
-        "world": 26922,
+        "world": 26923,
         "continents": {
           "_Africa": 332,
           "_Asia": 7752,
-          "_Europe": 8056,
+          "_Europe": 8057,
           "_North America": 7573,
           "_Oceania": 1104,
           "_South America": 2105
@@ -2568,7 +2568,7 @@
           "BY": 62,
           "BZ": 5,
           "CA": 893,
-          "CH": 161,
+          "CH": 162,
           "CI": 1,
           "CL": 194,
           "CM": 1,
@@ -2832,11 +2832,11 @@
     },
     "666": {
       "single": {
-        "world": 17694,
+        "world": 17695,
         "continents": {
           "_Africa": 146,
           "_Asia": 4249,
-          "_Europe": 5785,
+          "_Europe": 5786,
           "_North America": 5579,
           "_Oceania": 817,
           "_South America": 1118
@@ -2862,7 +2862,7 @@
           "BY": 27,
           "BZ": 3,
           "CA": 667,
-          "CH": 145,
+          "CH": 146,
           "CL": 97,
           "CM": 1,
           "CN": 1361,
@@ -3108,11 +3108,11 @@
     },
     "777": {
       "single": {
-        "world": 14377,
+        "world": 14378,
         "continents": {
           "_Africa": 118,
           "_Asia": 3559,
-          "_Europe": 4788,
+          "_Europe": 4789,
           "_North America": 4325,
           "_Oceania": 666,
           "_South America": 921
@@ -3137,7 +3137,7 @@
           "BY": 25,
           "BZ": 1,
           "CA": 504,
-          "CH": 122,
+          "CH": 123,
           "CL": 76,
           "CM": 1,
           "CN": 1272,
@@ -3823,11 +3823,11 @@
     },
     "minx": {
       "single": {
-        "world": 35199,
+        "world": 35201,
         "continents": {
           "_Africa": 466,
           "_Asia": 7651,
-          "_Europe": 11580,
+          "_Europe": 11582,
           "_North America": 10841,
           "_Oceania": 1589,
           "_South America": 3072
@@ -3856,7 +3856,7 @@
           "BY": 121,
           "BZ": 4,
           "CA": 1378,
-          "CH": 209,
+          "CH": 211,
           "CL": 196,
           "CM": 2,
           "CN": 1691,
@@ -3974,11 +3974,11 @@
         }
       },
       "average": {
-        "world": 21197,
+        "world": 21199,
         "continents": {
           "_Africa": 347,
           "_Asia": 5246,
-          "_Europe": 6332,
+          "_Europe": 6334,
           "_North America": 6186,
           "_Oceania": 864,
           "_South America": 2222
@@ -4005,7 +4005,7 @@
           "BY": 71,
           "BZ": 4,
           "CA": 775,
-          "CH": 132,
+          "CH": 134,
           "CL": 154,
           "CM": 1,
           "CN": 1330,

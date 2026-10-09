@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-10-08T00:00:26Z",
+    "exportDate": "2026-10-09T00:00:33Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_281_20261008T000026Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_282_20261009T000033Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 299674,
+  "totalCubers": 299683,
   "countries": [
     {
       "iso2": "US",
@@ -164,7 +164,7 @@
       "iso2": "IT",
       "name": "Italy",
       "continentId": "_Europe",
-      "cubers": 2984
+      "cubers": 2985
     },
     {
       "iso2": "MN",
@@ -278,7 +278,7 @@
       "iso2": "CH",
       "name": "Switzerland",
       "continentId": "_Europe",
-      "cubers": 1255
+      "cubers": 1257
     },
     {
       "iso2": "DK",
@@ -437,16 +437,16 @@
       "cubers": 378
     },
     {
+      "iso2": "HR",
+      "name": "Croatia",
+      "continentId": "_Europe",
+      "cubers": 377
+    },
+    {
       "iso2": "SV",
       "name": "El Salvador",
       "continentId": "_North America",
       "cubers": 375
-    },
-    {
-      "iso2": "HR",
-      "name": "Croatia",
-      "continentId": "_Europe",
-      "cubers": 372
     },
     {
       "iso2": "PY",
@@ -566,7 +566,7 @@
       "iso2": "BA",
       "name": "Bosnia and Herzegovina",
       "continentId": "_Europe",
-      "cubers": 150
+      "cubers": 151
     },
     {
       "iso2": "MD",
