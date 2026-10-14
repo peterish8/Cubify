@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-10-13T06:50:24Z",
+    "exportDate": "2026-10-14T00:00:33Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_286_20261013T065024Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_287_20261014T000033Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 299943,
+  "totalCubers": 300003,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 62598
+      "cubers": 62619
     },
     {
       "iso2": "CN",
@@ -26,13 +26,13 @@
       "iso2": "IN",
       "name": "India",
       "continentId": "_Asia",
-      "cubers": 21344
+      "cubers": 21363
     },
     {
       "iso2": "AU",
       "name": "Australia",
       "continentId": "_Oceania",
-      "cubers": 12254
+      "cubers": 12257
     },
     {
       "iso2": "CA",
@@ -320,7 +320,7 @@
       "iso2": "CZ",
       "name": "Czech Republic",
       "continentId": "_Europe",
-      "cubers": 809
+      "cubers": 812
     },
     {
       "iso2": "BD",
@@ -629,6 +629,12 @@
       "cubers": 69
     },
     {
+      "iso2": "AL",
+      "name": "Albania",
+      "continentId": "_Europe",
+      "cubers": 59
+    },
+    {
       "iso2": "ME",
       "name": "Montenegro",
       "continentId": "_Europe",
@@ -657,12 +663,6 @@
       "name": "United Arab Emirates",
       "continentId": "_Asia",
       "cubers": 49
-    },
-    {
-      "iso2": "AL",
-      "name": "Albania",
-      "continentId": "_Europe",
-      "cubers": 46
     },
     {
       "iso2": "AD",
@@ -707,15 +707,15 @@
       "cubers": 27
     },
     {
-      "iso2": "BZ",
-      "name": "Belize",
-      "continentId": "_North America",
-      "cubers": 26
-    },
-    {
       "iso2": "XK",
       "name": "Kosovo",
       "continentId": "_Europe",
+      "cubers": 27
+    },
+    {
+      "iso2": "BZ",
+      "name": "Belize",
+      "continentId": "_North America",
       "cubers": 26
     },
     {
