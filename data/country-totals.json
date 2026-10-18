@@ -2,49 +2,49 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-10-17T00:00:15Z",
+    "exportDate": "2026-10-18T00:00:15Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_290_20261017T000015Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_291_20261018T000015Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 300161,
+  "totalCubers": 300227,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 62674
+      "cubers": 62679
     },
     {
       "iso2": "CN",
       "name": "China",
       "continentId": "_Asia",
-      "cubers": 29778
+      "cubers": 29780
     },
     {
       "iso2": "IN",
       "name": "India",
       "continentId": "_Asia",
-      "cubers": 21366
+      "cubers": 21368
     },
     {
       "iso2": "AU",
       "name": "Australia",
       "continentId": "_Oceania",
-      "cubers": 12257
+      "cubers": 12286
     },
     {
       "iso2": "CA",
       "name": "Canada",
       "continentId": "_North America",
-      "cubers": 10950
+      "cubers": 10951
     },
     {
       "iso2": "BR",
       "name": "Brazil",
       "continentId": "_South America",
-      "cubers": 10297
+      "cubers": 10301
     },
     {
       "iso2": "GB",
@@ -56,7 +56,7 @@
       "iso2": "PL",
       "name": "Poland",
       "continentId": "_Europe",
-      "cubers": 6977
+      "cubers": 6978
     },
     {
       "iso2": "RU",
@@ -134,7 +134,7 @@
       "iso2": "JP",
       "name": "Japan",
       "continentId": "_Asia",
-      "cubers": 3407
+      "cubers": 3420
     },
     {
       "iso2": "SE",
@@ -152,7 +152,7 @@
       "iso2": "VN",
       "name": "Vietnam",
       "continentId": "_Asia",
-      "cubers": 3038
+      "cubers": 3039
     },
     {
       "iso2": "UA",
@@ -230,7 +230,7 @@
       "iso2": "SG",
       "name": "Singapore",
       "continentId": "_Asia",
-      "cubers": 1689
+      "cubers": 1697
     },
     {
       "iso2": "IR",
