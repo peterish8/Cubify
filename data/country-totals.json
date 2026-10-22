@@ -2,31 +2,31 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-10-21T00:00:36Z",
+    "exportDate": "2026-10-21T18:37:50Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_294_20261021T000036Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_294_20261021T183750Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 300632,
+  "totalCubers": 300723,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 62710
+      "cubers": 62726
     },
     {
       "iso2": "CN",
       "name": "China",
       "continentId": "_Asia",
-      "cubers": 29806
+      "cubers": 29807
     },
     {
       "iso2": "IN",
       "name": "India",
       "continentId": "_Asia",
-      "cubers": 21372
+      "cubers": 21373
     },
     {
       "iso2": "AU",
@@ -44,7 +44,7 @@
       "iso2": "BR",
       "name": "Brazil",
       "continentId": "_South America",
-      "cubers": 10301
+      "cubers": 10371
     },
     {
       "iso2": "GB",
@@ -74,7 +74,7 @@
       "iso2": "CO",
       "name": "Colombia",
       "continentId": "_South America",
-      "cubers": 6138
+      "cubers": 6141
     },
     {
       "iso2": "ES",
