@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-10-26T00:08:00Z",
+    "exportDate": "2026-10-27T00:00:47Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_299_20261026T000800Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_300_20261027T000047Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 301173,
+  "totalCubers": 301337,
   "countries": [
     {
       "iso2": "US",
@@ -20,7 +20,7 @@
       "iso2": "CN",
       "name": "China",
       "continentId": "_Asia",
-      "cubers": 29808
+      "cubers": 29930
     },
     {
       "iso2": "IN",
@@ -44,13 +44,13 @@
       "iso2": "BR",
       "name": "Brazil",
       "continentId": "_South America",
-      "cubers": 10371
+      "cubers": 10372
     },
     {
       "iso2": "GB",
       "name": "United Kingdom",
       "continentId": "_Europe",
-      "cubers": 7097
+      "cubers": 7109
     },
     {
       "iso2": "PL",
@@ -80,13 +80,13 @@
       "iso2": "ES",
       "name": "Spain",
       "continentId": "_Europe",
-      "cubers": 5518
+      "cubers": 5524
     },
     {
       "iso2": "FR",
       "name": "France",
       "continentId": "_Europe",
-      "cubers": 5001
+      "cubers": 5015
     },
     {
       "iso2": "KR",
@@ -146,7 +146,7 @@
       "iso2": "BO",
       "name": "Bolivia",
       "continentId": "_South America",
-      "cubers": 3041
+      "cubers": 3042
     },
     {
       "iso2": "VN",
@@ -218,7 +218,7 @@
       "iso2": "AR",
       "name": "Argentina",
       "continentId": "_South America",
-      "cubers": 1833
+      "cubers": 1840
     },
     {
       "iso2": "NO",
@@ -308,7 +308,7 @@
       "iso2": "VE",
       "name": "Venezuela",
       "continentId": "_South America",
-      "cubers": 1041
+      "cubers": 1042
     },
     {
       "iso2": "FI",
