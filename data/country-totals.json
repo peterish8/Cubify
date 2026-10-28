@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-10-27T00:00:47Z",
+    "exportDate": "2026-10-27T23:59:16Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_300_20261027T000047Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_300_20261027T235916Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 301337,
+  "totalCubers": 301428,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 62838
+      "cubers": 62872
     },
     {
       "iso2": "CN",
@@ -26,7 +26,7 @@
       "iso2": "IN",
       "name": "India",
       "continentId": "_Asia",
-      "cubers": 21375
+      "cubers": 21395
     },
     {
       "iso2": "AU",
@@ -38,13 +38,13 @@
       "iso2": "CA",
       "name": "Canada",
       "continentId": "_North America",
-      "cubers": 10996
+      "cubers": 10997
     },
     {
       "iso2": "BR",
       "name": "Brazil",
       "continentId": "_South America",
-      "cubers": 10372
+      "cubers": 10381
     },
     {
       "iso2": "GB",
@@ -80,7 +80,7 @@
       "iso2": "ES",
       "name": "Spain",
       "continentId": "_Europe",
-      "cubers": 5524
+      "cubers": 5531
     },
     {
       "iso2": "FR",
@@ -110,7 +110,7 @@
       "iso2": "MX",
       "name": "Mexico",
       "continentId": "_North America",
-      "cubers": 4451
+      "cubers": 4452
     },
     {
       "iso2": "ID",
@@ -152,13 +152,13 @@
       "iso2": "VN",
       "name": "Vietnam",
       "continentId": "_Asia",
-      "cubers": 3041
+      "cubers": 3042
     },
     {
       "iso2": "UA",
       "name": "Ukraine",
       "continentId": "_Europe",
-      "cubers": 2996
+      "cubers": 2997
     },
     {
       "iso2": "IT",
@@ -191,16 +191,16 @@
       "cubers": 2288
     },
     {
+      "iso2": "NZ",
+      "name": "New Zealand",
+      "continentId": "_Oceania",
+      "cubers": 2216
+    },
+    {
       "iso2": "CL",
       "name": "Chile",
       "continentId": "_South America",
       "cubers": 2205
-    },
-    {
-      "iso2": "NZ",
-      "name": "New Zealand",
-      "continentId": "_Oceania",
-      "cubers": 2199
     },
     {
       "iso2": "IL",
