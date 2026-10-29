@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-10-27T23:59:16Z",
+    "exportDate": "2026-10-29T00:06:48Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_300_20261027T235916Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_302_20261029T000648Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 301428,
+  "totalCubers": 301464,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 62872
+      "cubers": 62873
     },
     {
       "iso2": "CN",
@@ -26,7 +26,7 @@
       "iso2": "IN",
       "name": "India",
       "continentId": "_Asia",
-      "cubers": 21395
+      "cubers": 21422
     },
     {
       "iso2": "AU",
@@ -44,7 +44,7 @@
       "iso2": "BR",
       "name": "Brazil",
       "continentId": "_South America",
-      "cubers": 10381
+      "cubers": 10386
     },
     {
       "iso2": "GB",
@@ -104,7 +104,7 @@
       "iso2": "TW",
       "name": "Chinese Taipei",
       "continentId": "_Asia",
-      "cubers": 4506
+      "cubers": 4508
     },
     {
       "iso2": "MX",
@@ -128,7 +128,7 @@
       "iso2": "MY",
       "name": "Malaysia",
       "continentId": "_Asia",
-      "cubers": 3943
+      "cubers": 3944
     },
     {
       "iso2": "JP",
@@ -152,7 +152,7 @@
       "iso2": "VN",
       "name": "Vietnam",
       "continentId": "_Asia",
-      "cubers": 3042
+      "cubers": 3041
     },
     {
       "iso2": "UA",
@@ -353,16 +353,16 @@
       "cubers": 600
     },
     {
+      "iso2": "NP",
+      "name": "Nepal",
+      "continentId": "_Asia",
+      "cubers": 586
+    },
+    {
       "iso2": "PT",
       "name": "Portugal",
       "continentId": "_Europe",
       "cubers": 586
-    },
-    {
-      "iso2": "NP",
-      "name": "Nepal",
-      "continentId": "_Asia",
-      "cubers": 585
     },
     {
       "iso2": "AT",
