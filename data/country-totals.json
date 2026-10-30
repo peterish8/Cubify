@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-10-29T00:06:48Z",
+    "exportDate": "2026-10-30T00:00:57Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_302_20261029T000648Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_303_20261030T000057Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 301464,
+  "totalCubers": 301543,
   "countries": [
     {
       "iso2": "US",
@@ -50,7 +50,7 @@
       "iso2": "GB",
       "name": "United Kingdom",
       "continentId": "_Europe",
-      "cubers": 7109
+      "cubers": 7108
     },
     {
       "iso2": "PL",
@@ -68,7 +68,7 @@
       "iso2": "PH",
       "name": "Philippines",
       "continentId": "_Asia",
-      "cubers": 6559
+      "cubers": 6591
     },
     {
       "iso2": "CO",
@@ -104,7 +104,7 @@
       "iso2": "TW",
       "name": "Chinese Taipei",
       "continentId": "_Asia",
-      "cubers": 4508
+      "cubers": 4510
     },
     {
       "iso2": "MX",
@@ -182,7 +182,7 @@
       "iso2": "ZA",
       "name": "South Africa",
       "continentId": "_Africa",
-      "cubers": 2290
+      "cubers": 2291
     },
     {
       "iso2": "TR",
@@ -242,7 +242,7 @@
       "iso2": "RO",
       "name": "Romania",
       "continentId": "_Europe",
-      "cubers": 1639
+      "cubers": 1652
     },
     {
       "iso2": "IE",
@@ -260,13 +260,13 @@
       "iso2": "KZ",
       "name": "Kazakhstan",
       "continentId": "_Asia",
-      "cubers": 1388
+      "cubers": 1391
     },
     {
       "iso2": "HU",
       "name": "Hungary",
       "continentId": "_Europe",
-      "cubers": 1312
+      "cubers": 1323
     },
     {
       "iso2": "GT",
@@ -302,7 +302,7 @@
       "iso2": "GR",
       "name": "Greece",
       "continentId": "_Europe",
-      "cubers": 1062
+      "cubers": 1080
     },
     {
       "iso2": "VE",
