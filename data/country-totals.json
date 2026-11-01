@@ -2,25 +2,25 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-10-30T00:00:57Z",
+    "exportDate": "2026-10-31T16:33:31Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_303_20261030T000057Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_304_20261031T163331Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 301543,
+  "totalCubers": 301640,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 62873
+      "cubers": 62898
     },
     {
       "iso2": "CN",
       "name": "China",
       "continentId": "_Asia",
-      "cubers": 29930
+      "cubers": 29957
     },
     {
       "iso2": "IN",
@@ -44,7 +44,7 @@
       "iso2": "BR",
       "name": "Brazil",
       "continentId": "_South America",
-      "cubers": 10386
+      "cubers": 10402
     },
     {
       "iso2": "GB",
@@ -92,7 +92,7 @@
       "iso2": "KR",
       "name": "Republic of Korea",
       "continentId": "_Asia",
-      "cubers": 4647
+      "cubers": 4649
     },
     {
       "iso2": "PE",
@@ -146,7 +146,7 @@
       "iso2": "BO",
       "name": "Bolivia",
       "continentId": "_South America",
-      "cubers": 3042
+      "cubers": 3066
     },
     {
       "iso2": "VN",
@@ -158,7 +158,7 @@
       "iso2": "UA",
       "name": "Ukraine",
       "continentId": "_Europe",
-      "cubers": 2997
+      "cubers": 2998
     },
     {
       "iso2": "IT",
@@ -242,7 +242,7 @@
       "iso2": "RO",
       "name": "Romania",
       "continentId": "_Europe",
-      "cubers": 1652
+      "cubers": 1653
     },
     {
       "iso2": "IE",
@@ -296,13 +296,13 @@
       "iso2": "BE",
       "name": "Belgium",
       "continentId": "_Europe",
-      "cubers": 1139
+      "cubers": 1140
     },
     {
       "iso2": "GR",
       "name": "Greece",
       "continentId": "_Europe",
-      "cubers": 1080
+      "cubers": 1079
     },
     {
       "iso2": "VE",
@@ -356,7 +356,7 @@
       "iso2": "NP",
       "name": "Nepal",
       "continentId": "_Asia",
-      "cubers": 586
+      "cubers": 587
     },
     {
       "iso2": "PT",
