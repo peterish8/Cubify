@@ -87,16 +87,37 @@ async function fetchUpstreamData(id: string) {
  * takes the whole report down: they're folded in as unknown strength and
  * counted so the response can say so via `warnings`.
  */
-async function resolveUsers(registrations: Registration[]): Promise<FetchedUser[]> {
-  return parallelMap(registrations, 8, async (registration) => {
-    try {
-      const data = await wcaJson<WcaUserResponse>(`/users/${registration.user_id}`, wcaTtl.user)
-      return { ...data.user, eventIds: registration.event_ids }
-    } catch {
-      noteLookupFailure()
-      return { wca_id: null, name: "Unknown competitor", gender: null, country_iso2: "XX", eventIds: registration.event_ids, lookupFailed: true }
-    }
-  })
+// Each registrant needs two upstream calls (/users/:id, then /persons/:id).
+// Running them as one fused task per registrant -- instead of a full wave
+// of every /users/:id call followed by a second full wave of every
+// /persons/:id call -- means the two calls' latencies overlap across the
+// batch instead of stacking phase-by-phase. Concurrency is higher than the
+// "5-10" rule of thumb because live measurement showed individual WCA calls
+// ranging 1.2s-22s (see lib/report-service.ts header comment); at a lower
+// concurrency a ~50-person competition cannot clear even a 45s deadline.
+// Retry-with-backoff (lib/wca-client.ts) absorbs the extra 429 risk.
+const REGISTRANT_CONCURRENCY = 16
+
+async function resolveRegistrant(registration: Registration) {
+  let user: FetchedUser
+  try {
+    const data = await wcaJson<WcaUserResponse>(`/users/${registration.user_id}`, wcaTtl.user)
+    user = { ...data.user, eventIds: registration.event_ids }
+  } catch {
+    noteLookupFailure()
+    user = { wca_id: null, name: "Unknown competitor", gender: null, country_iso2: "XX", eventIds: registration.event_ids, lookupFailed: true }
+  }
+  const person = user.wca_id
+    ? await competitor(user.wca_id).catch(() => {
+        noteLookupFailure()
+        return null
+      })
+    : null
+  return { user, person }
+}
+
+async function resolveRegistrants(registrations: Registration[]) {
+  return parallelMap(registrations, REGISTRANT_CONCURRENCY, resolveRegistrant)
 }
 
 async function buildReportPayload(input: ReportRequest) {
@@ -110,17 +131,8 @@ async function buildReportPayload(input: ReportRequest) {
 
   const { result: upstream, context } = await withDeadline(withReportContext(async () => {
     const data = await fetchUpstreamData(id)
-    const users = await resolveUsers(data.registrations)
-    const people = await parallelMap(users, 6, async (user) => ({
-      user,
-      person: user.wca_id
-        ? await competitor(user.wca_id).catch(() => {
-            noteLookupFailure()
-            return null
-          })
-        : null,
-    }))
-    return { ...data, users, people }
+    const people = await resolveRegistrants(data.registrations)
+    return { ...data, people }
   }), REPORT_DEADLINE_MS)
 
   const { competition, competitionEvents, people } = upstream
