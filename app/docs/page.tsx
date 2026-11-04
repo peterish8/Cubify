@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react"
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome"
+import { presentingResultsSection } from "@/lib/agent-docs"
 
 const chatGptPrompt = `Read and follow Cubify8’s competition-analysis instructions:
 https://cubify.in/docs
@@ -201,6 +202,16 @@ export default function DocsPage() {
             <Link href="/docs/api" className="pressable inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-bold text-primary-foreground"><FileCode2 aria-hidden="true" className="h-3.5 w-3.5" /> API contract <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" /></Link>
             <a href="/llms.txt" className="pressable inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-xs font-bold text-muted-foreground hover:text-foreground">View llms.txt</a>
           </div>
+        </div>
+      </section>
+      <section className="mx-auto w-full max-w-6xl px-4 pb-20 sm:px-6 xl:px-8">
+        <div className="mb-5 border-b border-border pb-4">
+          <p className="font-data text-[10px] font-bold tracking-[0.16em] text-[var(--blue-bright)]">AGENT INSTRUCTIONS</p>
+          <h2 className="mt-2 font-display text-2xl font-bold tracking-[-0.04em] sm:text-3xl">Presenting results to users.</h2>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">The exact instructions every Cubify-connected agent follows so a report looks the same everywhere -- identical to what llms.txt, docs.txt, docs.md, and docs/agent.md serve.</p>
+        </div>
+        <div className="overflow-hidden rounded-xl border border-border bg-black/50">
+          <pre className="max-h-[32rem] overflow-y-auto whitespace-pre-wrap p-5 font-data text-xs leading-6 text-[#c8d6ef] sm:p-6 sm:text-[13px]">{presentingResultsSection}</pre>
         </div>
       </section>
       <SiteFooter />
