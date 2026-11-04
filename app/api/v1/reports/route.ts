@@ -1,150 +1,18 @@
-import { apiFailure, apiJson, apiOptions, ApiError, parallelMap, wcaJson, competitor, wcaId } from "@/lib/api-utils"
-import { comparePbs, competitionId, fieldStanding, strongestTheoreticalEvent, type PersonalBests } from "@/lib/report-utils"
-import { fetchWcaPersonRecentForm, type WcaEventRecentForm } from "@/lib/wca-person"
+import { apiFailure, apiOptions, ApiError } from "@/lib/api-utils"
+import { buildCompetitionReport, type ReportRequest } from "@/lib/report-service"
 
-type Registration = { user_id: number; event_ids: string[] }
-type WcaUserResponse = { user: { wca_id: string | null; name: string; gender: "m" | "f" | "o" | null; country_iso2: string } }
-type Competition = { id: string; name: string; start_date: string; end_date: string; city: string; event_ids: string[]; url: string }
-type CompetitionEvent = {
-  id: string
-  rounds?: Array<{
-    id?: string
-    format?: string
-    cutoff?: unknown
-    advancementCondition?: unknown
-  }>
-}
-type ReportRequest = { competitionUrl?: unknown; eventIds?: unknown; competitorWcaId?: unknown }
-function personalBests(person: Awaited<ReturnType<typeof competitor>> | null, eventId: string): PersonalBests {
-  const record = person?.personal_records[eventId]
-  return { single: record?.single?.best ?? null, average: record?.average?.best ?? null }
-}
-
-function buildRoundPlans(
-  eventRows: Array<{ eventId: string; competitors: Array<{ personalBests: PersonalBests }>; myStanding: { average: { position: number | null } } }>,
-  competitionEvents: CompetitionEvent[] | null,
-) {
-  if (!competitionEvents) return null
-  return Object.fromEntries(eventRows.map((event) => {
-    const metadata = competitionEvents.find((entry) => entry.id === event.eventId)
-    const averages = event.competitors.map((entry) => entry.personalBests.average).filter((value): value is number => value !== null).sort((a, b) => a - b)
-    const rounds = (metadata?.rounds ?? []).map((round) => {
-      const condition = round.advancementCondition
-      const level = typeof condition === "object" && condition !== null && "type" in condition && condition.type === "ranking" && "level" in condition && typeof condition.level === "number" && Number.isSafeInteger(condition.level) && condition.level > 0 ? condition.level : null
-      return {
-        roundId: round.id ?? null,
-        format: round.format ?? null,
-        cutoff: round.cutoff ?? null,
-        advancementCondition: condition ?? null,
-        pbAverageThreshold: level ? averages[level - 1] ?? null : null,
-        subjectPbAveragePosition: event.myStanding.average.position,
-        subjectMeetsPbThreshold: level && event.myStanding.average.position !== null ? event.myStanding.average.position <= level : null,
-      }
-    })
-    return [event.eventId, { rounds, source: "WCA competition event metadata", note: "PB threshold is a field estimate, not a competition-day cutoff." }]
-  }))
-}
+// Explicit and generous: the upstream WCA fan-out is bounded by
+// REPORT_DEADLINE_MS (45s) in lib/report-service.ts, but the route's own
+// limit must be comfortably above that so a near-deadline response always
+// has time to be written out, instead of depending on whatever an
+// unconfigured platform default happens to be.
+export const maxDuration = 60
 
 export async function POST(request: Request) {
   try {
     const body: unknown = await request.json()
     if (!body || typeof body !== "object" || Array.isArray(body)) throw new ApiError("Request body must be a JSON object", 400, "invalid_request")
-    const input = body as ReportRequest
-    const id = competitionId(input.competitionUrl)
-    if (input.eventIds !== undefined && !Array.isArray(input.eventIds)) throw new ApiError("eventIds must be an array of event IDs", 400, "invalid_request")
-    const rawEvents = Array.isArray(input.eventIds) ? input.eventIds : []
-    if (rawEvents.length > 25 || rawEvents.some((event) => typeof event !== "string" || !/^[a-z0-9]+$/i.test(event.trim()) || event.trim().length > 12)) throw new ApiError("eventIds must contain at most 25 valid event IDs", 400, "invalid_request")
-    const selectedEvents: string[] = rawEvents.map((event) => (event as string).trim().toLowerCase())
-    const me = input.competitorWcaId === undefined || input.competitorWcaId === null || input.competitorWcaId === "" ? null : wcaId(input.competitorWcaId)
-    const [competition, registrations, competitionEvents] = await Promise.all([
-      wcaJson<Competition>(`/competitions/${id}`),
-      wcaJson<Registration[]>(`/competitions/${id}/registrations`),
-      wcaJson<CompetitionEvent[]>(`/competitions/${id}/events`).catch(() => null),
-    ])
-    if (!competition || typeof competition !== "object" || typeof competition.id !== "string" || typeof competition.name !== "string" || !Array.isArray(competition.event_ids) || !competition.event_ids.every((event) => typeof event === "string")) throw new ApiError("The WCA competition response was invalid", 502, "upstream_invalid")
-    if (!Array.isArray(registrations) || registrations.length > 5000 || registrations.some((registration) => !registration || typeof registration.user_id !== "number" || !Number.isSafeInteger(registration.user_id) || registration.user_id <= 0 || !Array.isArray(registration.event_ids) || !registration.event_ids.every((event) => typeof event === "string"))) throw new ApiError("The WCA registrations response was invalid", 502, "upstream_invalid")
-    const requestedEvents: string[] = selectedEvents.length ? selectedEvents.filter((event) => competition.event_ids.includes(event)) : competition.event_ids
-    if (!requestedEvents.length) throw new ApiError("No requested events are offered at this competition", 400, "invalid_request")
-
-    const users = await parallelMap(registrations, 8, async (registration) => {
-      const data = await wcaJson<WcaUserResponse>(`/users/${registration.user_id}`)
-      return { ...data.user, eventIds: registration.event_ids }
-    })
-    const people = await parallelMap(users, 6, async (user) => ({ user, person: user.wca_id ? await competitor(user.wca_id).catch(() => null) : null }))
-    const mine = me ? people.find(({ user }) => user.wca_id === me) ?? null : null
-    if (me && !mine) throw new ApiError("competitorWcaId is not an accepted registration for this competition", 400, "invalid_request")
-    const events = mine ? requestedEvents.filter((eventId) => mine.user.eventIds.includes(eventId)) : requestedEvents
-    if (me && !events.length) throw new ApiError("None of the requested events are shared with your accepted registration", 400, "invalid_request")
-
-    const byEvent = events.map((eventId) => {
-      const competitors = people.filter(({ user }) => user.eventIds.includes(eventId)).map(({ user, person }) => {
-        const bests = personalBests(person, eventId)
-        return { wcaId: user.wca_id, name: user.name, gender: user.gender, countryIso2: user.country_iso2, firstTime: !user.wca_id, personalBests: bests }
-      })
-      const mineInEvent = me ? competitors.find((entry) => entry.wcaId === me) ?? null : null
-      const singleValues = competitors.map((entry) => entry.personalBests.single)
-      const averageValues = competitors.map((entry) => entry.personalBests.average)
-      const myStanding = {
-        single: fieldStanding(mineInEvent?.personalBests.single ?? null, singleValues),
-        average: fieldStanding(mineInEvent?.personalBests.average ?? null, averageValues),
-      }
-      const competitorsWithComparison = competitors.map((entry) => ({
-        ...entry,
-        comparisonToYou: me ? {
-          single: comparePbs(mineInEvent?.personalBests.single ?? null, entry.personalBests.single),
-          average: comparePbs(mineInEvent?.personalBests.average ?? null, entry.personalBests.average),
-        } : null,
-      })).sort((a, b) => (a.personalBests.average ?? a.personalBests.single ?? Number.MAX_SAFE_INTEGER) - (b.personalBests.average ?? b.personalBests.single ?? Number.MAX_SAFE_INTEGER))
-      return {
-        eventId,
-        registeredCount: competitors.length,
-        knownSingleCount: singleValues.filter((value) => value !== null).length,
-        knownAverageCount: averageValues.filter((value) => value !== null).length,
-        unknownStrengthCount: competitors.filter((entry) => entry.personalBests.single === null && entry.personalBests.average === null).length,
-        myPersonalBests: mineInEvent?.personalBests ?? null,
-        myStanding,
-        competitors: competitorsWithComparison,
-      }
-    })
-
-    const sharedCompetitors = mine && me ? people.filter(({ user }) => user.wca_id !== me).map(({ user, person }) => {
-      const sharedEventIds = events.filter((eventId) => user.eventIds.includes(eventId))
-      return {
-        wcaId: user.wca_id,
-        name: user.name,
-        gender: user.gender,
-        firstTime: !user.wca_id,
-        sharedEventIds,
-        eventComparisons: sharedEventIds.map((eventId) => {
-          const yours = personalBests(mine.person, eventId)
-          const theirs = personalBests(person, eventId)
-          return { eventId, yours, theirs, single: comparePbs(yours.single, theirs.single), average: comparePbs(yours.average, theirs.average) }
-        }),
-      }
-    }).filter((entry) => entry.sharedEventIds.length > 0) : []
-
-    const recentForm: WcaEventRecentForm[] = me
-      ? await fetchWcaPersonRecentForm(me, events).catch(() => [])
-      : []
-    const roundPlans = buildRoundPlans(byEvent, competitionEvents)
-    const personalized = mine && me ? {
-      competitorWcaId: me,
-      sharedEventIds: events,
-      theoreticalBestEvent: {
-        bySingle: strongestTheoreticalEvent(byEvent, "single"),
-        byAverage: strongestTheoreticalEvent(byEvent, "average"),
-      },
-      sharedCompetitors,
-      recentForm,
-      roundPlans,
-      methodology: "Positions use official PBs only. Lower WCA result values are better. Unknown or first-time strength is never ranked.",
-    } : null
-
-    const warnings = [
-      ...(competitionEvents ? [] : [{ code: "ROUND_METADATA_UNAVAILABLE", message: "WCA round metadata was unavailable; advancement thresholds were not calculated." }]),
-      ...(me && !recentForm.length ? [{ code: "RECENT_FORM_UNAVAILABLE", message: "Recent official averages were unavailable; PBs remain the only ranking basis." }] : []),
-    ]
-    return apiJson({ data: { competition: { id: competition.id, name: competition.name, dates: [competition.start_date, competition.end_date], city: competition.city, eventIds: competition.event_ids, url: competition.url, roundPlans }, requestedEvents: events, personalized, byEvent, warnings }, source: { registrations: `${competition.url}/registrations`, provider: "World Cube Association" }, generatedAt: new Date().toISOString() })
+    return await buildCompetitionReport(body as ReportRequest)
   } catch (error) {
     return apiFailure(error, "Competition report failed")
   }

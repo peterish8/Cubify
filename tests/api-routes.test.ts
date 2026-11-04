@@ -13,11 +13,13 @@ import { GET as docsMdGet } from "../app/docs.md/route"
 import { GET as agentDocsGet } from "../app/docs/agent.md/route"
 import { GET as openApiAliasGet } from "../app/api/openapi.json/route"
 import { competitionId } from "../lib/report-utils"
+import { resetWcaCache } from "../lib/wca-cache"
 
 const originalFetch = globalThis.fetch
 
 afterEach(() => {
   globalThis.fetch = originalFetch
+  resetWcaCache()
 })
 
 function jsonResponse(value: unknown, status = 200) {

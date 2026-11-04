@@ -1,8 +1,12 @@
-import { OPTIONS as reportOptions, POST as createReport } from "@/app/api/v1/reports/route"
+import { OPTIONS as reportOptions } from "@/app/api/v1/reports/route"
+import { buildCompetitionReport } from "@/lib/report-service"
 import { apiFailure, apiJson, ApiError, wcaId } from "@/lib/api-utils"
 import { canonicalCompetitionId } from "@/lib/report-utils"
 import { eventDisplayName } from "@/lib/wca-events"
 import { formatResult } from "@/lib/wca-format"
+
+// Shares lib/report-service's deadline; see that file for why 60s.
+export const maxDuration = 60
 
 function requestedEvents(value: string | null) {
   if (!value) return undefined
@@ -36,15 +40,11 @@ export async function GET(request: Request) {
     const includeAll = url.searchParams.get("include") === "all"
     const offset = boundedInteger(url.searchParams.get("offset"), 0, 5000)
     const limit = boundedInteger(url.searchParams.get("limit"), includeAll ? 100 : 8, 100)
-    const reportResponse = await createReport(new Request("http://cubify.internal/api/v1/reports", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        competitionUrl: `https://www.worldcubeassociation.org/competitions/${competitionId}`,
-        competitorWcaId,
-        eventIds,
-      }),
-    }))
+    const reportResponse = await buildCompetitionReport({
+      competitionUrl: `https://www.worldcubeassociation.org/competitions/${competitionId}`,
+      competitorWcaId,
+      eventIds,
+    })
     const report = await reportResponse.json() as any
     if (!reportResponse.ok) return apiJson(report, { status: reportResponse.status })
 

@@ -1,5 +1,7 @@
 /** Shared WCA person lookup used by Lookup, Compare, and Goal. */
 
+import { wcaFetch } from "@/lib/wca-client"
+
 const WCA_PERSON_API = "https://www.worldcubeassociation.org/api/v0/persons"
 
 export interface WcaPersonRecord {
@@ -87,9 +89,12 @@ export async function fetchWcaPerson(
   const normalized = wcaId.trim().toUpperCase()
   if (!normalized) throw new Error("Please enter a WCA ID")
 
-  const response = await fetch(`${WCA_PERSON_API}/${normalized}`, { signal })
-  if (!response.ok) {
+  const response = await wcaFetch(`${WCA_PERSON_API}/${normalized}`, { signal, retries: 2 })
+  if (response.status === 404) {
     throw new Error(`Player ${normalized} not found. Check the WCA ID and try again.`)
+  }
+  if (!response.ok) {
+    throw new Error(`WCA person lookup for ${normalized} failed with status ${response.status}`)
   }
 
   const payload = await response.json()
@@ -271,7 +276,7 @@ export async function fetchWcaPersonSolveActivity(
   const normalized = wcaId.trim().toUpperCase()
   if (!normalized) throw new Error("Please enter a WCA ID")
 
-  const response = await fetch(`${WCA_PERSON_API}/${normalized}/results`, { signal })
+  const response = await wcaFetch(`${WCA_PERSON_API}/${normalized}/results`, { signal, retries: 2 })
   if (!response.ok) {
     throw new Error(`Could not load results for ${normalized}`)
   }
@@ -289,7 +294,7 @@ export async function fetchWcaPersonRecentForm(
 ): Promise<WcaEventRecentForm[]> {
   const normalized = wcaId.trim().toUpperCase()
   if (!normalized) throw new Error("Please enter a WCA ID")
-  const response = await fetch(`${WCA_PERSON_API}/${normalized}/results`, { signal })
+  const response = await wcaFetch(`${WCA_PERSON_API}/${normalized}/results`, { signal, retries: 2 })
   if (!response.ok) throw new Error(`Could not load results for ${normalized}`)
   const rows = (await response.json()) as WcaPersonResultRow[]
   return aggregateRecentForm(rows, eventIds, windowCompetitions)

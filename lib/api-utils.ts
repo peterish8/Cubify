@@ -1,8 +1,20 @@
 import { fetchWcaPerson, fetchWcaPersonSolveActivity, type WcaPerson } from "@/lib/wca-person"
+import { wcaFetch } from "@/lib/wca-client"
+import { cached } from "@/lib/wca-cache"
+import { noteCacheResult } from "@/lib/request-context"
 
 const WCA_API = "https://www.worldcubeassociation.org/api/v0"
 const WCA_ID = /^\d{4}[A-Z]{4}\d{2}$/
 const SOURCE_TIMEOUT_MS = 12_000
+
+// Registrations change up to competition day; keep this short. Competition
+// metadata, user-id -> wcaId mappings, and competitor PBs change rarely, so
+// they can be cached far longer and safely served stale on a WCA outage.
+const REGISTRATIONS_TTL_MS = 5 * 60_000
+const COMPETITION_TTL_MS = 15 * 60_000
+const USER_TTL_MS = 6 * 60 * 60_000
+const PERSON_TTL_MS = 6 * 60 * 60_000
+const STALE_WINDOW_MS = 24 * 60 * 60_000
 
 export type ApiErrorCode =
   | "invalid_request"
@@ -12,19 +24,26 @@ export type ApiErrorCode =
   | "upstream_invalid"
   | "internal_error"
 
+export type UpstreamInfo = { service: string; status: number | null; endpoint: string; durationMs: number }
+
 export class ApiError extends Error {
   constructor(
     message: string,
     readonly status: number,
     readonly code: ApiErrorCode,
+    readonly upstream?: UpstreamInfo,
   ) {
     super(message)
     this.name = "ApiError"
   }
 }
 
-export function apiError(message: string, status = 400, code: ApiErrorCode = status >= 500 ? "internal_error" : "invalid_request", headers?: HeadersInit) {
-  return Response.json({ error: { code, message, status } }, {
+export function requestId() {
+  return `req_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`
+}
+
+export function apiError(message: string, status = 400, code: ApiErrorCode = status >= 500 ? "internal_error" : "invalid_request", headers?: HeadersInit, upstream?: UpstreamInfo) {
+  return Response.json({ error: { code, message, status, requestId: requestId(), ...(upstream ? { upstream } : {}) } }, {
     status,
     headers: {
       "Cache-Control": "no-store",
@@ -38,7 +57,7 @@ export function apiError(message: string, status = 400, code: ApiErrorCode = sta
 }
 
 export function apiFailure(error: unknown, fallback: string) {
-  if (error instanceof ApiError) return apiError(error.message, error.status, error.code)
+  if (error instanceof ApiError) return apiError(error.message, error.status, error.code, undefined, error.upstream)
   if (error instanceof SyntaxError) return apiError("Request body must be valid JSON", 400, "invalid_request")
   return apiError(fallback, 502, "upstream_unavailable")
 }
@@ -71,19 +90,25 @@ export function wcaId(value: unknown) {
   return id
 }
 
-export async function competitor(id: string, withActivity = false) {
+export async function competitor(id: string, withActivity = false, options: { ttlMs?: number; staleMs?: number } = {}) {
+  const ttlMs = options.ttlMs ?? PERSON_TTL_MS
+  const staleMs = options.staleMs ?? STALE_WINDOW_MS
   try {
-    const person = await withSourceTimeout((signal) => fetchWcaPerson(id, signal))
-    const activity = withActivity
-      ? await withSourceTimeout((signal) => fetchWcaPersonSolveActivity(id, signal)).catch(() => null)
-      : null
-    return { ...person, activity }
+    const result = await cached(`wca:person:${id}:${withActivity}`, ttlMs, staleMs, async () => {
+      const person = await withSourceTimeout((signal) => fetchWcaPerson(id, signal), `/persons/${id}`)
+      const activity = withActivity
+        ? await withSourceTimeout((signal) => fetchWcaPersonSolveActivity(id, signal), `/persons/${id}/results`).catch(() => null)
+        : null
+      return { ...person, activity }
+    })
+    noteCacheResult(result.stale, result.cachedAt)
+    return result.value
   } catch (error) {
     if (error instanceof ApiError) throw error
     if (error instanceof Error && /^Player .* not found\./.test(error.message)) {
       throw new ApiError(error.message, 404, "not_found")
     }
-    throw new ApiError("WCA competitor data is temporarily unavailable", 502, "upstream_unavailable")
+    throw new ApiError("WCA competitor data is temporarily unavailable", 502, "upstream_unavailable", { service: "wca", status: null, endpoint: `/persons/${id}`, durationMs: 0 })
   }
 }
 
@@ -100,31 +125,50 @@ export function publicPerson(person: WcaPerson & { activity?: unknown }) {
   }
 }
 
-export async function wcaJson<T>(path: string): Promise<T> {
+/** TTL presets for the WCA resources wcaJson is called with; see call sites. */
+export const wcaTtl = {
+  competition: { ttlMs: COMPETITION_TTL_MS, staleMs: STALE_WINDOW_MS },
+  registrations: { ttlMs: REGISTRATIONS_TTL_MS, staleMs: STALE_WINDOW_MS },
+  events: { ttlMs: COMPETITION_TTL_MS, staleMs: STALE_WINDOW_MS },
+  user: { ttlMs: USER_TTL_MS, staleMs: STALE_WINDOW_MS },
+}
+
+export async function wcaJson<T>(path: string, options: { ttlMs?: number; staleMs?: number } = {}): Promise<T> {
+  const ttlMs = options.ttlMs ?? COMPETITION_TTL_MS
+  const staleMs = options.staleMs ?? STALE_WINDOW_MS
   try {
-    return await withSourceTimeout(async (signal) => {
-      const response = await fetch(`${WCA_API}${path}`, { signal, next: { revalidate: 900 } })
-      if (response.status === 404) throw new ApiError("The requested WCA resource was not found", 404, "not_found")
-      if (!response.ok) throw new ApiError("The WCA data source is temporarily unavailable", 502, "upstream_unavailable")
-      try {
-        return await response.json() as T
-      } catch {
-        throw new ApiError("The WCA data source returned an invalid response", 502, "upstream_invalid")
-      }
-    })
+    const result = await cached(`wca:${path}`, ttlMs, staleMs, () => fetchWcaJson<T>(path))
+    noteCacheResult(result.stale, result.cachedAt)
+    return result.value
   } catch (error) {
     if (error instanceof ApiError) throw error
-    throw new ApiError("The WCA data source is temporarily unavailable", 502, "upstream_unavailable")
+    throw new ApiError("The WCA data source is temporarily unavailable", 502, "upstream_unavailable", { service: "wca", status: null, endpoint: path, durationMs: 0 })
   }
 }
 
-async function withSourceTimeout<T>(task: (signal: AbortSignal) => Promise<T>) {
+async function fetchWcaJson<T>(path: string): Promise<T> {
+  const start = Date.now()
+  return await withSourceTimeout(async (signal) => {
+    const response = await wcaFetch(`${WCA_API}${path}`, { signal, retries: 2 })
+    const durationMs = Date.now() - start
+    if (response.status === 404) throw new ApiError("The requested WCA resource was not found", 404, "not_found", { service: "wca", status: 404, endpoint: path, durationMs })
+    if (!response.ok) throw new ApiError("The WCA data source is temporarily unavailable", 502, "upstream_unavailable", { service: "wca", status: response.status, endpoint: path, durationMs })
+    try {
+      return await response.json() as T
+    } catch {
+      throw new ApiError("The WCA data source returned an invalid response", 502, "upstream_invalid", { service: "wca", status: response.status, endpoint: path, durationMs })
+    }
+  }, path)
+}
+
+async function withSourceTimeout<T>(task: (signal: AbortSignal) => Promise<T>, endpoint = "unknown") {
+  const start = Date.now()
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), SOURCE_TIMEOUT_MS)
   try {
     return await task(controller.signal)
   } catch (error) {
-    if (controller.signal.aborted) throw new ApiError("The WCA data source timed out", 504, "upstream_timeout")
+    if (controller.signal.aborted) throw new ApiError("The WCA data source timed out", 504, "upstream_timeout", { service: "wca", status: null, endpoint, durationMs: Date.now() - start })
     throw error
   } finally {
     clearTimeout(timer)
