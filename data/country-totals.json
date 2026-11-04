@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-11-02T00:00:38Z",
+    "exportDate": "2026-11-04T00:30:05Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_306_20261102T000038Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_308_20261104T003005Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 301825,
+  "totalCubers": 301892,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 62913
+      "cubers": 62947
     },
     {
       "iso2": "CN",
@@ -26,7 +26,7 @@
       "iso2": "IN",
       "name": "India",
       "continentId": "_Asia",
-      "cubers": 21423
+      "cubers": 21438
     },
     {
       "iso2": "AU",
@@ -44,7 +44,7 @@
       "iso2": "BR",
       "name": "Brazil",
       "continentId": "_South America",
-      "cubers": 10402
+      "cubers": 10416
     },
     {
       "iso2": "GB",
@@ -254,7 +254,7 @@
       "iso2": "HK",
       "name": "Hong Kong, China",
       "continentId": "_Asia",
-      "cubers": 1486
+      "cubers": 1490
     },
     {
       "iso2": "KZ",
@@ -290,7 +290,7 @@
       "iso2": "EC",
       "name": "Ecuador",
       "continentId": "_South America",
-      "cubers": 1161
+      "cubers": 1162
     },
     {
       "iso2": "BE",
@@ -362,7 +362,7 @@
       "iso2": "PT",
       "name": "Portugal",
       "continentId": "_Europe",
-      "cubers": 586
+      "cubers": 585
     },
     {
       "iso2": "AT",
