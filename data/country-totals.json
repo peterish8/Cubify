@@ -2,43 +2,43 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-11-04T00:30:05Z",
+    "exportDate": "2026-11-05T00:30:22Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_308_20261104T003005Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_309_20261105T003022Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 301892,
+  "totalCubers": 301992,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 62947
+      "cubers": 62969
     },
     {
       "iso2": "CN",
       "name": "China",
       "continentId": "_Asia",
-      "cubers": 30027
+      "cubers": 30028
     },
     {
       "iso2": "IN",
       "name": "India",
       "continentId": "_Asia",
-      "cubers": 21438
+      "cubers": 21444
     },
     {
       "iso2": "AU",
       "name": "Australia",
       "continentId": "_Oceania",
-      "cubers": 12317
+      "cubers": 12318
     },
     {
       "iso2": "CA",
       "name": "Canada",
       "continentId": "_North America",
-      "cubers": 11018
+      "cubers": 11020
     },
     {
       "iso2": "BR",
@@ -56,7 +56,7 @@
       "iso2": "PL",
       "name": "Poland",
       "continentId": "_Europe",
-      "cubers": 7018
+      "cubers": 7019
     },
     {
       "iso2": "RU",
@@ -74,7 +74,7 @@
       "iso2": "CO",
       "name": "Colombia",
       "continentId": "_South America",
-      "cubers": 6187
+      "cubers": 6199
     },
     {
       "iso2": "ES",
@@ -86,7 +86,7 @@
       "iso2": "FR",
       "name": "France",
       "continentId": "_Europe",
-      "cubers": 5018
+      "cubers": 5037
     },
     {
       "iso2": "KR",
@@ -152,7 +152,7 @@
       "iso2": "VN",
       "name": "Vietnam",
       "continentId": "_Asia",
-      "cubers": 3041
+      "cubers": 3042
     },
     {
       "iso2": "UA",
@@ -188,7 +188,7 @@
       "iso2": "ZA",
       "name": "South Africa",
       "continentId": "_Africa",
-      "cubers": 2297
+      "cubers": 2298
     },
     {
       "iso2": "NZ",
@@ -230,7 +230,7 @@
       "iso2": "SG",
       "name": "Singapore",
       "continentId": "_Asia",
-      "cubers": 1697
+      "cubers": 1702
     },
     {
       "iso2": "IR",
@@ -290,7 +290,7 @@
       "iso2": "EC",
       "name": "Ecuador",
       "continentId": "_South America",
-      "cubers": 1162
+      "cubers": 1168
     },
     {
       "iso2": "BE",
@@ -530,7 +530,7 @@
       "iso2": "IS",
       "name": "Iceland",
       "continentId": "_Europe",
-      "cubers": 215
+      "cubers": 216
     },
     {
       "iso2": "MA",
@@ -707,6 +707,12 @@
       "cubers": 28
     },
     {
+      "iso2": "NA",
+      "name": "Namibia",
+      "continentId": "_Africa",
+      "cubers": 27
+    },
+    {
       "iso2": "XK",
       "name": "Kosovo",
       "continentId": "_Europe",
@@ -843,12 +849,6 @@
       "name": "Turkmenistan",
       "continentId": "_Asia",
       "cubers": 6
-    },
-    {
-      "iso2": "NA",
-      "name": "Namibia",
-      "continentId": "_Africa",
-      "cubers": 5
     },
     {
       "iso2": "BT",
