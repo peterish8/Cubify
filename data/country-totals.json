@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-11-06T00:30:25Z",
+    "exportDate": "2026-11-07T00:30:15Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_310_20261106T003025Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_311_20261107T003015Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 302073,
+  "totalCubers": 302086,
   "countries": [
     {
       "iso2": "US",
@@ -26,7 +26,7 @@
       "iso2": "IN",
       "name": "India",
       "continentId": "_Asia",
-      "cubers": 21459
+      "cubers": 21458
     },
     {
       "iso2": "AU",
@@ -194,7 +194,7 @@
       "iso2": "NZ",
       "name": "New Zealand",
       "continentId": "_Oceania",
-      "cubers": 2216
+      "cubers": 2217
     },
     {
       "iso2": "CL",
@@ -206,7 +206,7 @@
       "iso2": "IL",
       "name": "Israel",
       "continentId": "_Europe",
-      "cubers": 2160
+      "cubers": 2161
     },
     {
       "iso2": "TH",
@@ -365,16 +365,16 @@
       "cubers": 585
     },
     {
+      "iso2": "EG",
+      "name": "Egypt",
+      "continentId": "_Africa",
+      "cubers": 562
+    },
+    {
       "iso2": "AT",
       "name": "Austria",
       "continentId": "_Europe",
       "cubers": 552
-    },
-    {
-      "iso2": "EG",
-      "name": "Egypt",
-      "continentId": "_Africa",
-      "cubers": 550
     },
     {
       "iso2": "UY",
