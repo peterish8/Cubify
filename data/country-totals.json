@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-11-07T00:30:15Z",
+    "exportDate": "2026-11-08T00:30:14Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_311_20261107T003015Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_312_20261108T003014Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 302086,
+  "totalCubers": 302158,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 62972
+      "cubers": 62977
     },
     {
       "iso2": "CN",
@@ -44,7 +44,7 @@
       "iso2": "BR",
       "name": "Brazil",
       "continentId": "_South America",
-      "cubers": 10422
+      "cubers": 10427
     },
     {
       "iso2": "GB",
@@ -122,7 +122,7 @@
       "iso2": "DE",
       "name": "Germany",
       "continentId": "_Europe",
-      "cubers": 4336
+      "cubers": 4340
     },
     {
       "iso2": "MY",
@@ -188,19 +188,19 @@
       "iso2": "ZA",
       "name": "South Africa",
       "continentId": "_Africa",
-      "cubers": 2298
+      "cubers": 2299
+    },
+    {
+      "iso2": "CL",
+      "name": "Chile",
+      "continentId": "_South America",
+      "cubers": 2218
     },
     {
       "iso2": "NZ",
       "name": "New Zealand",
       "continentId": "_Oceania",
       "cubers": 2217
-    },
-    {
-      "iso2": "CL",
-      "name": "Chile",
-      "continentId": "_South America",
-      "cubers": 2205
     },
     {
       "iso2": "IL",
@@ -218,7 +218,7 @@
       "iso2": "AR",
       "name": "Argentina",
       "continentId": "_South America",
-      "cubers": 1840
+      "cubers": 1845
     },
     {
       "iso2": "NO",
@@ -374,7 +374,7 @@
       "iso2": "AT",
       "name": "Austria",
       "continentId": "_Europe",
-      "cubers": 552
+      "cubers": 557
     },
     {
       "iso2": "UY",
@@ -437,15 +437,15 @@
       "cubers": 382
     },
     {
-      "iso2": "DZ",
-      "name": "Algeria",
-      "continentId": "_Africa",
-      "cubers": 378
-    },
-    {
       "iso2": "PY",
       "name": "Paraguay",
       "continentId": "_South America",
+      "cubers": 379
+    },
+    {
+      "iso2": "DZ",
+      "name": "Algeria",
+      "continentId": "_Africa",
       "cubers": 378
     },
     {
@@ -617,15 +617,15 @@
       "cubers": 73
     },
     {
-      "iso2": "GH",
-      "name": "Ghana",
-      "continentId": "_Africa",
-      "cubers": 69
-    },
-    {
       "iso2": "SY",
       "name": "Syria",
       "continentId": "_Asia",
+      "cubers": 70
+    },
+    {
+      "iso2": "GH",
+      "name": "Ghana",
+      "continentId": "_Africa",
       "cubers": 69
     },
     {
@@ -671,6 +671,12 @@
       "cubers": 42
     },
     {
+      "iso2": "MZ",
+      "name": "Mozambique",
+      "continentId": "_Africa",
+      "cubers": 39
+    },
+    {
       "iso2": "FJ",
       "name": "Fiji",
       "continentId": "_Oceania",
@@ -701,16 +707,16 @@
       "cubers": 29
     },
     {
+      "iso2": "NA",
+      "name": "Namibia",
+      "continentId": "_Africa",
+      "cubers": 29
+    },
+    {
       "iso2": "IQ",
       "name": "Iraq",
       "continentId": "_Asia",
       "cubers": 28
-    },
-    {
-      "iso2": "NA",
-      "name": "Namibia",
-      "continentId": "_Africa",
-      "cubers": 27
     },
     {
       "iso2": "XK",
@@ -812,12 +818,6 @@
       "iso2": "BN",
       "name": "Brunei",
       "continentId": "_Asia",
-      "cubers": 9
-    },
-    {
-      "iso2": "MZ",
-      "name": "Mozambique",
-      "continentId": "_Africa",
       "cubers": 9
     },
     {
