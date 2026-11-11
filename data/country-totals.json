@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-11-10T00:30:17Z",
+    "exportDate": "2026-11-11T00:30:20Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_314_20261110T003017Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_315_20261111T003020Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 302567,
+  "totalCubers": 302677,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 63100
+      "cubers": 63122
     },
     {
       "iso2": "CN",
@@ -26,7 +26,7 @@
       "iso2": "IN",
       "name": "India",
       "continentId": "_Asia",
-      "cubers": 21460
+      "cubers": 21461
     },
     {
       "iso2": "AU",
@@ -68,7 +68,7 @@
       "iso2": "PH",
       "name": "Philippines",
       "continentId": "_Asia",
-      "cubers": 6617
+      "cubers": 6637
     },
     {
       "iso2": "CO",
@@ -92,7 +92,7 @@
       "iso2": "KR",
       "name": "Republic of Korea",
       "continentId": "_Asia",
-      "cubers": 4653
+      "cubers": 4654
     },
     {
       "iso2": "PE",
@@ -128,7 +128,7 @@
       "iso2": "MY",
       "name": "Malaysia",
       "continentId": "_Asia",
-      "cubers": 3944
+      "cubers": 3976
     },
     {
       "iso2": "JP",
@@ -224,13 +224,13 @@
       "iso2": "NO",
       "name": "Norway",
       "continentId": "_Europe",
-      "cubers": 1722
+      "cubers": 1755
     },
     {
       "iso2": "SG",
       "name": "Singapore",
       "continentId": "_Asia",
-      "cubers": 1702
+      "cubers": 1703
     },
     {
       "iso2": "IR",
