@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-11-11T00:30:20Z",
+    "exportDate": "2026-11-12T00:30:25Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_315_20261111T003020Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_316_20261112T003025Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 302677,
+  "totalCubers": 302706,
   "countries": [
     {
       "iso2": "US",
@@ -74,13 +74,13 @@
       "iso2": "CO",
       "name": "Colombia",
       "continentId": "_South America",
-      "cubers": 6199
+      "cubers": 6209
     },
     {
       "iso2": "ES",
       "name": "Spain",
       "continentId": "_Europe",
-      "cubers": 5563
+      "cubers": 5567
     },
     {
       "iso2": "FR",
@@ -188,19 +188,19 @@
       "iso2": "ZA",
       "name": "South Africa",
       "continentId": "_Africa",
-      "cubers": 2299
+      "cubers": 2300
+    },
+    {
+      "iso2": "NZ",
+      "name": "New Zealand",
+      "continentId": "_Oceania",
+      "cubers": 2219
     },
     {
       "iso2": "CL",
       "name": "Chile",
       "continentId": "_South America",
       "cubers": 2218
-    },
-    {
-      "iso2": "NZ",
-      "name": "New Zealand",
-      "continentId": "_Oceania",
-      "cubers": 2217
     },
     {
       "iso2": "IL",
@@ -320,7 +320,7 @@
       "iso2": "BD",
       "name": "Bangladesh",
       "continentId": "_Asia",
-      "cubers": 830
+      "cubers": 832
     },
     {
       "iso2": "CZ",
@@ -785,6 +785,12 @@
       "cubers": 13
     },
     {
+      "iso2": "LS",
+      "name": "Lesotho",
+      "continentId": "_Africa",
+      "cubers": 13
+    },
+    {
       "iso2": "YE",
       "name": "Yemen",
       "continentId": "_Asia",
@@ -901,12 +907,6 @@
     {
       "iso2": "ER",
       "name": "Eritrea",
-      "continentId": "_Africa",
-      "cubers": 3
-    },
-    {
-      "iso2": "LS",
-      "name": "Lesotho",
       "continentId": "_Africa",
       "cubers": 3
     },
