@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-11-17T00:30:28Z",
+    "exportDate": "2026-11-18T00:30:11Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_321_20261117T003028Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_322_20261118T003011Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 303341,
+  "totalCubers": 303428,
   "countries": [
     {
       "iso2": "US",
@@ -62,37 +62,37 @@
       "iso2": "RU",
       "name": "Russia",
       "continentId": "_Europe",
-      "cubers": 6813
+      "cubers": 6815
     },
     {
       "iso2": "PH",
       "name": "Philippines",
       "continentId": "_Asia",
-      "cubers": 6637
+      "cubers": 6660
     },
     {
       "iso2": "CO",
       "name": "Colombia",
       "continentId": "_South America",
-      "cubers": 6209
+      "cubers": 6210
     },
     {
       "iso2": "ES",
       "name": "Spain",
       "continentId": "_Europe",
-      "cubers": 5572
+      "cubers": 5587
     },
     {
       "iso2": "FR",
       "name": "France",
       "continentId": "_Europe",
-      "cubers": 5079
+      "cubers": 5080
     },
     {
       "iso2": "KR",
       "name": "Republic of Korea",
       "continentId": "_Asia",
-      "cubers": 4658
+      "cubers": 4685
     },
     {
       "iso2": "PE",
@@ -158,7 +158,7 @@
       "iso2": "UA",
       "name": "Ukraine",
       "continentId": "_Europe",
-      "cubers": 3015
+      "cubers": 3016
     },
     {
       "iso2": "IT",
@@ -218,7 +218,7 @@
       "iso2": "AR",
       "name": "Argentina",
       "continentId": "_South America",
-      "cubers": 1853
+      "cubers": 1855
     },
     {
       "iso2": "NO",
@@ -254,7 +254,7 @@
       "iso2": "HK",
       "name": "Hong Kong, China",
       "continentId": "_Asia",
-      "cubers": 1492
+      "cubers": 1493
     },
     {
       "iso2": "KZ",
@@ -302,7 +302,7 @@
       "iso2": "GR",
       "name": "Greece",
       "continentId": "_Europe",
-      "cubers": 1080
+      "cubers": 1093
     },
     {
       "iso2": "VE",
@@ -614,7 +614,7 @@
       "iso2": "LB",
       "name": "Lebanon",
       "continentId": "_Asia",
-      "cubers": 77
+      "cubers": 78
     },
     {
       "iso2": "SY",
