@@ -2,25 +2,25 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-11-18T00:30:11Z",
+    "exportDate": "2026-11-19T00:30:20Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_322_20261118T003011Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_323_20261119T003020Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 303428,
+  "totalCubers": 303467,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 63260
+      "cubers": 63266
     },
     {
       "iso2": "CN",
       "name": "China",
       "continentId": "_Asia",
-      "cubers": 30225
+      "cubers": 30234
     },
     {
       "iso2": "IN",
@@ -38,7 +38,7 @@
       "iso2": "CA",
       "name": "Canada",
       "continentId": "_North America",
-      "cubers": 11042
+      "cubers": 11044
     },
     {
       "iso2": "BR",
@@ -56,7 +56,7 @@
       "iso2": "PL",
       "name": "Poland",
       "continentId": "_Europe",
-      "cubers": 7030
+      "cubers": 7031
     },
     {
       "iso2": "RU",
@@ -236,7 +236,7 @@
       "iso2": "IR",
       "name": "Iran",
       "continentId": "_Asia",
-      "cubers": 1657
+      "cubers": 1658
     },
     {
       "iso2": "RO",
@@ -320,7 +320,7 @@
       "iso2": "BD",
       "name": "Bangladesh",
       "continentId": "_Asia",
-      "cubers": 832
+      "cubers": 833
     },
     {
       "iso2": "CZ",
@@ -350,7 +350,7 @@
       "iso2": "LK",
       "name": "Sri Lanka",
       "continentId": "_Asia",
-      "cubers": 600
+      "cubers": 601
     },
     {
       "iso2": "NP",
@@ -482,7 +482,7 @@
       "iso2": "PK",
       "name": "Pakistan",
       "continentId": "_Asia",
-      "cubers": 306
+      "cubers": 308
     },
     {
       "iso2": "PA",
@@ -737,14 +737,14 @@
       "cubers": 24
     },
     {
-      "iso2": "CI",
-      "name": "Côte d'Ivoire",
-      "continentId": "_Africa",
-      "cubers": 22
-    },
-    {
       "iso2": "ZW",
       "name": "Zimbabwe",
+      "continentId": "_Africa",
+      "cubers": 24
+    },
+    {
+      "iso2": "CI",
+      "name": "Côte d'Ivoire",
       "continentId": "_Africa",
       "cubers": 22
     },
@@ -753,6 +753,12 @@
       "name": "Sudan",
       "continentId": "_Africa",
       "cubers": 16
+    },
+    {
+      "iso2": "BW",
+      "name": "Botswana",
+      "continentId": "_Africa",
+      "cubers": 15
     },
     {
       "iso2": "CU",
@@ -962,12 +968,6 @@
       "iso2": "AG",
       "name": "Antigua and Barbuda",
       "continentId": "_North America",
-      "cubers": 1
-    },
-    {
-      "iso2": "BW",
-      "name": "Botswana",
-      "continentId": "_Africa",
       "cubers": 1
     },
     {
