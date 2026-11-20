@@ -2,25 +2,25 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-11-19T00:30:20Z",
+    "exportDate": "2026-11-20T00:30:01Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_323_20261119T003020Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_324_20261120T003001Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 303467,
+  "totalCubers": 303538,
   "countries": [
     {
       "iso2": "US",
       "name": "United States",
       "continentId": "_North America",
-      "cubers": 63266
+      "cubers": 63288
     },
     {
       "iso2": "CN",
       "name": "China",
       "continentId": "_Asia",
-      "cubers": 30234
+      "cubers": 30235
     },
     {
       "iso2": "IN",
@@ -38,7 +38,7 @@
       "iso2": "CA",
       "name": "Canada",
       "continentId": "_North America",
-      "cubers": 11044
+      "cubers": 11051
     },
     {
       "iso2": "BR",
@@ -56,13 +56,13 @@
       "iso2": "PL",
       "name": "Poland",
       "continentId": "_Europe",
-      "cubers": 7031
+      "cubers": 7043
     },
     {
       "iso2": "RU",
       "name": "Russia",
       "continentId": "_Europe",
-      "cubers": 6815
+      "cubers": 6816
     },
     {
       "iso2": "PH",
@@ -110,7 +110,7 @@
       "iso2": "MX",
       "name": "Mexico",
       "continentId": "_North America",
-      "cubers": 4463
+      "cubers": 4472
     },
     {
       "iso2": "ID",
@@ -236,7 +236,7 @@
       "iso2": "IR",
       "name": "Iran",
       "continentId": "_Asia",
-      "cubers": 1658
+      "cubers": 1659
     },
     {
       "iso2": "RO",
@@ -386,7 +386,7 @@
       "iso2": "UZ",
       "name": "Uzbekistan",
       "continentId": "_Asia",
-      "cubers": 475
+      "cubers": 492
     },
     {
       "iso2": "SK",
@@ -677,15 +677,15 @@
       "cubers": 39
     },
     {
-      "iso2": "FJ",
-      "name": "Fiji",
-      "continentId": "_Oceania",
-      "cubers": 31
-    },
-    {
       "iso2": "TJ",
       "name": "Tajikistan",
       "continentId": "_Asia",
+      "cubers": 32
+    },
+    {
+      "iso2": "FJ",
+      "name": "Fiji",
+      "continentId": "_Oceania",
       "cubers": 31
     },
     {
