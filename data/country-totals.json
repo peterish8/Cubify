@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "source": {
     "name": "World Cube Association Results Export",
-    "exportDate": "2026-11-26T00:30:10Z",
+    "exportDate": "2026-11-27T00:30:08Z",
     "exportFormatVersion": "2.0.2",
-    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_330_20261126T003010Z.tsv.zip",
+    "archiveUrl": "https://exports.worldcubeassociation.org/results/WCA_export_v2_331_20261127T003008Z.tsv.zip",
     "url": "https://www.worldcubeassociation.org/export/results",
     "attribution": "Based on competition results owned and maintained by the World Cube Association."
   },
-  "totalCubers": 304409,
+  "totalCubers": 304460,
   "countries": [
     {
       "iso2": "US",
@@ -68,7 +68,7 @@
       "iso2": "PH",
       "name": "Philippines",
       "continentId": "_Asia",
-      "cubers": 6739
+      "cubers": 6765
     },
     {
       "iso2": "CO",
@@ -104,7 +104,7 @@
       "iso2": "TW",
       "name": "Chinese Taipei",
       "continentId": "_Asia",
-      "cubers": 4516
+      "cubers": 4523
     },
     {
       "iso2": "MX",
@@ -122,7 +122,7 @@
       "iso2": "DE",
       "name": "Germany",
       "continentId": "_Europe",
-      "cubers": 4385
+      "cubers": 4386
     },
     {
       "iso2": "MY",
@@ -143,16 +143,16 @@
       "cubers": 3264
     },
     {
+      "iso2": "SE",
+      "name": "Sweden",
+      "continentId": "_Europe",
+      "cubers": 3112
+    },
+    {
       "iso2": "VN",
       "name": "Vietnam",
       "continentId": "_Asia",
       "cubers": 3108
-    },
-    {
-      "iso2": "SE",
-      "name": "Sweden",
-      "continentId": "_Europe",
-      "cubers": 3098
     },
     {
       "iso2": "UA",
@@ -176,7 +176,7 @@
       "iso2": "MN",
       "name": "Mongolia",
       "continentId": "_Asia",
-      "cubers": 2386
+      "cubers": 2387
     },
     {
       "iso2": "TR",
@@ -266,7 +266,7 @@
       "iso2": "HU",
       "name": "Hungary",
       "continentId": "_Europe",
-      "cubers": 1325
+      "cubers": 1326
     },
     {
       "iso2": "GT",
@@ -482,7 +482,7 @@
       "iso2": "PK",
       "name": "Pakistan",
       "continentId": "_Asia",
-      "cubers": 309
+      "cubers": 310
     },
     {
       "iso2": "PA",
